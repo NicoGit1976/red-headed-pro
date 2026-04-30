@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
- * Webhooks dispatcher — Pélican (Pro).
+ * Webhooks dispatcher — Harlequin (Pro).
  *
  * Listens to pelican_export_generated / .delivered / .failed and POSTs JSON
  * to every registered HTTPS endpoint.

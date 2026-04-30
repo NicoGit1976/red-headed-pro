@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
- * Bulk action on the WC orders list — "🦩 Export selected orders (Pélican)".
+ * Bulk action on the WC orders list — "🃏 Export selected orders (Harlequin)".
  * Lite + Pro both expose the action; Lite is capped to CSV + 1 destination.
  *
  * @package Pelican
@@ -15,7 +15,7 @@ class Pelican_Bulk_Actions {
         add_action( 'admin_notices', array( $this, 'maybe_render_result' ) );
     }
     public function register_bulk( $actions ) {
-        $actions['pelican_export'] = __( '🦩 Export with Pélican', 'pelican' );
+        $actions['pelican_export'] = __( '🃏 Export with Harlequin', 'pelican' );
         return $actions;
     }
     public function handle_bulk( $redirect, $action, $ids ) {
@@ -46,14 +46,14 @@ class Pelican_Bulk_Actions {
             echo '<div class="notice notice-success is-dismissible"><p>';
             printf(
                 /* translators: 1: job id, 2: link to exports list */
-                esc_html__( '✓ Pélican export #%1$d created. %2$s', 'pelican' ),
+                esc_html__( '✓ Harlequin export #%1$d created. %2$s', 'pelican' ),
                 $job_id,
                 '<a href="' . esc_url( $url ) . '" class="button button-primary" style="margin-left:6px;">' . esc_html__( 'Open Exports list', 'pelican' ) . '</a>'
             );
             echo '</p></div>';
         } else {
             $err = sanitize_text_field( wp_unslash( $_GET['pelican_err'] ?? 'unknown' ) );
-            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( '⚠ Pélican export failed: ' . $err ) . '</p></div>';
+            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( '⚠ Harlequin export failed: ' . $err ) . '</p></div>';
         }
     }
 }

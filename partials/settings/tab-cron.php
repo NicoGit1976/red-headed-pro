@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                 <li>✓ <?php esc_html_e( 'Order status auto-trigger (processing → SFTP, completed → email…)', 'pelican' ); ?></li>
                 <li>✓ <?php esc_html_e( 'Per-profile fire-once dedupe', 'pelican' ); ?></li>
             </ul>
-            <a href="https://thelionfrog.com/products/plugins/pelican-pro" target="_blank" rel="noopener" class="pl-btn pl-btn-upgrade">⚡ <?php esc_html_e( 'Upgrade to Pro', 'pelican' ); ?></a>
+            <a href="https://thelionfrog.com/products/plugins/woo-order-pro" target="_blank" rel="noopener" class="pl-btn pl-btn-upgrade">⚡ <?php esc_html_e( 'Upgrade to Pro', 'pelican' ); ?></a>
         </div>
     <?php else :
         $profiles = Pelican_Profile_Repo::all();

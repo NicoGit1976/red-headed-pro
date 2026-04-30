@@ -35,7 +35,7 @@ if ( Pelican_Soft_Lock::is_pro() ) {
                 <li>✓ <?php esc_html_e( 'HMAC SHA-256 signature in X-Pelican-Signature', 'pelican' ); ?></li>
                 <li>✓ <?php esc_html_e( 'Multiple endpoints, per-endpoint event subscription', 'pelican' ); ?></li>
             </ul>
-            <a href="https://thelionfrog.com/products/plugins/pelican-pro" target="_blank" rel="noopener" class="pl-btn pl-btn-upgrade">⚡ <?php esc_html_e( 'Upgrade to Pro', 'pelican' ); ?></a>
+            <a href="https://thelionfrog.com/products/plugins/woo-order-pro" target="_blank" rel="noopener" class="pl-btn pl-btn-upgrade">⚡ <?php esc_html_e( 'Upgrade to Pro', 'pelican' ); ?></a>
         </div>
     <?php else :
         $hooks = Pelican_Webhooks::list_urls();

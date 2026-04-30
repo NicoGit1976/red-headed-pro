@@ -1,6 +1,6 @@
 <?php
 /**
- * Engine — orchestrator for Pélican.
+ * Engine — orchestrator for Harlequin.
  *
  * @package Pelican
  */

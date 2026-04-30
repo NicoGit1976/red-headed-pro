@@ -1,6 +1,6 @@
 <?php
 /**
- * Installer — DB schema for Pélican.
+ * Installer — DB schema for Harlequin.
  *
  * Tables:
  *   wp_pl_profiles  — saved export configurations (filter, columns, format, destinations)

@@ -18,9 +18,9 @@ class Pelican_Admin {
         $cap = 'manage_woocommerce';
         /* No top-level menu. All pages register under parent=null with a
            shared in-page nav at the top (Dashboard / Exports / Settings). */
-        add_submenu_page( null, __( 'Pélican Dashboard', 'pelican' ), '', $cap, 'pelican',          array( $this, 'render_dashboard' ) );
-        add_submenu_page( null, __( 'Pélican Exports',   'pelican' ), '', $cap, 'pelican-exports',  array( $this, 'render_exports' ) );
-        add_submenu_page( null, __( 'Pélican Settings',  'pelican' ), '', $cap, 'pelican-settings', array( $this, 'render_settings' ) );
+        add_submenu_page( null, __( 'Harlequin Dashboard', 'pelican' ), '', $cap, 'pelican',          array( $this, 'render_dashboard' ) );
+        add_submenu_page( null, __( 'Harlequin Exports',   'pelican' ), '', $cap, 'pelican-exports',  array( $this, 'render_exports' ) );
+        add_submenu_page( null, __( 'Harlequin Settings',  'pelican' ), '', $cap, 'pelican-settings', array( $this, 'render_settings' ) );
 
         /* Settings deep-links forced ?tab= */
         foreach ( array( 'profiles', 'destinations', 'cron', 'webhooks', 'general' ) as $tab ) {

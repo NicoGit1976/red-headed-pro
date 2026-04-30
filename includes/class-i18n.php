@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
- * i18n compatibility — PolyLang & WPML for Pélican.
+ * i18n compatibility — PolyLang & WPML for Harlequin.
  *
  * @package Pelican
  */

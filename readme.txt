@@ -1,17 +1,17 @@
-=== Pélican Pro — WooCommerce Order Export ===
+=== Harlequin Pro — WooCommerce Order Export ===
 Contributors: thelionfrog
 Tags: woocommerce, export, csv, xlsx, json, xml, sftp, cron, webhooks
 Requires at least: 6.2
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPL-2.0-or-later
 
-🦩 Premium WooCommerce order export — multi-format, multi-destination, scheduled & event-driven. Part of The Lion Frog suite.
+🃏 Premium WooCommerce order export — multi-format, multi-destination, scheduled & event-driven. Part of The Lion Frog suite.
 
 == Description ==
 
-**Pélican Pro** is the full-power order exporter for WooCommerce. Manual or automatic, single or bulk, send orders to anywhere in the format the receiver expects.
+**Harlequin Pro** is the full-power order exporter for WooCommerce. Manual or automatic, single or bulk, send orders to anywhere in the format the receiver expects.
 
 = Formats =
 * CSV / TSV (with locale-aware decimals)
@@ -42,9 +42,9 @@ License: GPL-2.0-or-later
 
 == Installation ==
 
-1. Upload `pelican-pro` to `/wp-content/plugins/`.
-2. Activate it. Pélican Lite (if installed) is auto-deactivated.
-3. Go to **Froggy Hub → Pélican** to license + configure.
+1. Upload `woo-order-pro` to `/wp-content/plugins/`.
+2. Activate it. Harlequin Lite (if installed) is auto-deactivated.
+3. Go to **Froggy Hub → Harlequin** to license + configure.
 
 == Frequently Asked Questions ==
 
@@ -55,9 +55,16 @@ Yes. Custom Order Tables (HPOS) compatibility is declared at boot.
 AES-256-CBC encrypted at rest with `wp_salt('auth')`.
 
 = Is there a free version? =
-Yes — **Pélican Lite**: manual + bulk, CSV only, Email + SFTP. Pro features are visible & soft-locked.
+Yes — **Harlequin Lite**: manual + bulk, CSV only, Email + SFTP. Pro features are visible & soft-locked.
 
 == Changelog ==
 
+= 1.1.0 — 2026-04-30 =
+* Verbal rebrand: ships as **Harlequin Pro — WooCommerce Order Export**.
+* Slug renamed `pelican-pro` → `woo-order-pro` (function-descriptive).
+* Mascot: harlequin frog (Atelopus) — placeholder SVG asset.
+* Internal class names, REST routes, hooks, options, DB tables: UNCHANGED.
+* Backward-compatible with v1.0.0 data — no migration required.
+
 = 1.0.0 — 2026-04-30 =
-* Initial release.
+* Initial release (as Pélican).

@@ -1,6 +1,6 @@
 <?php
 /**
- * Hub Registry — Pélican.
+ * Hub Registry — Harlequin.
  *
  * Filter: 'the_froggy_hub_ecosystem' (Hub v1.4.0+ schema).
  * Plus stats hook for the global Hub dashboard.
@@ -18,27 +18,27 @@ class Pelican_Hub_Registry {
     public static function register( $ecosystem ) {
         if ( ! is_array( $ecosystem ) ) $ecosystem = array();
         $ecosystem['pelican'] = array(
-            'title' => 'Pélican',
+            'title' => 'Harlequin',
             'desc'  => __( 'Order Export — bulk + auto-export WooCommerce orders to CSV / XLSX / JSON / XML, deliver via Email / SFTP / Google Drive / Download.', 'pelican' ),
             'lite'  => array(
-                'name' => 'The Lion Frog | Pélican Lite',
-                'slug' => 'pelican-lite',
-                'img'  => 'pelican-lite.webp',
+                'name' => 'The Lion Frog | Harlequin Lite',
+                'slug' => 'woo-order-lite',
+                'img'  => 'woo-order-lite.webp',
                 'url'  => 'admin.php?page=pelican',
             ),
             'pro'   => array(
-                'name' => 'The Lion Frog | Pélican Pro',
-                'slug' => 'pelican-pro',
-                'img'  => 'pelican-pro.webp',
+                'name' => 'The Lion Frog | Harlequin Pro',
+                'slug' => 'woo-order-pro',
+                'img'  => 'woo-order-pro.webp',
                 'url'  => 'admin.php?page=pelican',
-                'shop' => 'https://thelionfrog.com/products/plugins/pelican-pro',
+                'shop' => 'https://thelionfrog.com/products/plugins/woo-order-pro',
             ),
         );
         return $ecosystem;
     }
 
     public static function stats( $stats, $slug ) {
-        if ( ! in_array( $slug, array( 'pelican-lite', 'pelican-pro' ), true ) ) return $stats;
+        if ( ! in_array( $slug, array( 'woo-order-lite', 'woo-order-pro' ), true ) ) return $stats;
         global $wpdb;
         $jobs = $wpdb->prefix . 'pl_jobs';
         if ( ! is_array( $stats ) ) $stats = array();

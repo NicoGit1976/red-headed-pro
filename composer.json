@@ -1,6 +1,6 @@
 {
-    "name": "thelionfrog/pelican-pro",
-    "description": "🦩 WooCommerce Order Export Pro — part of The Lion Frog suite.",
+    "name": "thelionfrog/woo-order-pro",
+    "description": "🃏 WooCommerce Order Export Pro — part of The Lion Frog suite.",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "require": {

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Harlequin Frog (Atelopus) — placeholder mascot, v1 -->
+  <defs>
+    <radialGradient id="hq-body" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="60%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#1d6d7f"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="32" cy="40" rx="20" ry="14" fill="url(#hq-body)"/>
+  <ellipse cx="22" cy="22" rx="9" ry="10" fill="#1d6d7f"/>
+  <ellipse cx="42" cy="22" rx="9" ry="10" fill="#1d6d7f"/>
+  <circle cx="22" cy="22" r="5" fill="#fff"/>
+  <circle cx="42" cy="22" r="5" fill="#fff"/>
+  <circle cx="22" cy="22" r="3" fill="#0f172a"/>
+  <circle cx="42" cy="22" r="3" fill="#0f172a"/>
+  <circle cx="22.8" cy="20.8" r="1.2" fill="#fff"/>
+  <circle cx="42.8" cy="20.8" r="1.2" fill="#fff"/>
+  <!-- Harlequin diamond pattern accent -->
+  <path d="M22 42 L26 38 L30 42 L26 46 Z" fill="#f97316" opacity="0.85"/>
+  <path d="M34 42 L38 38 L42 42 L38 46 Z" fill="#1d6d7f" opacity="0.85"/>
+  <path d="M28 50 L32 46 L36 50 L32 54 Z" fill="#fde68a" opacity="0.85"/>
+  <!-- Smile -->
+  <path d="M26 36 Q32 40 38 36" stroke="#0f172a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>

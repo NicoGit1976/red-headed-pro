@@ -1,6 +1,6 @@
 <?php
 /**
- * Soft Lock — Pélican.
+ * Soft Lock — Harlequin.
  * Pro features visible but locked when running Lite. Same pattern as the rest of the suite.
  *
  * @package Pelican
@@ -64,7 +64,7 @@ class Pelican_Soft_Lock {
                 'code'    => 'feature_locked',
                 'message' => sprintf(
                     /* translators: %s = feature slug */
-                    __( 'This feature (%s) requires Pélican Pro.', 'pelican' ),
+                    __( 'This feature (%s) requires Harlequin Pro.', 'pelican' ),
                     $feature
                 ),
             ), 403 );

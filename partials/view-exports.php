@@ -79,7 +79,7 @@ $is_pro = Pelican_Soft_Lock::is_pro();
 
         <?php if ( empty( $jobs ) ) : ?>
             <div class="pl-empty">
-                <div class="pl-empty-icon">🦩</div>
+                <div class="pl-empty-icon">🃏</div>
                 <p><?php esc_html_e( 'No exports yet. Configure a profile in Settings or run a bulk export from the WC orders list.', 'pelican' ); ?></p>
                 <a href="<?php echo esc_url( admin_url( 'admin.php?page=pelican-settings-profiles' ) ); ?>" class="pl-btn pl-btn-primary"><?php esc_html_e( '+ Create profile', 'pelican' ); ?></a>
             </div>

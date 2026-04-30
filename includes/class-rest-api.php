@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
- * REST API — Pélican (Pro).
+ * REST API — Harlequin (Pro).
  *
  * Routes:
  *   GET    /pelican/v1/profiles

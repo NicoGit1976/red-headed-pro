@@ -339,3 +339,23 @@
     .pl-page-nav { padding: 4px; }
     .pl-page-nav-item { padding: 6px 10px; font-size: 13px; }
 }
+
+/* ──────────────────────────────────────────────────────────────────
+   v1.1.0 — Harlequin rebrand: hero mascot SVG + baseline
+   ────────────────────────────────────────────────────────────────── */
+.pl-hero-mascot-svg {
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.18));
+    flex-shrink: 0;
+}
+.pl-hero-edition {
+    font-size: 18px; font-weight: 400; opacity: .82; margin-left: 4px;
+    letter-spacing: .5px;
+}
+.pl-hero-baseline {
+    margin: 2px 0 6px;
+    font-size: 13px;
+    color: rgba(255,255,255,.78);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-weight: 600;
+}

@@ -58,11 +58,11 @@ if ( isset( $_POST['pl_purge_jobs'] ) && check_admin_referer( 'pl_purge_jobs' ) 
             </p>
             <label class="pl-field">
                 <span class="pl-field-lbl"><?php esc_html_e( 'Subject', 'pelican' ); ?></span>
-                <input type="text" name="email_subject" value="<?php echo esc_attr( get_option( 'pelican_email_subject', '🦩 Pélican export — {{filename}}' ) ); ?>" />
+                <input type="text" name="email_subject" value="<?php echo esc_attr( get_option( 'pelican_email_subject', '🃏 Harlequin export — {{filename}}' ) ); ?>" />
             </label>
             <label class="pl-field">
                 <span class="pl-field-lbl"><?php esc_html_e( 'Body', 'pelican' ); ?></span>
-                <textarea name="email_body" rows="5"><?php echo esc_textarea( get_option( 'pelican_email_body', "Bonjour,\n\nVoici l'export généré par Pélican : {{filename}} ({{records}} commandes).\n\n— The Lion Frog" ) ); ?></textarea>
+                <textarea name="email_body" rows="5"><?php echo esc_textarea( get_option( 'pelican_email_body', "Bonjour,\n\nVoici l'export généré par Harlequin : {{filename}} ({{records}} commandes).\n\n— The Lion Frog" ) ); ?></textarea>
             </label>
         </fieldset>
 
@@ -84,8 +84,8 @@ if ( isset( $_POST['pl_purge_jobs'] ) && check_admin_referer( 'pl_purge_jobs' ) 
 
     <fieldset class="pl-card">
         <legend class="pl-card-title">ℹ️ <?php esc_html_e( 'About', 'pelican' ); ?></legend>
-        <p><strong>Pélican</strong> v<?php echo esc_html( PELICAN_VERSION ); ?> — <?php echo esc_html( strtoupper( Pelican_Soft_Lock::edition() ) ); ?></p>
-        <p class="pl-muted"><?php esc_html_e( '🦩 Order Export pour WooCommerce — by The Lion Frog.', 'pelican' ); ?></p>
+        <p><strong>Harlequin</strong> v<?php echo esc_html( PELICAN_VERSION ); ?> — <?php echo esc_html( strtoupper( Pelican_Soft_Lock::edition() ) ); ?></p>
+        <p class="pl-muted"><?php esc_html_e( '🃏 Order Export pour WooCommerce — by The Lion Frog.', 'pelican' ); ?></p>
         <ul class="pl-muted">
             <li>📚 <?php esc_html_e( 'Docs', 'pelican' ); ?>: <a href="https://thelionfrog.com/docs/pelican" target="_blank" rel="noopener">thelionfrog.com/docs/pelican</a></li>
             <li>🐛 <?php esc_html_e( 'Support', 'pelican' ); ?>: <a href="https://thelionfrog.com/support" target="_blank" rel="noopener">thelionfrog.com/support</a></li>

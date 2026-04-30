@@ -1,5 +1,5 @@
 /**
- * Pélican — admin JS (profile editor + actions).
+ * Harlequin — admin JS (profile editor + actions).
  *
  * Uses the suite-wide pattern: lightweight jQuery for AJAX, vanilla DOM for the rest.
  */

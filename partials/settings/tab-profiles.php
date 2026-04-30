@@ -23,8 +23,8 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
 
     <?php if ( $cap_hit ) : ?>
         <div class="pl-notice pl-notice-info">
-            <span><?php esc_html_e( '🦩 Lite is capped to 1 profile. Upgrade to Pro for unlimited profiles, cron schedules and auto-triggers.', 'pelican' ); ?></span>
-            <a href="https://thelionfrog.com/products/plugins/pelican-pro" target="_blank" rel="noopener" class="pl-btn pl-btn-upgrade">⚡ <?php esc_html_e( 'Upgrade to Pro', 'pelican' ); ?></a>
+            <span><?php esc_html_e( '🃏 Lite is capped to 1 profile. Upgrade to Pro for unlimited profiles, cron schedules and auto-triggers.', 'pelican' ); ?></span>
+            <a href="https://thelionfrog.com/products/plugins/woo-order-pro" target="_blank" rel="noopener" class="pl-btn pl-btn-upgrade">⚡ <?php esc_html_e( 'Upgrade to Pro', 'pelican' ); ?></a>
         </div>
     <?php endif; ?>
 

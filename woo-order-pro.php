@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name:       The Lion Frog | Pélican Pro
- * Plugin URI:        https://thelionfrog.com/products/plugins/pelican-pro
- * Description:       Pélican carries your WooCommerce orders wherever you need them — bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Pro edition.
- * Version:           1.0.0
+ * Plugin Name:       Harlequin Pro — WooCommerce Order Export
+ * Plugin URI:        https://thelionfrog.com/products/plugins/woo-order-pro
+ * Description:       Harlequin Pro carries your WooCommerce orders wherever you need them — bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Pro edition. Part of the Lion Frog Suite.
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            The Lion Frog Team
@@ -23,13 +23,13 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'PELICAN_VERSION',  '1.0.0' );
+define( 'PELICAN_VERSION',  '1.1.0' );
 define( 'PELICAN_EDITION',  'pro' );
 define( 'PELICAN_FILE',     __FILE__ );
 define( 'PELICAN_PATH',     plugin_dir_path( __FILE__ ) );
 define( 'PELICAN_URL',      plugin_dir_url( __FILE__ ) );
 define( 'PELICAN_BASENAME', plugin_basename( __FILE__ ) );
-define( 'PELICAN_SLUG',     'pelican-pro' );
+define( 'PELICAN_SLUG',     'woo-order-pro' );
 
 /* Composer autoloader (mPDF/PhpSpreadsheet/phpseclib live in vendor when installed). */
 if ( file_exists( PELICAN_PATH . 'vendor/autoload.php' ) ) {
@@ -50,8 +50,8 @@ register_activation_hook( __FILE__, function () {
     if ( ! function_exists( 'is_plugin_active' ) ) {
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
     }
-    if ( is_plugin_active( 'pelican-lite/pelican-lite.php' ) ) {
-        deactivate_plugins( 'pelican-lite/pelican-lite.php' );
+    if ( is_plugin_active( 'woo-order-lite/woo-order-lite.php' ) ) {
+        deactivate_plugins( 'woo-order-lite/woo-order-lite.php' );
         set_transient( 'pelican_lite_was_deactivated', 1, 30 );
     }
     require_once PELICAN_PATH . 'includes/class-installer.php';
@@ -66,8 +66,8 @@ add_action( 'admin_notices', function () {
     if ( ! get_transient( 'pelican_lite_was_deactivated' ) ) return;
     delete_transient( 'pelican_lite_was_deactivated' );
     echo '<div class="notice notice-success is-dismissible" style="border-left-color:#10B981;">';
-    echo '<p><strong>🦩 ' . esc_html__( 'Pélican Pro activated.', 'pelican' ) . '</strong></p>';
-    echo '<p>' . esc_html__( 'Pélican Lite has been deactivated automatically. All your data and settings have been preserved.', 'pelican' ) . '</p>';
+    echo '<p><strong>🃏 ' . esc_html__( 'Harlequin Pro activated.', 'pelican' ) . '</strong></p>';
+    echo '<p>' . esc_html__( 'Harlequin Lite has been deactivated automatically. All your data and settings have been preserved.', 'pelican' ) . '</p>';
     echo '</div>';
 } );
 
@@ -88,7 +88,7 @@ add_action( 'plugins_loaded', function () {
         } else {
             FH_Soft_Lock::register( PELICAN_SLUG, array(
                 'page_slug'      => 'pelican',
-                'plugin_name'    => 'Pélican Pro',
+                'plugin_name'    => 'Harlequin Pro',
                 'plugin_icon'    => PELICAN_URL . 'assets/img/icon.png',
                 'license_status' => $status,
                 'features'       => array(
@@ -104,7 +104,7 @@ add_action( 'plugins_loaded', function () {
                     __( 'HPOS compatible · Hub auto-register · Lion Frog DNA UI', 'pelican' ),
                 ),
                 'parent_slug' => 'froggy-hub',
-                'shop_url'    => 'https://thelionfrog.com/products/plugins/pelican-pro',
+                'shop_url'    => 'https://thelionfrog.com/products/plugins/woo-order-pro',
             ) );
         }
     } else {
