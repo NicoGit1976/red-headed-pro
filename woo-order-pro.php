@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name:       Bull Pro — WooCommerce Order Export
+ * Plugin Name:       Red-Headed Pro — WooCommerce Order Export
  * Plugin URI:        https://thelionfrog.com/products/plugins/woo-order-pro
- * Description:       Premium WooCommerce order export. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Surinam Horned Frog. Pro edition. Part of WooFrog Suite.
- * Version:           1.3.0
+ * Description:       Premium WooCommerce order export. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools.
+ * Version:           1.4.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            The Lion Frog Team
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'PELICAN_VERSION',  '1.3.0' );
+define( 'PELICAN_VERSION',  '1.4.0' );
 define( 'PELICAN_EDITION',  'pro' );
 define( 'PELICAN_FILE',     __FILE__ );
 define( 'PELICAN_PATH',     plugin_dir_path( __FILE__ ) );

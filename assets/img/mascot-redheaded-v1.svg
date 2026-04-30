@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Red-Headed Poison Frog — placeholder mascot, v1. Designer Figma incoming. -->
+  <defs>
+    <radialGradient id="m-body" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#fecaca"/>
+      <stop offset="60%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </radialGradient>
+  </defs>
+  <ellipse cx="32" cy="40" rx="20" ry="14" fill="url(#m-body)"/>
+  <ellipse cx="22" cy="22" rx="9" ry="10" fill="#7f1d1d"/>
+  <ellipse cx="42" cy="22" rx="9" ry="10" fill="#7f1d1d"/>
+  <circle cx="22" cy="22" r="5" fill="#fff"/>
+  <circle cx="42" cy="22" r="5" fill="#fff"/>
+  <circle cx="22" cy="22" r="3" fill="#fff"/>
+  <circle cx="42" cy="22" r="3" fill="#fff"/>
+  <circle cx="22.8" cy="20.8" r="1.2" fill="#fff"/>
+  <circle cx="42.8" cy="20.8" r="1.2" fill="#fff"/>
+  <rect x="22" y="14" width="20" height="6" rx="3" fill="#dc2626"/>
+  <path d="M26 36 Q32 40 38 36" stroke="#0f172a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>

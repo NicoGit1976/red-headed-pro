@@ -1,12 +1,23 @@
 # Harlequin — Changelog
 
+## 1.4.0 — 2026-04-30
+
+### Changed
+- Verbal rebrand to **Red-Headed Pro — WooCommerce Order Export** (final naming, Nicolas-validated).
+- Suite renamed: **Ultimate Woo Powertools** *(by The Lion Frog)*.
+- Triple version sync (header / readme Stable tag / manifest.json) at 1.4.0.
+
+### Unchanged
+- Slug `woo-order-pro`, option keys, REST routes, hooks, DB tables, text-domain — all UNCHANGED.
+- No data migration. Backward-compatible with 1.3.0.
+
 ## 1.3.0 — 2026-04-30
 
 ### Changed
-- Verbal rebrand to **Bull Pro — WooCommerce Order Export** (poster-aligned: only species in the official Amazon Rainforest poster).
+- Verbal rebrand to **Red-Headed Pro — WooCommerce Order Export** (poster-aligned: only species in the official Amazon Rainforest poster).
 - Plugin Name header, admin H1, sub-menu label and readme synchronized.
 - New mascot asset: `assets/img/mascot-bull-v1.svg` (placeholder, designer Figma incoming).
-- Suite renamed to **WooFrog** (was "The Lion Frog Suite").
+- Suite renamed to **Ultimate Woo Powertools** (was "The Lion Frog Suite").
 
 ### Unchanged
 - Slug `woo-order-pro` UNCHANGED. Option keys, REST routes, hooks, DB tables, text-domain UNCHANGED.
