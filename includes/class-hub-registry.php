@@ -19,7 +19,8 @@ class Pelican_Hub_Registry {
         if ( ! is_array( $ecosystem ) ) $ecosystem = array();
         $ecosystem['pelican'] = array(
             'title' => 'Harlequin',
-            'desc'  => __( 'Order Export — bulk + auto-export WooCommerce orders to CSV / XLSX / JSON / XML, deliver via Email / SFTP / Google Drive / Download.', 'pelican' ),
+        'baseline' => 'WooCommerce Order Export',
+            'desc'  => __( 'Bulk + auto exports for WooCommerce orders — CSV / XLSX / JSON / XML / NDJSON / TSV. Multi-destination + cron + status triggers (Pro).', 'pelican' ),
             'lite'  => array(
                 'name' => 'The Lion Frog | Harlequin Lite',
                 'slug' => 'woo-order-lite',

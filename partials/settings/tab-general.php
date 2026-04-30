@@ -62,7 +62,7 @@ if ( isset( $_POST['pl_purge_jobs'] ) && check_admin_referer( 'pl_purge_jobs' ) 
             </label>
             <label class="pl-field">
                 <span class="pl-field-lbl"><?php esc_html_e( 'Body', 'pelican' ); ?></span>
-                <textarea name="email_body" rows="5"><?php echo esc_textarea( get_option( 'pelican_email_body', "Bonjour,\n\nVoici l'export généré par Harlequin : {{filename}} ({{records}} commandes).\n\n— The Lion Frog" ) ); ?></textarea>
+                <textarea name="email_body" rows="5"><?php echo esc_textarea( get_option( 'pelican_email_body', "Hi,\n\nYour Harlequin export is ready: {{filename}} ({{records}} orders).\n\n— The Lion Frog" ) ); ?></textarea>
             </label>
         </fieldset>
 

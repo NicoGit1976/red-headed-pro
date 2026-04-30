@@ -4,7 +4,7 @@ Tags: woocommerce, export, csv, xlsx, json, xml, sftp, cron, webhooks
 Requires at least: 6.2
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPL-2.0-or-later
 
 🃏 Premium WooCommerce order export — multi-format, multi-destination, scheduled & event-driven. Part of The Lion Frog suite.
