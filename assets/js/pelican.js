@@ -21,10 +21,19 @@
         document.getElementById( 'pl-pf-id' ).value      = p.id || '';
         document.getElementById( 'pl-pf-name' ).value    = p.name || '';
         document.getElementById( 'pl-pf-format' ).value  = p.format || 'csv';
-        document.getElementById( 'pl-pf-statuses' ).value  = ( p.filters && p.filters.status ) ? ( Array.isArray( p.filters.status ) ? p.filters.status.join( ', ' ) : p.filters.status ) : '';
+
+        /* Status filter — checkbox grid */
+        var statusList = ( p.filters && p.filters.status ) ? ( Array.isArray( p.filters.status ) ? p.filters.status : [ p.filters.status ] ) : [];
+        document.querySelectorAll( 'input[name="pl-pf-status[]"]' ).forEach( function ( cb ) {
+            cb.checked = statusList.indexOf( cb.value ) !== -1;
+        } );
+
         document.getElementById( 'pl-pf-date-from' ).value = ( p.filters && p.filters.date_from ) || '';
         document.getElementById( 'pl-pf-date-to' ).value   = ( p.filters && p.filters.date_to )   || '';
-        document.getElementById( 'pl-pf-columns' ).value   = Array.isArray( p.columns ) ? p.columns.join( ', ' ) : '';
+
+        /* Columns — rich picker (objects: { key, label }) */
+        var cols = Array.isArray( p.columns ) ? p.columns : [];
+        renderActiveColumns( cols );
 
         if ( document.getElementById( 'pl-pf-schedule' ) ) document.getElementById( 'pl-pf-schedule' ).value = p.schedule || 'manual';
         if ( document.getElementById( 'pl-pf-auto-status' ) ) {
@@ -36,6 +45,186 @@
 
         renderDestinations( p.destinations || [] );
         document.getElementById( 'pl-editor-title' ).textContent = p.id ? ( 'Edit profile · ' + ( p.name || '' ) ) : 'New profile';
+    }
+
+    /* ────────── Column picker (v1.2.0) ────────── */
+    function renderActiveColumns( colsInput ) {
+        var ol = document.getElementById( 'pl-cols-active' );
+        if ( ! ol ) return;
+        ol.innerHTML = '';
+
+        /* Normalize: input can be a list of strings OR objects {key, label} */
+        var cols = ( colsInput || [] ).map( function ( c ) {
+            if ( typeof c === 'string' ) {
+                return { key: c, label: lookupLabel( c ) };
+            }
+            return { key: c.key || '', label: c.label || lookupLabel( c.key ) };
+        } );
+
+        if ( ! cols.length ) {
+            ol.innerHTML = '<li class="pl-cols-empty pl-muted">No columns yet. Tick boxes on the left to add them.</li>';
+            updateActiveCount();
+            syncCatalogChecks();
+            return;
+        }
+
+        cols.forEach( function ( c ) {
+            ol.appendChild( buildActiveRow( c.key, c.label ) );
+        } );
+        updateActiveCount();
+        syncCatalogChecks();
+    }
+
+    function lookupLabel( key ) {
+        var row = document.querySelector( '.pl-col-row[data-key="' + cssEscape( key ) + '"]' );
+        if ( row ) return row.dataset.label || key;
+        if ( key && key.indexOf( 'meta:' ) === 0 ) return key.replace( /^meta:/, 'Meta — ' );
+        return key;
+    }
+
+    function cssEscape( s ) {
+        return ( s || '' ).replace( /["\\]/g, '\\$&' );
+    }
+
+    function buildActiveRow( key, label ) {
+        var li = document.createElement( 'li' );
+        li.className = 'pl-cols-active-row';
+        li.draggable = true;
+        li.dataset.key = key;
+        li.innerHTML =
+            '<span class="pl-drag-handle" aria-hidden="true">⋮⋮</span>' +
+            '<input type="text" class="pl-col-active-label" value="' + ( label || key ).replace( /"/g, '&quot;' ) + '" />' +
+            '<code class="pl-col-active-key">' + key + '</code>' +
+            '<button type="button" class="pl-btn pl-btn-sm pl-btn-danger pl-col-rm" aria-label="Remove">×</button>';
+        li.querySelector( '.pl-col-rm' ).addEventListener( 'click', function () {
+            li.remove();
+            updateActiveCount();
+            syncCatalogChecks();
+        } );
+        wireDragRow( li );
+        return li;
+    }
+
+    function updateActiveCount() {
+        var c = document.querySelectorAll( '#pl-cols-active .pl-cols-active-row' ).length;
+        var el = document.getElementById( 'pl-cols-count' );
+        if ( el ) el.textContent = c;
+    }
+
+    function syncCatalogChecks() {
+        var activeKeys = Array.from( document.querySelectorAll( '#pl-cols-active .pl-cols-active-row' ) ).map( function ( r ) { return r.dataset.key; } );
+        document.querySelectorAll( '.pl-col-row' ).forEach( function ( row ) {
+            var cb = row.querySelector( '.pl-col-toggle' );
+            if ( cb ) cb.checked = activeKeys.indexOf( row.dataset.key ) !== -1;
+        } );
+    }
+
+    /* Catalog checkbox → toggle in active list */
+    function wireCatalog() {
+        document.querySelectorAll( '.pl-col-row' ).forEach( function ( row ) {
+            var cb = row.querySelector( '.pl-col-toggle' );
+            if ( ! cb ) return;
+            cb.addEventListener( 'change', function () {
+                var key = row.dataset.key;
+                var label = row.dataset.label || key;
+                var ol = document.getElementById( 'pl-cols-active' );
+                var empty = ol.querySelector( '.pl-cols-empty' );
+                if ( empty ) empty.remove();
+                if ( cb.checked ) {
+                    if ( ! ol.querySelector( '[data-key="' + cssEscape( key ) + '"]' ) ) {
+                        ol.appendChild( buildActiveRow( key, label ) );
+                    }
+                } else {
+                    var rmRow = ol.querySelector( '[data-key="' + cssEscape( key ) + '"]' );
+                    if ( rmRow ) rmRow.remove();
+                    if ( ! ol.querySelector( '.pl-cols-active-row' ) ) {
+                        ol.innerHTML = '<li class="pl-cols-empty pl-muted">No columns yet. Tick boxes on the left to add them.</li>';
+                    }
+                }
+                updateActiveCount();
+            } );
+        } );
+
+        /* Search filter */
+        var search = document.getElementById( 'pl-cols-search' );
+        if ( search ) {
+            search.addEventListener( 'input', function () {
+                var q = this.value.trim().toLowerCase();
+                document.querySelectorAll( '.pl-col-row' ).forEach( function ( row ) {
+                    var hay = ( row.dataset.label + ' ' + row.dataset.key ).toLowerCase();
+                    row.style.display = ( ! q || hay.indexOf( q ) !== -1 ) ? '' : 'none';
+                } );
+                /* Hide empty groups too */
+                document.querySelectorAll( '.pl-cols-group' ).forEach( function ( g ) {
+                    var visible = g.querySelectorAll( '.pl-col-row[style=""], .pl-col-row:not([style])' ).length;
+                    var anyVisible = Array.from( g.querySelectorAll( '.pl-col-row' ) ).some( function ( r ) { return r.style.display !== 'none'; } );
+                    g.style.display = anyVisible ? '' : ( q ? 'none' : '' );
+                } );
+            } );
+        }
+
+        /* Defaults / clear */
+        var btnDef = document.getElementById( 'pl-cols-defaults' );
+        if ( btnDef ) btnDef.addEventListener( 'click', function () {
+            renderActiveColumns( [
+                'order_id', 'order_number', 'date_created', 'status',
+                'billing_first_name', 'billing_last_name', 'billing_email',
+                'billing_company', 'billing_country',
+                'total', 'currency', 'payment_method',
+                'item_count', 'shipping_method'
+            ] );
+        } );
+        var btnClr = document.getElementById( 'pl-cols-clear' );
+        if ( btnClr ) btnClr.addEventListener( 'click', function () { renderActiveColumns( [] ); } );
+
+        /* Custom meta column add */
+        var btnMeta = document.getElementById( 'pl-meta-add-btn' );
+        if ( btnMeta ) btnMeta.addEventListener( 'click', function () {
+            var k = ( document.getElementById( 'pl-meta-key' ).value || '' ).trim();
+            var lbl = ( document.getElementById( 'pl-meta-label' ).value || '' ).trim();
+            if ( ! k ) return;
+            var key = 'meta:' + k;
+            var ol = document.getElementById( 'pl-cols-active' );
+            var empty = ol.querySelector( '.pl-cols-empty' );
+            if ( empty ) empty.remove();
+            if ( ! ol.querySelector( '[data-key="' + cssEscape( key ) + '"]' ) ) {
+                ol.appendChild( buildActiveRow( key, lbl || k ) );
+            }
+            document.getElementById( 'pl-meta-key' ).value = '';
+            document.getElementById( 'pl-meta-label' ).value = '';
+            updateActiveCount();
+        } );
+    }
+
+    /* HTML5 drag-drop reorder */
+    function wireDragRow( li ) {
+        li.addEventListener( 'dragstart', function ( e ) {
+            li.classList.add( 'pl-drag-ghost' );
+            try { e.dataTransfer.setData( 'text/plain', li.dataset.key ); } catch ( _ ) {}
+            e.dataTransfer.effectAllowed = 'move';
+        } );
+        li.addEventListener( 'dragend', function () { li.classList.remove( 'pl-drag-ghost' ); } );
+        li.addEventListener( 'dragover', function ( e ) { e.preventDefault(); } );
+        li.addEventListener( 'drop', function ( e ) {
+            e.preventDefault();
+            var draggedKey = '';
+            try { draggedKey = e.dataTransfer.getData( 'text/plain' ); } catch ( _ ) {}
+            if ( ! draggedKey || draggedKey === li.dataset.key ) return;
+            var ol = document.getElementById( 'pl-cols-active' );
+            var dragged = ol.querySelector( '[data-key="' + cssEscape( draggedKey ) + '"]' );
+            if ( dragged ) ol.insertBefore( dragged, li );
+        } );
+    }
+
+    function readActiveColumns() {
+        return Array.from( document.querySelectorAll( '#pl-cols-active .pl-cols-active-row' ) ).map( function ( row ) {
+            var keyEl = row.querySelector( '.pl-col-active-key' );
+            var lblEl = row.querySelector( '.pl-col-active-label' );
+            return {
+                key:   keyEl ? keyEl.textContent : row.dataset.key,
+                label: lblEl ? lblEl.value : ''
+            };
+        } );
     }
 
     function closeEditor() { if ( ed ) ed.hidden = true; }
@@ -124,16 +313,17 @@
     /* ────────── Save / delete / run ────────── */
     function saveProfile() {
         var commaList = function ( s ) { return ( s || '' ).split( ',' ).map( function ( x ) { return x.trim(); } ).filter( Boolean ); };
+        var statusList = Array.from( document.querySelectorAll( 'input[name="pl-pf-status[]"]:checked' ) ).map( function ( c ) { return c.value; } );
         var profile = {
             id:     parseInt( document.getElementById( 'pl-pf-id' ).value, 10 ) || 0,
             name:   document.getElementById( 'pl-pf-name' ).value,
             format: document.getElementById( 'pl-pf-format' ).value,
             filters: {
-                status:    commaList( document.getElementById( 'pl-pf-statuses' ).value ),
+                status:    statusList,
                 date_from: document.getElementById( 'pl-pf-date-from' ).value,
                 date_to:   document.getElementById( 'pl-pf-date-to' ).value
             },
-            columns:      commaList( document.getElementById( 'pl-pf-columns' ).value ),
+            columns:      readActiveColumns(),
             destinations: readDestinations()
         };
         if ( document.getElementById( 'pl-pf-schedule' ) ) profile.schedule = document.getElementById( 'pl-pf-schedule' ).value;
@@ -176,6 +366,10 @@
         var cls1 = document.getElementById( 'pl-editor-close' );
         var cls2 = document.getElementById( 'pl-editor-cancel' );
         var addd = document.getElementById( 'pl-pf-add-dest' );
+
+        /* v1.2.0 — wire the redesigned column picker (catalog checkboxes,
+           search, defaults / clear, custom meta add). */
+        if ( document.getElementById( 'pl-cols-catalog' ) ) wireCatalog();
 
         if ( add )  add.addEventListener( 'click', function () { openEditor( null ); } );
         if ( save ) save.addEventListener( 'click', saveProfile );

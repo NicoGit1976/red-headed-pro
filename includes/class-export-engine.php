@@ -29,7 +29,9 @@ class Pelican_Export_Engine {
 
         try {
             $orders  = self::fetch_orders( isset( $profile['filters'] ) ? (array) $profile['filters'] : array() );
-            $columns = isset( $profile['columns'] ) ? (array) $profile['columns'] : self::default_columns();
+            $columns = self::normalize_columns(
+                ! empty( $profile['columns'] ) ? (array) $profile['columns'] : self::default_columns()
+            );
             $rows    = array_map( function ( $order ) use ( $columns ) {
                 return self::map_row( $order, $columns );
             }, $orders );
@@ -120,6 +122,36 @@ class Pelican_Export_Engine {
     }
 
     /* ────────── Order → row (columns) ────────── */
+    /**
+     * Normalize columns to an array of { key, label } objects.
+     * Accepts plain string lists (legacy) and { key, label } object lists (v1.2.0+).
+     */
+    public static function normalize_columns( $columns ) {
+        $out = array();
+        foreach ( (array) $columns as $col ) {
+            if ( is_array( $col ) ) {
+                $key = (string) ( $col['key'] ?? '' );
+                if ( $key === '' ) continue;
+                $out[] = array(
+                    'key'   => $key,
+                    'label' => (string) ( $col['label'] ?? self::default_label_for( $key ) ),
+                );
+            } else {
+                $key = (string) $col;
+                if ( $key === '' ) continue;
+                $out[] = array( 'key' => $key, 'label' => self::default_label_for( $key ) );
+            }
+        }
+        return $out;
+    }
+
+    public static function default_label_for( $key ) {
+        $cat = self::column_catalog();
+        if ( isset( $cat[ $key ]['label'] ) ) return $cat[ $key ]['label'];
+        if ( strpos( $key, 'meta:' ) === 0 ) return 'Meta — ' . substr( $key, 5 );
+        return $key;
+    }
+
     public static function map_row( $order, $columns ) {
         $row = array();
         foreach ( $columns as $col ) {
@@ -136,6 +168,70 @@ class Pelican_Export_Engine {
             'billing_company', 'billing_country',
             'total', 'currency', 'payment_method',
             'item_count', 'shipping_method',
+        );
+    }
+
+    /**
+     * Catalog of every column the engine knows how to resolve, grouped by
+     * category for the admin column picker. Used by the profile editor UI.
+     *
+     * @return array<string, array{label:string, group:string, hint?:string}>
+     */
+    public static function column_catalog() {
+        $cat = array(
+            /* Order */
+            'order_id'           => array( 'label' => 'Order ID',           'group' => 'order' ),
+            'order_number'       => array( 'label' => 'Order number',       'group' => 'order' ),
+            'date_created'       => array( 'label' => 'Date created',       'group' => 'order' ),
+            'date_paid'          => array( 'label' => 'Date paid',          'group' => 'order' ),
+            'status'             => array( 'label' => 'Status',             'group' => 'order' ),
+            'currency'           => array( 'label' => 'Currency',           'group' => 'order' ),
+            'item_count'         => array( 'label' => 'Item count',         'group' => 'order' ),
+            'customer_id'        => array( 'label' => 'Customer ID',        'group' => 'order' ),
+            'customer_note'      => array( 'label' => 'Customer note',      'group' => 'order' ),
+
+            /* Totals */
+            'total'              => array( 'label' => 'Order total',        'group' => 'totals' ),
+            'subtotal'           => array( 'label' => 'Subtotal',           'group' => 'totals' ),
+            'shipping_total'     => array( 'label' => 'Shipping total',     'group' => 'totals' ),
+            'tax_total'          => array( 'label' => 'Tax total',          'group' => 'totals' ),
+            'discount_total'     => array( 'label' => 'Discount total',     'group' => 'totals' ),
+
+            /* Payment / shipping */
+            'payment_method'     => array( 'label' => 'Payment method',     'group' => 'payment' ),
+            'shipping_method'    => array( 'label' => 'Shipping method',    'group' => 'payment' ),
+
+            /* Billing */
+            'billing_first_name' => array( 'label' => 'Billing first name', 'group' => 'billing' ),
+            'billing_last_name'  => array( 'label' => 'Billing last name',  'group' => 'billing' ),
+            'billing_email'      => array( 'label' => 'Billing email',      'group' => 'billing' ),
+            'billing_phone'      => array( 'label' => 'Billing phone',      'group' => 'billing' ),
+            'billing_company'    => array( 'label' => 'Billing company',    'group' => 'billing' ),
+            'billing_address'    => array( 'label' => 'Billing address',    'group' => 'billing', 'hint' => 'address_1 + address_2' ),
+            'billing_city'       => array( 'label' => 'Billing city',       'group' => 'billing' ),
+            'billing_postcode'   => array( 'label' => 'Billing postcode',   'group' => 'billing' ),
+            'billing_country'    => array( 'label' => 'Billing country',    'group' => 'billing' ),
+
+            /* Shipping */
+            'shipping_first_name' => array( 'label' => 'Shipping first name', 'group' => 'shipping' ),
+            'shipping_last_name'  => array( 'label' => 'Shipping last name',  'group' => 'shipping' ),
+            'shipping_address'    => array( 'label' => 'Shipping address',    'group' => 'shipping', 'hint' => 'address_1 + address_2' ),
+            'shipping_city'       => array( 'label' => 'Shipping city',       'group' => 'shipping' ),
+            'shipping_postcode'   => array( 'label' => 'Shipping postcode',   'group' => 'shipping' ),
+            'shipping_country'    => array( 'label' => 'Shipping country',    'group' => 'shipping' ),
+        );
+        /* Allow third-party plugins to register custom columns. */
+        return apply_filters( 'pelican_column_catalog', $cat );
+    }
+
+    public static function column_groups() {
+        return array(
+            'order'    => __( 'Order',         'pelican' ),
+            'totals'   => __( 'Totals',        'pelican' ),
+            'payment'  => __( 'Payment & Shipping', 'pelican' ),
+            'billing'  => __( 'Billing address',    'pelican' ),
+            'shipping' => __( 'Shipping address',   'pelican' ),
+            'meta'     => __( 'Custom meta',        'pelican' ),
         );
     }
 

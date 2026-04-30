@@ -1,5 +1,26 @@
 # Harlequin — Changelog
 
+## 1.2.0 — 2026-04-30
+
+🗂 **Profile editor v2 — column picker à la WC Customer/Order/Coupon Export.**
+
+### New
+- Two-pane column builder (catalog ↔ active list) with checkbox-grid + drag-drop reorder.
+- 30+ pre-mapped order fields grouped by category (Order, Totals, Payment, Billing, Shipping).
+- Editable header label per column (free-text, defaults to engine label).
+- Custom meta column add: type a meta_key + label, get a `meta:<key>` column.
+- Status filter is now a checkbox-chip grid (Pending / Processing / Completed / …) populated from `wc_get_order_statuses()`.
+- Search input filters the catalog live.
+- "Use defaults" / "Clear" buttons.
+
+### Engine
+- New `Pelican_Export_Engine::column_catalog()` + `column_groups()` (filter `pelican_column_catalog` for third-party extensions).
+- New `normalize_columns()` ensures all builders receive the `{ key, label }` shape (legacy plain-string lists still accepted — backward compat).
+- New `default_label_for( $key )` helper.
+
+### Unchanged
+- Profile data shape (still serialized to `columns` JSON); option keys, REST routes, hooks, DB tables — all preserved.
+
 ## 1.1.0 — 2026-04-30
 
 🃏 **Verbal rebrand + slug rename** (Pélican → Harlequin · pelican-pro → woo-order-pro).

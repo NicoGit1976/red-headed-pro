@@ -97,22 +97,105 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                 </label>
 
                 <fieldset class="pl-field">
-                    <legend class="pl-field-lbl"><?php esc_html_e( 'Filters', 'pelican' ); ?></legend>
-                    <label><span><?php esc_html_e( 'Statuses (comma-separated WC slugs)', 'pelican' ); ?></span>
-                        <input type="text" id="pl-pf-statuses" placeholder="processing, completed" />
+                    <legend class="pl-field-lbl">🔎 <?php esc_html_e( 'Filters', 'pelican' ); ?></legend>
+                    <p class="pl-muted"><?php esc_html_e( 'Restrict which orders are exported by this profile.', 'pelican' ); ?></p>
+
+                    <label class="pl-field-stack">
+                        <span class="pl-field-sublabel"><?php esc_html_e( 'Order statuses', 'pelican' ); ?></span>
+                        <span class="pl-status-grid">
+                            <?php
+                            $wc_statuses = function_exists( 'wc_get_order_statuses' ) ? wc_get_order_statuses() : array(
+                                'wc-pending'    => 'Pending',
+                                'wc-processing' => 'Processing',
+                                'wc-on-hold'    => 'On hold',
+                                'wc-completed'  => 'Completed',
+                                'wc-cancelled'  => 'Cancelled',
+                                'wc-refunded'   => 'Refunded',
+                                'wc-failed'     => 'Failed',
+                            );
+                            foreach ( $wc_statuses as $slug => $label ) :
+                                $clean = preg_replace( '/^wc-/', '', $slug );
+                            ?>
+                                <label class="pl-status-chip">
+                                    <input type="checkbox" name="pl-pf-status[]" value="<?php echo esc_attr( $clean ); ?>" />
+                                    <span><?php echo esc_html( $label ); ?></span>
+                                </label>
+                            <?php endforeach; ?>
+                        </span>
                     </label>
-                    <label><span><?php esc_html_e( 'Date from', 'pelican' ); ?></span>
-                        <input type="date" id="pl-pf-date-from" />
-                    </label>
-                    <label><span><?php esc_html_e( 'Date to', 'pelican' ); ?></span>
-                        <input type="date" id="pl-pf-date-to" />
-                    </label>
+
+                    <div class="pl-grid pl-grid-2">
+                        <label class="pl-field-stack">
+                            <span class="pl-field-sublabel"><?php esc_html_e( 'Date from', 'pelican' ); ?></span>
+                            <input type="date" id="pl-pf-date-from" />
+                        </label>
+                        <label class="pl-field-stack">
+                            <span class="pl-field-sublabel"><?php esc_html_e( 'Date to', 'pelican' ); ?></span>
+                            <input type="date" id="pl-pf-date-to" />
+                        </label>
+                    </div>
                 </fieldset>
 
                 <fieldset class="pl-field">
-                    <legend class="pl-field-lbl"><?php esc_html_e( 'Columns', 'pelican' ); ?></legend>
-                    <p class="pl-muted"><?php esc_html_e( 'Comma-separated. Default = the 15 standard columns.', 'pelican' ); ?></p>
-                    <input type="text" id="pl-pf-columns" placeholder="<?php echo esc_attr( implode( ', ', Pelican_Export_Engine::default_columns() ) ); ?>" />
+                    <legend class="pl-field-lbl">🗂 <?php esc_html_e( 'Columns', 'pelican' ); ?></legend>
+                    <p class="pl-muted">
+                        <?php esc_html_e( 'Pick the order fields to include in the export, then drag them into the order you want.', 'pelican' ); ?>
+                    </p>
+
+                    <div class="pl-cols-builder">
+                        <!-- LEFT — Available column catalog grouped by category -->
+                        <div class="pl-cols-pane pl-cols-pane-available">
+                            <div class="pl-cols-pane-head">
+                                <strong><?php esc_html_e( 'Available', 'pelican' ); ?></strong>
+                                <input type="search" id="pl-cols-search" placeholder="<?php esc_attr_e( 'Search…', 'pelican' ); ?>" />
+                            </div>
+                            <div class="pl-cols-catalog" id="pl-cols-catalog">
+                                <?php
+                                $catalog = Pelican_Export_Engine::column_catalog();
+                                $groups  = Pelican_Export_Engine::column_groups();
+                                $by_group = array();
+                                foreach ( $catalog as $key => $meta ) {
+                                    $g = $meta['group'] ?? 'order';
+                                    $by_group[ $g ][ $key ] = $meta;
+                                }
+                                foreach ( $groups as $g_key => $g_label ) :
+                                    if ( empty( $by_group[ $g_key ] ) && $g_key !== 'meta' ) continue;
+                                ?>
+                                    <div class="pl-cols-group" data-group="<?php echo esc_attr( $g_key ); ?>">
+                                        <div class="pl-cols-group-title"><?php echo esc_html( $g_label ); ?></div>
+                                        <?php if ( ! empty( $by_group[ $g_key ] ) ) : foreach ( $by_group[ $g_key ] as $key => $meta ) : ?>
+                                            <label class="pl-col-row" data-key="<?php echo esc_attr( $key ); ?>" data-label="<?php echo esc_attr( $meta['label'] ); ?>">
+                                                <input type="checkbox" class="pl-col-toggle" />
+                                                <span class="pl-col-label"><?php echo esc_html( $meta['label'] ); ?></span>
+                                                <code class="pl-col-key"><?php echo esc_html( $key ); ?></code>
+                                                <?php if ( ! empty( $meta['hint'] ) ) : ?><span class="pl-col-hint" title="<?php echo esc_attr( $meta['hint'] ); ?>">ⓘ</span><?php endif; ?>
+                                            </label>
+                                        <?php endforeach; endif; ?>
+                                        <?php if ( $g_key === 'meta' ) : ?>
+                                            <div class="pl-meta-add">
+                                                <input type="text" id="pl-meta-key" placeholder="<?php esc_attr_e( 'meta_key (e.g. _vat_number)', 'pelican' ); ?>" />
+                                                <input type="text" id="pl-meta-label" placeholder="<?php esc_attr_e( 'header label', 'pelican' ); ?>" />
+                                                <button type="button" class="pl-btn pl-btn-sm" id="pl-meta-add-btn">+ <?php esc_html_e( 'Add meta column', 'pelican' ); ?></button>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT — Active columns (drag to reorder) -->
+                        <div class="pl-cols-pane pl-cols-pane-selected">
+                            <div class="pl-cols-pane-head">
+                                <strong><?php esc_html_e( 'Active columns', 'pelican' ); ?></strong>
+                                <span class="pl-cols-count" id="pl-cols-count">0</span>
+                                <button type="button" class="pl-btn pl-btn-sm pl-cols-defaults" id="pl-cols-defaults"><?php esc_html_e( 'Use defaults', 'pelican' ); ?></button>
+                                <button type="button" class="pl-btn pl-btn-sm pl-cols-clear" id="pl-cols-clear"><?php esc_html_e( 'Clear', 'pelican' ); ?></button>
+                            </div>
+                            <ol class="pl-cols-active" id="pl-cols-active">
+                                <li class="pl-cols-empty pl-muted"><?php esc_html_e( 'No columns yet. Tick boxes on the left to add them.', 'pelican' ); ?></li>
+                            </ol>
+                        </div>
+                    </div>
                 </fieldset>
 
                 <fieldset class="pl-field">

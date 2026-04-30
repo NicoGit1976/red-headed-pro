@@ -1,17 +1,24 @@
 {
-    "slug": "woo-order-pro",
-    "title": "Harlequin Pro",
-    "display_name": "Harlequin Pro",
-    "subtitle": "WooCommerce Order Export",
-    "tagline": "WooCommerce Order Export — full power.",
-    "mascot": "harlequin",
-    "edition": "pro",
-    "version": "1.1.0",
-    "license_required": true,
-    "shop_url": "https://thelionfrog.com/products/plugins/woo-order-pro",
-    "lite_slug": "woo-order-lite",
-    "icon": "🃏",
-    "category": "ecommerce-export",
-    "requires": { "wp": "6.2", "php": "8.1", "wc": "8.0" },
-    "depends_on": [ "the-froggy-hub", "woocommerce" ]
+  "slug": "woo-order-pro",
+  "title": "Harlequin Pro",
+  "display_name": "Harlequin Pro",
+  "subtitle": "WooCommerce Order Export",
+  "tagline": "WooCommerce Order Export — full power.",
+  "mascot": "harlequin",
+  "edition": "pro",
+  "version": "1.2.0",
+  "license_required": true,
+  "shop_url": "https://thelionfrog.com/products/plugins/woo-order-pro",
+  "lite_slug": "woo-order-lite",
+  "icon": "🃏",
+  "category": "ecommerce-export",
+  "requires": {
+    "wp": "6.2",
+    "php": "8.1",
+    "wc": "8.0"
+  },
+  "depends_on": [
+    "the-froggy-hub",
+    "woocommerce"
+  ]
 }
