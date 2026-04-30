@@ -1,5 +1,17 @@
 # Harlequin — Changelog
 
+## 1.3.0 — 2026-04-30
+
+### Changed
+- Verbal rebrand to **Bull Pro — WooCommerce Order Export** (poster-aligned: only species in the official Amazon Rainforest poster).
+- Plugin Name header, admin H1, sub-menu label and readme synchronized.
+- New mascot asset: `assets/img/mascot-bull-v1.svg` (placeholder, designer Figma incoming).
+- Suite renamed to **WooFrog** (was "The Lion Frog Suite").
+
+### Unchanged
+- Slug `woo-order-pro` UNCHANGED. Option keys, REST routes, hooks, DB tables, text-domain UNCHANGED.
+- No data migration. Backward compatible with 1.2.1.
+
 ## 1.2.0 — 2026-04-30
 
 🗂 **Profile editor v2 — column picker à la WC Customer/Order/Coupon Export.**

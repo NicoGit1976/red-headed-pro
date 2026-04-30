@@ -1,17 +1,17 @@
-=== Harlequin Pro — WooCommerce Order Export ===
+=== Bull Pro — WooCommerce Order Export ===
 Contributors: thelionfrog
 Tags: woocommerce, export, csv, xlsx, json, xml, sftp, cron, webhooks
 Requires at least: 6.2
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.2.1
+Stable tag: 1.3.0
 License: GPL-2.0-or-later
 
-🃏 Premium WooCommerce order export — multi-format, multi-destination, scheduled & event-driven. Part of The Lion Frog suite.
+🐂 Premium WooCommerce order export — multi-format, multi-destination, scheduled & event-driven. Part of WooFrog Suite.
 
 == Description ==
 
-**Harlequin Pro** is the full-power order exporter for WooCommerce. Manual or automatic, single or bulk, send orders to anywhere in the format the receiver expects.
+**Bull Pro** is the full-power order exporter for WooCommerce. Manual or automatic, single or bulk, send orders to anywhere in the format the receiver expects.
 
 = Formats =
 * CSV / TSV (with locale-aware decimals)

@@ -1,12 +1,12 @@
 {
   "slug": "woo-order-pro",
   "title": "Harlequin Pro",
-  "display_name": "Harlequin Pro",
+  "display_name": "Bull Pro",
   "subtitle": "WooCommerce Order Export",
   "tagline": "WooCommerce Order Export — full power.",
-  "mascot": "harlequin",
+  "mascot": "bull",
   "edition": "pro",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "license_required": true,
   "shop_url": "https://thelionfrog.com/products/plugins/woo-order-pro",
   "lite_slug": "woo-order-lite",
@@ -20,5 +20,6 @@
   "depends_on": [
     "the-froggy-hub",
     "woocommerce"
-  ]
+  ],
+  "name": "woo-order-pro"
 }
