@@ -1,0 +1,14 @@
+{
+    "slug": "pelican-pro",
+    "title": "Pélican Pro",
+    "tagline": "WooCommerce Order Export — full power.",
+    "edition": "pro",
+    "version": "1.0.0",
+    "license_required": true,
+    "shop_url": "https://thelionfrog.com/products/plugins/pelican-pro",
+    "lite_slug": "pelican-lite",
+    "icon": "🦩",
+    "category": "ecommerce-export",
+    "requires": { "wp": "6.2", "php": "8.1", "wc": "8.0" },
+    "depends_on": [ "the-froggy-hub", "woocommerce" ]
+}

@@ -1,0 +1,871 @@
+# Copyright (C) 2026 The Lion Frog Team
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: The Lion Frog | Pélican Pro 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pelican-pro\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-04-30T07:20:04+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: pelican\n"
+
+#. Plugin Name of the plugin
+#: pelican-pro.php
+msgid "The Lion Frog | Pélican Pro"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: pelican-pro.php
+msgid "https://thelionfrog.com/products/plugins/pelican-pro"
+msgstr ""
+
+#. Description of the plugin
+#: pelican-pro.php
+msgid "Pélican carries your WooCommerce orders wherever you need them — bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Pro edition."
+msgstr ""
+
+#. Author of the plugin
+#: pelican-pro.php
+msgid "The Lion Frog Team"
+msgstr ""
+
+#. Author URI of the plugin
+#: pelican-pro.php
+msgid "https://thelionfrog.com"
+msgstr ""
+
+#: admin/class-admin.php:21
+msgid "Pélican Dashboard"
+msgstr ""
+
+#: admin/class-admin.php:22
+msgid "Pélican Exports"
+msgstr ""
+
+#: admin/class-admin.php:23
+msgid "Pélican Settings"
+msgstr ""
+
+#: admin/class-bulk-actions.php:18
+msgid "🦩 Export with Pélican"
+msgstr ""
+
+#. translators: 1: job id, 2: link to exports list
+#: admin/class-bulk-actions.php:49
+#, php-format
+msgid "✓ Pélican export #%1$d created. %2$s"
+msgstr ""
+
+#: admin/class-bulk-actions.php:51
+msgid "Open Exports list"
+msgstr ""
+
+#: includes/class-cron.php:19
+msgid "Once a week"
+msgstr ""
+
+#: includes/class-hub-registry.php:22
+msgid "Order Export — bulk + auto-export WooCommerce orders to CSV / XLSX / JSON / XML, deliver via Email / SFTP / Google Drive / Download."
+msgstr ""
+
+#: includes/class-profile-repo.php:29
+msgid "Lite is capped to 1 export profile. Upgrade to Pro for unlimited profiles."
+msgstr ""
+
+#: includes/class-rest-api.php:52
+#: includes/class-rest-api.php:66
+msgid "Profile not found."
+msgstr ""
+
+#: includes/class-rest-api.php:81
+#: includes/class-rest-api.php:87
+msgid "Job not found."
+msgstr ""
+
+#: includes/class-rest-api.php:90
+msgid "File missing on disk."
+msgstr ""
+
+#: includes/class-soft-lock.php:55
+msgid "Pro feature locked"
+msgstr ""
+
+#. translators: %s = feature slug
+#: includes/class-soft-lock.php:67
+#, php-format
+msgid "This feature (%s) requires Pélican Pro."
+msgstr ""
+
+#: includes/destinations/class-destination-dispatcher.php:18
+msgid "Local ZIP requires Pro."
+msgstr ""
+
+#: includes/destinations/class-destination-dispatcher.php:21
+msgid "REST destination requires Pro."
+msgstr ""
+
+#: includes/destinations/class-destination-dispatcher.php:24
+msgid "Google Drive destination requires Pro."
+msgstr ""
+
+#: includes/destinations/class-destination-dispatcher.php:32
+msgid "Unknown destination type."
+msgstr ""
+
+#: includes/destinations/class-destination-email.php:19
+msgid "Email quota reached (30/24h Lite limit). Upgrade to Pro for unlimited emails."
+msgstr ""
+
+#: includes/destinations/class-destination-email.php:23
+msgid "No recipient email configured."
+msgstr ""
+
+#. translators: 1: site name
+#: includes/destinations/class-destination-email.php:27
+#, php-format
+msgid "[%1$s] Pélican export — %2$s"
+msgstr ""
+
+#: includes/destinations/class-destination-email.php:31
+msgid "Your Pélican order export is attached."
+msgstr ""
+
+#: includes/destinations/class-destination-email.php:33
+msgid "wp_mail returned false."
+msgstr ""
+
+#: includes/destinations/class-destination-gdrive.php:18
+msgid "Google Drive: no OAuth access token configured. Open Settings → Destinations → Google Drive to connect."
+msgstr ""
+
+#: includes/destinations/class-destination-local-zip.php:12
+msgid "PHP ZipArchive extension missing."
+msgstr ""
+
+#: includes/destinations/class-destination-local-zip.php:17
+msgid "Cannot open zip for writing."
+msgstr ""
+
+#: includes/destinations/class-destination-rest.php:13
+msgid "Missing endpoint URL."
+msgstr ""
+
+#: includes/destinations/class-destination-sftp.php:17
+msgid "Missing SFTP host or user."
+msgstr ""
+
+#: includes/destinations/class-destination-sftp.php:26
+msgid "SFTP authentication failed."
+msgstr ""
+
+#: includes/destinations/class-destination-sftp.php:29
+msgid "SFTP upload failed."
+msgstr ""
+
+#: includes/destinations/class-destination-sftp.php:38
+msgid "SSH2 connect failed."
+msgstr ""
+
+#: includes/destinations/class-destination-sftp.php:39
+msgid "SSH2 auth failed."
+msgstr ""
+
+#: includes/destinations/class-destination-sftp.php:41
+msgid "SFTP subsystem failed."
+msgstr ""
+
+#: includes/destinations/class-destination-sftp.php:43
+msgid "Cannot open remote path."
+msgstr ""
+
+#: includes/destinations/class-destination-sftp.php:49
+msgid "SFTP library missing. Install phpseclib3 (composer install --no-dev) or enable PHP SSH2 extension."
+msgstr ""
+
+#: partials/settings/tab-cron.php:10
+#: partials/view-dashboard.php:142
+msgid "Cron schedules"
+msgstr ""
+
+#: partials/settings/tab-cron.php:15
+msgid "Cron schedules — Pro feature"
+msgstr ""
+
+#: partials/settings/tab-cron.php:16
+msgid "Schedule any export profile to run hourly, twice daily, daily, weekly, or with a custom WP-Cron interval. Combine with auto-trigger to fire on order status changes."
+msgstr ""
+
+#: partials/settings/tab-cron.php:18
+msgid "Hourly / twice-daily / daily / weekly presets"
+msgstr ""
+
+#: partials/settings/tab-cron.php:19
+msgid "Custom interval (n minutes)"
+msgstr ""
+
+#: partials/settings/tab-cron.php:20
+msgid "Order status auto-trigger (processing → SFTP, completed → email…)"
+msgstr ""
+
+#: partials/settings/tab-cron.php:21
+msgid "Per-profile fire-once dedupe"
+msgstr ""
+
+#: partials/settings/tab-cron.php:23
+#: partials/settings/tab-profiles.php:27
+#: partials/settings/tab-webhooks.php:38
+#: partials/view-dashboard.php:50
+msgid "Upgrade to Pro"
+msgstr ""
+
+#. translators: %s = next tick datetime
+#: partials/settings/tab-cron.php:33
+#, php-format
+msgid "Master tick: every hour — next run at %s."
+msgstr ""
+
+#: partials/settings/tab-cron.php:34
+msgid "not scheduled"
+msgstr ""
+
+#: partials/settings/tab-cron.php:41
+msgid "Profile"
+msgstr ""
+
+#: partials/settings/tab-cron.php:42
+#: partials/settings/tab-profiles.php:42
+#: partials/settings/tab-profiles.php:127
+msgid "Schedule"
+msgstr ""
+
+#: partials/settings/tab-cron.php:43
+msgid "Last run"
+msgstr ""
+
+#: partials/settings/tab-cron.php:44
+#: partials/settings/tab-profiles.php:43
+#: partials/view-dashboard.php:100
+#: partials/view-exports.php:96
+msgid "Status"
+msgstr ""
+
+#: partials/settings/tab-cron.php:63
+msgid "Edit a profile to change its schedule or auto-trigger."
+msgstr ""
+
+#: partials/settings/tab-destinations.php:19
+msgid "✓ Destinations defaults saved."
+msgstr ""
+
+#: partials/settings/tab-destinations.php:25
+msgid "📡 Destinations defaults"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:26
+msgid "Default credentials used as a starting point for new destinations inside profiles. Per-profile overrides supported."
+msgstr ""
+
+#: partials/settings/tab-destinations.php:32
+msgid "Email"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:34
+msgid "Default recipient(s)"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:38
+msgid "Default subject"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:42
+msgid "Default body"
+msgstr ""
+
+#. translators: 1: sent, 2: limit, 3: edition
+#: partials/settings/tab-destinations.php:49
+#, php-format
+msgid "%1$d / %2$d sent (24h sliding) — %3$s."
+msgstr ""
+
+#: partials/settings/tab-destinations.php:51
+msgid "Pro: unlimited"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:51
+msgid "Lite cap"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:58
+msgid "SFTP"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:61
+msgid "Host"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:65
+msgid "Port"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:69
+msgid "User"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:73
+msgid "Password"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:74
+msgid "(stored)"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:77
+msgid "Remote path"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:81
+msgid "Password is encrypted at rest (AES-256-CBC + wp_salt)."
+msgstr ""
+
+#: partials/settings/tab-destinations.php:86
+msgid "Google Drive"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:87
+msgid "OAuth flow — set up under each Pro profile destination. Server-side OAuth client coming in v1.1."
+msgstr ""
+
+#: partials/settings/tab-destinations.php:91
+msgid "REST endpoint"
+msgstr ""
+
+#: partials/settings/tab-destinations.php:92
+msgid "Configure URL + auth per profile destination — supports Bearer / Basic / custom header."
+msgstr ""
+
+#: partials/settings/tab-destinations.php:110
+msgid "💾 Save defaults"
+msgstr ""
+
+#: partials/settings/tab-general.php:14
+msgid "✓ Settings saved."
+msgstr ""
+
+#: partials/settings/tab-general.php:21
+#, php-format
+msgid "✓ Purged %d old jobs."
+msgstr ""
+
+#: partials/settings/tab-general.php:25
+msgid "General settings"
+msgstr ""
+
+#: partials/settings/tab-general.php:31
+msgid "File defaults"
+msgstr ""
+
+#: partials/settings/tab-general.php:34
+msgid "Filename pattern"
+msgstr ""
+
+#: partials/settings/tab-general.php:36
+msgid "Tokens: {{date}} {{time}} {{records}} {{format}} {{profile}}"
+msgstr ""
+
+#: partials/settings/tab-general.php:40
+msgid "Decimal separator"
+msgstr ""
+
+#: partials/settings/tab-general.php:42
+msgid "dot — international"
+msgstr ""
+
+#: partials/settings/tab-general.php:43
+msgid "comma — France/EU"
+msgstr ""
+
+#: partials/settings/tab-general.php:48
+msgid "Retention (days)"
+msgstr ""
+
+#: partials/settings/tab-general.php:50
+msgid "Files older than this are auto-deleted from /uploads/pelican/exports. 0 = keep forever."
+msgstr ""
+
+#: partials/settings/tab-general.php:55
+msgid "Default email template"
+msgstr ""
+
+#: partials/settings/tab-general.php:57
+msgid "Translatable via PolyLang & WPML — use the “Pelican” string group in the language admin."
+msgstr ""
+
+#: partials/settings/tab-general.php:60
+msgid "Subject"
+msgstr ""
+
+#: partials/settings/tab-general.php:64
+msgid "Body"
+msgstr ""
+
+#: partials/settings/tab-general.php:70
+msgid "💾 Save settings"
+msgstr ""
+
+#: partials/settings/tab-general.php:77
+msgid "Maintenance"
+msgstr ""
+
+#: partials/settings/tab-general.php:80
+msgid "Delete success jobs older than 90 days from the log."
+msgstr ""
+
+#: partials/settings/tab-general.php:81
+msgid "Purge old job rows? This cannot be undone."
+msgstr ""
+
+#: partials/settings/tab-general.php:81
+msgid "Purge old jobs"
+msgstr ""
+
+#: partials/settings/tab-general.php:86
+msgid "About"
+msgstr ""
+
+#: partials/settings/tab-general.php:88
+msgid "🦩 Order Export pour WooCommerce — by The Lion Frog."
+msgstr ""
+
+#: partials/settings/tab-general.php:90
+msgid "Docs"
+msgstr ""
+
+#: partials/settings/tab-general.php:91
+msgid "Support"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:15
+msgid "Export profiles"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:16
+msgid "A profile = format + filters + columns + destinations (+ cron/auto in Pro)."
+msgstr ""
+
+#: partials/settings/tab-profiles.php:19
+#, php-format
+msgid "%1$d / %2$s profiles"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:20
+#: partials/settings/tab-profiles.php:71
+msgid "New profile"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:26
+msgid "🦩 Lite is capped to 1 profile. Upgrade to Pro for unlimited profiles, cron schedules and auto-triggers."
+msgstr ""
+
+#: partials/settings/tab-profiles.php:34
+msgid "No profile yet. Create one to start exporting WooCommerce orders."
+msgstr ""
+
+#: partials/settings/tab-profiles.php:39
+#: partials/settings/tab-profiles.php:78
+msgid "Name"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:40
+#: partials/settings/tab-profiles.php:83
+#: partials/view-dashboard.php:95
+#: partials/view-exports.php:90
+msgid "Format"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:41
+#: partials/settings/tab-profiles.php:119
+#: partials/view-dashboard.php:137
+#: partials/view-settings.php:10
+msgid "Destinations"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:44
+#: partials/view-exports.php:97
+msgid "Actions"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:57
+msgid "Run"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:79
+msgid "e.g. Daily orders → SFTP"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:100
+msgid "Filters"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:101
+msgid "Statuses (comma-separated WC slugs)"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:104
+msgid "Date from"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:107
+msgid "Date to"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:113
+msgid "Columns"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:114
+msgid "Comma-separated. Default = the 15 standard columns."
+msgstr ""
+
+#: partials/settings/tab-profiles.php:120
+msgid "Add one or many destinations. Lite is capped to 1."
+msgstr ""
+
+#: partials/settings/tab-profiles.php:122
+msgid "Add destination"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:129
+msgid "Manual only"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:130
+msgid "Hourly"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:131
+msgid "Twice daily"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:132
+msgid "Daily"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:133
+msgid "Weekly"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:138
+msgid "Auto-trigger"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:139
+msgid "On status change to (comma-separated)"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:142
+msgid "Min total (€)"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:147
+msgid "Fire only once per order"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:154
+msgid "Cancel"
+msgstr ""
+
+#: partials/settings/tab-profiles.php:155
+msgid "Save profile"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:14
+msgid "✓ Webhook saved."
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:16
+msgid "⚠ Invalid URL — must be HTTPS."
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:21
+msgid "✓ Webhook removed."
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:26
+#: partials/view-dashboard.php:146
+#: partials/view-settings.php:12
+msgid "Webhooks"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:31
+msgid "Webhooks — Pro feature"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:32
+msgid "Get notified by HTTP POST every time an export is generated, delivered, or fails. HMAC-signed payloads, per-endpoint event filter."
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:35
+msgid "HMAC SHA-256 signature in X-Pelican-Signature"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:36
+msgid "Multiple endpoints, per-endpoint event subscription"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:45
+msgid "+ Add webhook endpoint"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:47
+msgid "URL (HTTPS only)"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:51
+msgid "Secret (HMAC SHA-256)"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:52
+msgid "Optional but recommended"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:55
+#: partials/settings/tab-webhooks.php:75
+msgid "Events"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:64
+msgid "💾 Save webhook"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:68
+msgid "Registered endpoints"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:70
+msgid "None yet."
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:74
+msgid "URL"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:76
+msgid "Secret"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:84
+msgid "set"
+msgstr ""
+
+#: partials/settings/tab-webhooks.php:88
+msgid "Remove this webhook?"
+msgstr ""
+
+#: partials/view-dashboard.php:44
+msgid "Order Export — full power: bulk, cron, auto-trigger, all formats, all destinations."
+msgstr ""
+
+#: partials/view-dashboard.php:45
+msgid "Order Export — manual + bulk to CSV via Email or SFTP. Pro features visible & locked."
+msgstr ""
+
+#: partials/view-dashboard.php:56
+msgid "Total exports"
+msgstr ""
+
+#: partials/view-dashboard.php:57
+msgid "This month"
+msgstr ""
+
+#: partials/view-dashboard.php:58
+msgid "Successful"
+msgstr ""
+
+#: partials/view-dashboard.php:59
+msgid "Failed"
+msgstr ""
+
+#: partials/view-dashboard.php:63
+msgid "🗂️ Available formats"
+msgstr ""
+
+#: partials/view-dashboard.php:75
+msgid "exports"
+msgstr ""
+
+#: partials/view-dashboard.php:83
+msgid "🕒 Recent exports"
+msgstr ""
+
+#: partials/view-dashboard.php:84
+msgid "See all →"
+msgstr ""
+
+#: partials/view-dashboard.php:89
+msgid "No exports yet. Go to Settings → Profiles to create one, or use \"🦩 Export with Pélican\" as a bulk action on the WC orders list."
+msgstr ""
+
+#: partials/view-dashboard.php:96
+#: partials/view-exports.php:91
+msgid "Records"
+msgstr ""
+
+#: partials/view-dashboard.php:97
+#: partials/view-exports.php:92
+msgid "Size"
+msgstr ""
+
+#: partials/view-dashboard.php:98
+#: partials/view-exports.php:93
+msgid "Trigger"
+msgstr ""
+
+#: partials/view-dashboard.php:99
+msgid "When"
+msgstr ""
+
+#: partials/view-dashboard.php:120
+msgid "⚡ Quick actions"
+msgstr ""
+
+#: partials/view-dashboard.php:124
+#: partials/view-settings.php:9
+msgid "Profiles"
+msgstr ""
+
+#: partials/view-dashboard.php:129
+#: partials/_page-nav.php:10
+msgid "Exports"
+msgstr ""
+
+#: partials/view-dashboard.php:133
+msgid "WC Orders"
+msgstr ""
+
+#: partials/view-dashboard.php:154
+msgid "✉️ Email quota"
+msgstr ""
+
+#. translators: 1: sent, 2: limit, 3: remaining
+#: partials/view-dashboard.php:160
+#, php-format
+msgid "%1$d / %2$d emails sent (24h sliding) — %3$d remaining. Pro = unlimited."
+msgstr ""
+
+#: partials/view-exports.php:58
+msgid "📦 Exports"
+msgstr ""
+
+#: partials/view-exports.php:59
+#, php-format
+msgid "%d jobs total"
+msgstr ""
+
+#: partials/view-exports.php:65
+msgid "All statuses"
+msgstr ""
+
+#: partials/view-exports.php:71
+msgid "All formats"
+msgstr ""
+
+#: partials/view-exports.php:76
+msgid "Filter"
+msgstr ""
+
+#: partials/view-exports.php:77
+msgid "Reset"
+msgstr ""
+
+#: partials/view-exports.php:83
+msgid "No exports yet. Configure a profile in Settings or run a bulk export from the WC orders list."
+msgstr ""
+
+#: partials/view-exports.php:84
+msgid "+ Create profile"
+msgstr ""
+
+#: partials/view-exports.php:94
+msgid "Started"
+msgstr ""
+
+#: partials/view-exports.php:95
+msgid "Duration"
+msgstr ""
+
+#: partials/view-exports.php:120
+msgid "Re-run profile"
+msgstr ""
+
+#: partials/view-settings.php:11
+msgid "Cron"
+msgstr ""
+
+#: partials/view-settings.php:13
+msgid "General"
+msgstr ""
+
+#: partials/view-settings.php:22
+msgid "⚙️ Settings"
+msgstr ""
+
+#: partials/_page-nav.php:9
+msgid "Dashboard"
+msgstr ""
+
+#: partials/_page-nav.php:11
+msgid "Settings"
+msgstr ""
+
+#: pelican-pro.php:69
+msgid "Pélican Pro activated."
+msgstr ""
+
+#: pelican-pro.php:70
+msgid "Pélican Lite has been deactivated automatically. All your data and settings have been preserved."
+msgstr ""
+
+#: pelican-pro.php:95
+msgid "Bulk + manual exports of WooCommerce orders"
+msgstr ""
+
+#: pelican-pro.php:96
+msgid "6 formats: CSV · XLSX · JSON · NDJSON · XML · TSV"
+msgstr ""
+
+#: pelican-pro.php:97
+msgid "Multi-destinations: Email · SFTP · Google Drive · Download · Local ZIP · REST"
+msgstr ""
+
+#: pelican-pro.php:98
+msgid "Cron triggers: hourly · twice-daily · daily · weekly · custom"
+msgstr ""
+
+#: pelican-pro.php:99
+msgid "Auto-trigger on order status change (rules engine)"
+msgstr ""
+
+#: pelican-pro.php:100
+msgid "Advanced filters: dates · status · payment · shipping · category · SKU · customer role"
+msgstr ""
+
+#: pelican-pro.php:101
+msgid "Field mapper: pick columns, rename headers, transform values"
+msgstr ""
+
+#: pelican-pro.php:102
+msgid "PolyLang & WPML compatibility"
+msgstr ""
+
+#: pelican-pro.php:103
+msgid "REST API + Webhooks (Zapier / n8n / your CRM)"
+msgstr ""
+
+#: pelican-pro.php:104
+msgid "HPOS compatible · Hub auto-register · Lion Frog DNA UI"
+msgstr ""

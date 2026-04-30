@@ -1,0 +1,13 @@
+{
+    "name": "thelionfrog/pelican-pro",
+    "description": "🦩 WooCommerce Order Export Pro — part of The Lion Frog suite.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=8.1"
+    },
+    "suggest": {
+        "phpseclib/phpseclib": "^3.0 — preferred SFTP transport",
+        "phpoffice/phpspreadsheet": "^2.0 — preferred XLSX builder"
+    }
+}
