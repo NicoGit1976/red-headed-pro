@@ -1,17 +1,17 @@
-=== Red-Headed Pro — WooCommerce Order Export ===
+=== Red-Headed Pro — Exports Orders Everywhere, Anytime ===
 Contributors: thelionfrog
 Tags: woocommerce, export, csv, xlsx, json, xml, sftp, cron, webhooks
 Requires at least: 6.2
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 License: GPL-2.0-or-later
 
-🐂 Premium WooCommerce order export — multi-format, multi-destination, scheduled & event-driven. Part of Ultimate Woo Powertools.
+🐂 Exports WooCommerce orders everywhere, anytime — multi-format, multi-destination, scheduled & event-driven. Part of Ultimate Woo Powertools (by The Lion Frog).
 
 == Description ==
 
-**Red-Headed Pro** is the full-power order exporter for WooCommerce. Manual or automatic, single or bulk, send orders to anywhere in the format the receiver expects.
+**Red-Headed Pro** exports your WooCommerce orders everywhere, anytime — manual or automatic, single or bulk, sent to anywhere in the format the receiver expects.
 
 = Formats =
 * CSV / TSV (with locale-aware decimals)
@@ -43,8 +43,8 @@ License: GPL-2.0-or-later
 == Installation ==
 
 1. Upload `woo-order-pro` to `/wp-content/plugins/`.
-2. Activate it. Harlequin Lite (if installed) is auto-deactivated.
-3. Go to **Froggy Hub → Harlequin** to license + configure.
+2. Activate it. Red-Headed Lite (if installed) is auto-deactivated.
+3. Go to **Froggy Hub → Red-Headed** to license + configure.
 
 == Frequently Asked Questions ==
 
@@ -55,7 +55,7 @@ Yes. Custom Order Tables (HPOS) compatibility is declared at boot.
 AES-256-CBC encrypted at rest with `wp_salt('auth')`.
 
 = Is there a free version? =
-Yes — **Harlequin Lite**: manual + bulk, CSV only, Email + SFTP. Pro features are visible & soft-locked.
+Yes — **Red-Headed Lite**: manual + bulk, CSV only, Email + SFTP. Pro features are visible & soft-locked.
 
 == Changelog ==
 

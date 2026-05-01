@@ -359,8 +359,14 @@
             .fail( function () { alert( 'Network error' ); } );
     }
 
-    /* ────────── Boot ────────── */
-    document.addEventListener( 'DOMContentLoaded', function () {
+    /* ────────── Boot ──────────
+       v1.4.2 — script is enqueued in the footer (in_footer=true), which
+       runs AFTER DOMContentLoaded has already fired. Wrapping the boot
+       code in a DOMContentLoaded listener silently drops every event
+       binding, killing every button on Settings → Profiles. Just call
+       the boot directly — by the time the footer parses this, the DOM
+       is fully built. */
+    function boot() {
         var add  = document.getElementById( 'pl-add-profile' );
         var save = document.getElementById( 'pl-editor-save' );
         var cls1 = document.getElementById( 'pl-editor-close' );
@@ -396,6 +402,11 @@
         document.querySelectorAll( '.pl-btn-run, .pl-btn-rerun' ).forEach( function ( b ) {
             b.addEventListener( 'click', function () { runProfile( parseInt( this.dataset.id || this.dataset.profile, 10 ) ); } );
         } );
-    } );
+    }
+    if ( document.readyState === 'loading' ) {
+        document.addEventListener( 'DOMContentLoaded', boot );
+    } else {
+        boot();
+    }
 
 } )( jQuery );

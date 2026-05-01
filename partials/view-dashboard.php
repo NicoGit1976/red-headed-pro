@@ -39,7 +39,7 @@ $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $
                 <img src="<?php echo esc_url( PELICAN_URL . 'assets/img/mascot-harlequin-v1.svg' ); ?>" alt="Red-Headed frog" class="pl-hero-mascot-svg" width="64" height="64" />
                 <div>
                     <h1 class="pl-hero-title">Red-Headed <span class="pl-hero-edition"><?php echo $is_pro ? 'Pro' : 'Lite'; ?></span></h1>
-                    <p class="pl-hero-baseline"><?php esc_html_e( 'WooCommerce Order Export', 'pelican' ); ?></p>
+                    <p class="pl-hero-baseline"><?php esc_html_e( 'Exports Orders Everywhere, Anytime', 'pelican' ); ?></p>
                     <p class="pl-hero-tag">
                         <?php echo $is_pro
                             ? '<span class="pl-edition pl-edition-pro">PRO</span> ' . esc_html__( 'Bulk + auto exports · 6 formats · 6 destinations · cron + status triggers.', 'pelican' )
