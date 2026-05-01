@@ -29,7 +29,7 @@ class Pelican_Hub_Registry {
             ),
             'pro'   => array(
                 'name' => 'The Lion Frog | Red-Headed Pro',
-                'slug' => 'woo-order-pro',
+                'slug' => 'red-headed-pro',
                 'img'  => 'woo-order-pro.webp',
                 'url'  => 'admin.php?page=pelican',
                 'shop' => 'https://thelionfrog.com/products/plugins/woo-order-pro',
