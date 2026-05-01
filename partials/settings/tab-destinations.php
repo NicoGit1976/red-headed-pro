@@ -36,11 +36,11 @@ $rate = Pelican_Destination_Email::rate_status();
             </label>
             <label class="pl-field">
                 <span class="pl-field-lbl"><?php esc_html_e( 'Default subject', 'pelican' ); ?></span>
-                <input type="text" name="email_subject" value="<?php echo esc_attr( get_option( 'pelican_email_subject', '🃏 Harlequin export — {{filename}}' ) ); ?>" />
+                <input type="text" name="email_subject" value="<?php echo esc_attr( get_option( 'pelican_email_subject', '🃏 Red-Headed export — {{filename}}' ) ); ?>" />
             </label>
             <label class="pl-field">
                 <span class="pl-field-lbl"><?php esc_html_e( 'Default body', 'pelican' ); ?></span>
-                <textarea name="email_body" rows="4"><?php echo esc_textarea( get_option( 'pelican_email_body', "Hi,\n\nYour Harlequin export is ready: {{filename}} ({{records}} orders).\n\n— The Lion Frog" ) ); ?></textarea>
+                <textarea name="email_body" rows="4"><?php echo esc_textarea( get_option( 'pelican_email_body', "Hi,\n\nYour Red-Headed export is ready: {{filename}} ({{records}} orders).\n\n— The Lion Frog" ) ); ?></textarea>
             </label>
             <p class="pl-muted">
                 <?php

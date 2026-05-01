@@ -36,9 +36,9 @@ $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $
         <div class="pl-hero-bg"></div>
         <div class="pl-hero-inner">
             <div class="pl-hero-brand">
-                <img src="<?php echo esc_url( PELICAN_URL . 'assets/img/mascot-harlequin-v1.svg' ); ?>" alt="Harlequin frog" class="pl-hero-mascot-svg" width="64" height="64" />
+                <img src="<?php echo esc_url( PELICAN_URL . 'assets/img/mascot-harlequin-v1.svg' ); ?>" alt="Red-Headed frog" class="pl-hero-mascot-svg" width="64" height="64" />
                 <div>
-                    <h1 class="pl-hero-title">Harlequin <span class="pl-hero-edition"><?php echo $is_pro ? 'Pro' : 'Lite'; ?></span></h1>
+                    <h1 class="pl-hero-title">Red-Headed <span class="pl-hero-edition"><?php echo $is_pro ? 'Pro' : 'Lite'; ?></span></h1>
                     <p class="pl-hero-baseline"><?php esc_html_e( 'WooCommerce Order Export', 'pelican' ); ?></p>
                     <p class="pl-hero-tag">
                         <?php echo $is_pro
@@ -87,7 +87,7 @@ $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $
         <?php if ( empty( $recent ) ) : ?>
             <div class="pl-empty">
                 <div class="pl-empty-icon">🃏</div>
-                <p><?php esc_html_e( 'No exports yet. Go to Settings → Profiles to create one, or use "🃏 Export with Harlequin" as a bulk action on the WC orders list.', 'pelican' ); ?></p>
+                <p><?php esc_html_e( 'No exports yet. Go to Settings → Profiles to create one, or use "🃏 Export with Red-Headed" as a bulk action on the WC orders list.', 'pelican' ); ?></p>
             </div>
         <?php else : ?>
             <table class="pl-table">

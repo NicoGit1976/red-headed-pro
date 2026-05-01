@@ -64,7 +64,7 @@ class Pelican_Soft_Lock {
                 'code'    => 'feature_locked',
                 'message' => sprintf(
                     /* translators: %s = feature slug */
-                    __( 'This feature (%s) requires Harlequin Pro.', 'pelican' ),
+                    __( 'This feature (%s) requires Red-Headed Pro.', 'pelican' ),
                     $feature
                 ),
             ), 403 );

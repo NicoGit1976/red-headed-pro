@@ -13,7 +13,7 @@ $_pl_pages = array(
 $_pl_current = isset( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : 'pelican';
 if ( strpos( $_pl_current, 'pelican-settings' ) === 0 ) $_pl_current = 'pelican-settings';
 ?>
-<nav class="pl-page-nav" role="navigation" aria-label="Harlequin sections">
+<nav class="pl-page-nav" role="navigation" aria-label="Red-Headed sections">
     <?php foreach ( $_pl_pages as $slug => $meta ) :
         $url = admin_url( 'admin.php?page=' . $slug );
         $is_cur = ( $slug === $_pl_current );

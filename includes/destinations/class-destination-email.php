@@ -24,11 +24,11 @@ class Pelican_Destination_Email extends Pelican_Destination_Base {
 
         $subject = sprintf(
             /* translators: 1: site name */
-            __( '[%1$s] Harlequin export — %2$s', 'pelican' ),
+            __( '[%1$s] Red-Headed export — %2$s', 'pelican' ),
             wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
             basename( $file )
         );
-        $body = isset( $config['email_body'] ) ? wp_kses_post( $config['email_body'] ) : __( 'Your Harlequin order export is attached.', 'pelican' );
+        $body = isset( $config['email_body'] ) ? wp_kses_post( $config['email_body'] ) : __( 'Your Red-Headed order export is attached.', 'pelican' );
         $sent = wp_mail( $to, $subject, $body, array( 'Content-Type: text/html; charset=UTF-8' ), array( $file ) );
         if ( ! $sent ) return new \WP_Error( 'mail_failed', __( 'wp_mail returned false.', 'pelican' ) );
         if ( ! Pelican_Soft_Lock::is_pro() ) self::increment_rate();

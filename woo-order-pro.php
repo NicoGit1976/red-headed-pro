@@ -3,7 +3,7 @@
  * Plugin Name:       Red-Headed Pro — WooCommerce Order Export
  * Plugin URI:        https://thelionfrog.com/products/plugins/woo-order-pro
  * Description:       Premium WooCommerce order export. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools.
- * Version:           1.4.0
+ * Version:           1.4.1
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            The Lion Frog Team
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'PELICAN_VERSION',  '1.4.0' );
+define( 'PELICAN_VERSION', '1.4.1' );
 define( 'PELICAN_EDITION',  'pro' );
 define( 'PELICAN_FILE',     __FILE__ );
 define( 'PELICAN_PATH',     plugin_dir_path( __FILE__ ) );
@@ -66,8 +66,8 @@ add_action( 'admin_notices', function () {
     if ( ! get_transient( 'pelican_lite_was_deactivated' ) ) return;
     delete_transient( 'pelican_lite_was_deactivated' );
     echo '<div class="notice notice-success is-dismissible" style="border-left-color:#10B981;">';
-    echo '<p><strong>🃏 ' . esc_html__( 'Harlequin Pro activated.', 'pelican' ) . '</strong></p>';
-    echo '<p>' . esc_html__( 'Harlequin Lite has been deactivated automatically. All your data and settings have been preserved.', 'pelican' ) . '</p>';
+    echo '<p><strong>🃏 ' . esc_html__( 'Red-Headed Pro activated.', 'pelican' ) . '</strong></p>';
+    echo '<p>' . esc_html__( 'Red-Headed Lite has been deactivated automatically. All your data and settings have been preserved.', 'pelican' ) . '</p>';
     echo '</div>';
 } );
 
@@ -88,7 +88,7 @@ add_action( 'plugins_loaded', function () {
         } else {
             FH_Soft_Lock::register( PELICAN_SLUG, array(
                 'page_slug'      => 'pelican',
-                'plugin_name'    => 'Harlequin Pro',
+                'plugin_name'    => 'Red-Headed Pro',
                 'plugin_icon'    => PELICAN_URL . 'assets/img/icon.png',
                 'license_status' => $status,
                 'features'       => array(
