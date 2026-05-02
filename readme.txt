@@ -4,7 +4,7 @@ Tags: woocommerce, export, csv, xlsx, json, xml, sftp, cron, webhooks
 Requires at least: 6.2
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.4.3
+Stable tag: 1.4.4
 License: GPL-2.0-or-later
 
 🐂 Exports WooCommerce orders everywhere, anytime — multi-format, multi-destination, scheduled & event-driven. Part of Ultimate Woo Powertools (by The Lion Frog).
@@ -58,6 +58,9 @@ AES-256-CBC encrypted at rest with `wp_salt('auth')`.
 Yes — **Red-Headed Lite**: manual + bulk, CSV only, Email + SFTP. Pro features are visible & soft-locked.
 
 == Changelog ==
+
+= 1.4.4 =
+* **Fix (CRITICAL):** Removed obsolete legacy main file (`woo-order-pro.php`). Both `woo-order-pro.php` and `red-headed-pro.php` carried a `Plugin Name:` header → WordPress loaded them as TWO plugins → fatal "Cannot redeclare" on activation. Plugin was unactivatable since the rebrand.
 
 = 1.1.0 — 2026-04-30 =
 * Verbal rebrand: ships as **Harlequin Pro — WooCommerce Order Export**.

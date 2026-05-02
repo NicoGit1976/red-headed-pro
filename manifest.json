@@ -7,11 +7,11 @@
   "tagline": "Exports orders everywhere, anytime.",
   "mascot": "redheaded",
   "edition": "pro",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "license_required": true,
   "shop_url": "https://thelionfrog.com/products/plugins/woo-order-pro",
   "lite_slug": "woo-order-lite",
-  "icon": "🃏",
+  "icon": "\ud83c\udccf",
   "category": "ecommerce-export",
   "requires": {
     "wp": "6.2",
