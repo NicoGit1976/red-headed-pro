@@ -30,8 +30,6 @@ $formats = array(
 $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $r['format'] ] = (int) $r['n'];
 ?>
 <div class="pl-wrap wrap">
-    <?php include PELICAN_PATH . 'partials/_page-nav.php'; ?>
-
     <section class="pl-hero">
         <div class="pl-hero-bg"></div>
         <div class="pl-hero-inner">
@@ -52,6 +50,8 @@ $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $
             <?php endif; ?>
         </div>
     </section>
+
+    <?php include PELICAN_PATH . 'partials/_page-nav.php'; ?>
 
     <section class="pl-kpis">
         <div class="pl-kpi"><div class="pl-kpi-icon">📊</div><div><div class="pl-kpi-num"><?php echo (int) $stats['total']; ?></div><div class="pl-kpi-lbl"><?php esc_html_e( 'Total exports', 'pelican' ); ?></div></div></div>
