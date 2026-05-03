@@ -16,6 +16,18 @@ $active = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'profiles';
 if ( ! isset( $tabs[ $active ] ) ) $active = 'profiles';
 ?>
 <div class="pl-wrap wrap">
+    <?php
+    if ( class_exists( 'FH_UI_Helper' ) ) {
+        FH_UI_Helper::render_header(
+            'Red-Headed Pro',
+            __( 'Exports Orders Everywhere, Anytime', 'pelican' ),
+            'mascot-redheaded-v1.svg',
+            array(),
+            'red-headed-pro'
+        );
+    }
+    ?>
+
     <?php include PELICAN_PATH . 'partials/_page-nav.php'; ?>
 
     <section class="pl-section">

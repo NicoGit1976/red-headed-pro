@@ -30,26 +30,20 @@ $formats = array(
 $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $r['format'] ] = (int) $r['n'];
 ?>
 <div class="pl-wrap wrap">
-    <section class="pl-hero">
-        <div class="pl-hero-bg"></div>
-        <div class="pl-hero-inner">
-            <div class="pl-hero-brand">
-                <img src="<?php echo esc_url( PELICAN_URL . 'assets/img/mascot-harlequin-v1.svg' ); ?>" alt="Red-Headed frog" class="pl-hero-mascot-svg" width="64" height="64" />
-                <div>
-                    <h1 class="pl-hero-title">Red-Headed <span class="pl-hero-edition"><?php echo $is_pro ? 'Pro' : 'Lite'; ?></span></h1>
-                    <p class="pl-hero-baseline"><?php esc_html_e( 'Exports Orders Everywhere, Anytime', 'pelican' ); ?></p>
-                    <p class="pl-hero-tag">
-                        <?php echo $is_pro
-                            ? '<span class="pl-edition pl-edition-pro">PRO</span> ' . esc_html__( 'Bulk + auto exports · 6 formats · 6 destinations · cron + status triggers.', 'pelican' )
-                            : '<span class="pl-edition pl-edition-lite">LITE</span> ' . esc_html__( 'Manual + bulk to CSV via Email or SFTP. Pro features visible & locked.', 'pelican' ); ?>
-                    </p>
-                </div>
-            </div>
-            <?php if ( ! $is_pro ) : ?>
-                <a href="https://thelionfrog.com/products/plugins/woo-order-pro" target="_blank" rel="noopener" class="pl-btn pl-btn-upgrade">⚡ <?php esc_html_e( 'Upgrade to Pro', 'pelican' ); ?></a>
-            <?php endif; ?>
-        </div>
-    </section>
+    <?php
+    /* v1.4.28 — Canonical Hub-rendered header (mascot + name + baseline + version pill).
+       Per `feedback_hub_centralizes_admin_chrome.md`: child plugins don't own admin
+       chrome — `FH_UI_Helper::render_header()` is the single source. */
+    if ( class_exists( 'FH_UI_Helper' ) ) {
+        FH_UI_Helper::render_header(
+            'Red-Headed Pro',
+            __( 'Exports Orders Everywhere, Anytime', 'pelican' ),
+            'mascot-redheaded-v1.svg',
+            array(),
+            'red-headed-pro'
+        );
+    }
+    ?>
 
     <?php include PELICAN_PATH . 'partials/_page-nav.php'; ?>
 

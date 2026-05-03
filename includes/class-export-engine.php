@@ -67,6 +67,8 @@ class Pelican_Export_Engine {
                an "Exported" column. Skipped when 0 rows (no orders processed). */
             if ( count( $rows ) > 0 ) {
                 $now = current_time( 'mysql' );
+                $post_status = isset( $profile['post_export_status'] ) ? sanitize_key( (string) $profile['post_export_status'] ) : '';
+                $can_post_status = $post_status !== '' && Pelican_Soft_Lock::is_available( 'post_export_status' );
                 foreach ( $orders as $order ) {
                     if ( ! is_a( $order, 'WC_Order' ) ) continue;
                     $count = (int) $order->get_meta( '_rh_export_count' );
@@ -74,6 +76,10 @@ class Pelican_Export_Engine {
                     $order->update_meta_data( '_rh_last_export_at', $now );
                     $order->update_meta_data( '_rh_last_export_job_id', $job_id );
                     $order->save_meta_data();
+                    if ( $can_post_status ) {
+                        /* Convert "completed" → "wc-completed" if needed; WC update_status accepts both. */
+                        $order->update_status( $post_status, __( 'Set by Red-Headed export', 'pelican' ) );
+                    }
                 }
             }
 
@@ -210,10 +216,14 @@ class Pelican_Export_Engine {
             if ( is_array( $col ) ) {
                 $key = (string) ( $col['key'] ?? '' );
                 if ( $key === '' ) continue;
-                $out[] = array(
+                $entry = array(
                     'key'   => $key,
                     'label' => (string) ( $col['label'] ?? self::default_label_for( $key ) ),
                 );
+                /* Preserve metadata for computed columns (static + calc). */
+                if ( strpos( $key, 'static:' ) === 0 && isset( $col['value'] ) ) $entry['value'] = (string) $col['value'];
+                if ( strpos( $key, 'calc:' )   === 0 && isset( $col['expr'] ) )  $entry['expr']  = (string) $col['expr'];
+                $out[] = $entry;
             } else {
                 $key = (string) $col;
                 if ( $key === '' ) continue;
@@ -234,9 +244,33 @@ class Pelican_Export_Engine {
         $row = array();
         foreach ( $columns as $col ) {
             $key = is_array( $col ) ? ( $col['key'] ?? '' ) : (string) $col;
+            /* Computed columns (Pro): static + calc resolve from the column entry itself. */
+            if ( is_array( $col ) && strpos( $key, 'static:' ) === 0 ) {
+                $row[ $key ] = isset( $col['value'] ) ? (string) $col['value'] : '';
+                continue;
+            }
+            if ( is_array( $col ) && strpos( $key, 'calc:' ) === 0 ) {
+                $row[ $key ] = self::resolve_calc( $order, isset( $col['expr'] ) ? (string) $col['expr'] : '' );
+                continue;
+            }
             $row[ $key ] = self::resolve_column( $order, $key );
         }
         return $row;
+    }
+
+    /** Substitute {placeholder} tokens with order field values, then evaluate the math expression. */
+    protected static function resolve_calc( $order, $expr ) {
+        if ( $expr === '' ) return '';
+        if ( ! Pelican_Soft_Lock::is_available( 'computed_columns' ) ) return '';
+        $sub = preg_replace_callback( '/\{([a-z0-9_:.-]+)\}/i', function ( $m ) use ( $order ) {
+            $val = self::resolve_column( $order, $m[1] );
+            return is_numeric( $val ) ? (string) $val : '0';
+        }, $expr );
+        try {
+            return Pelican_Expr_Evaluator::eval_expr( $sub );
+        } catch ( \Throwable $e ) {
+            return '';
+        }
     }
 
     public static function default_columns() {

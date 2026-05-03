@@ -92,7 +92,7 @@
         }
 
         cols.forEach( function ( c ) {
-            ol.appendChild( buildActiveRow( c.key, c.label ) );
+            ol.appendChild( buildActiveRow( c.key, c.label, { value: c.value, expr: c.expr } ) );
         } );
         updateActiveCount();
         syncCatalogChecks();
@@ -109,15 +109,22 @@
         return ( s || '' ).replace( /["\\]/g, '\\$&' );
     }
 
-    function buildActiveRow( key, label ) {
+    function buildActiveRow( key, label, extra ) {
         var li = document.createElement( 'li' );
         li.className = 'pl-cols-active-row';
         li.draggable = true;
         li.dataset.key = key;
+        var meta = '';
+        if ( extra && typeof extra === 'object' ) {
+            if ( extra.value != null ) li.dataset.value = extra.value;
+            if ( extra.expr  != null ) li.dataset.expr  = extra.expr;
+            if ( key.indexOf( 'static:' ) === 0 ) meta = ' <span class="pl-col-meta" style="font-size:11px;color:#94a3b8;">= ' + escHtml( extra.value || '' ) + '</span>';
+            if ( key.indexOf( 'calc:' )   === 0 ) meta = ' <span class="pl-col-meta" style="font-size:11px;color:#94a3b8;">= ' + escHtml( extra.expr  || '' ) + '</span>';
+        }
         li.innerHTML =
             '<span class="pl-drag-handle" aria-hidden="true">⋮⋮</span>' +
             '<input type="text" class="pl-col-active-label" value="' + ( label || key ).replace( /"/g, '&quot;' ) + '" />' +
-            '<code class="pl-col-active-key">' + key + '</code>' +
+            '<code class="pl-col-active-key">' + key + '</code>' + meta +
             '<button type="button" class="pl-btn pl-btn-sm pl-btn-danger pl-col-rm" aria-label="Remove">×</button>';
         li.querySelector( '.pl-col-rm' ).addEventListener( 'click', function () {
             li.remove();
@@ -127,6 +134,7 @@
         wireDragRow( li );
         return li;
     }
+    function escHtml( s ) { return String( s == null ? '' : s ).replace( /[&<>"']/g, function ( c ) { return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]; } ); }
 
     function updateActiveCount() {
         var c = document.querySelectorAll( '#pl-cols-active .pl-cols-active-row' ).length;
@@ -217,6 +225,46 @@
             document.getElementById( 'pl-meta-label' ).value = '';
             updateActiveCount();
         } );
+
+        /* Static field add (Pro). */
+        var btnStatic = document.getElementById( 'pl-static-add-btn' );
+        if ( btnStatic ) btnStatic.addEventListener( 'click', function () {
+            var k   = ( document.getElementById( 'pl-static-key' ).value   || '' ).trim();
+            var lbl = ( document.getElementById( 'pl-static-label' ).value || '' ).trim();
+            var val =   document.getElementById( 'pl-static-value' ).value;
+            if ( ! k ) return;
+            var key = 'static:' + k;
+            var ol = document.getElementById( 'pl-cols-active' );
+            var empty = ol.querySelector( '.pl-cols-empty' );
+            if ( empty ) empty.remove();
+            if ( ! ol.querySelector( '[data-key="' + cssEscape( key ) + '"]' ) ) {
+                ol.appendChild( buildActiveRow( key, lbl || k, { value: val } ) );
+            }
+            document.getElementById( 'pl-static-key' ).value = '';
+            document.getElementById( 'pl-static-label' ).value = '';
+            document.getElementById( 'pl-static-value' ).value = '';
+            updateActiveCount();
+        } );
+
+        /* Calculated field add (Pro). */
+        var btnCalc = document.getElementById( 'pl-calc-add-btn' );
+        if ( btnCalc ) btnCalc.addEventListener( 'click', function () {
+            var k    = ( document.getElementById( 'pl-calc-key' ).value   || '' ).trim();
+            var lbl  = ( document.getElementById( 'pl-calc-label' ).value || '' ).trim();
+            var expr = ( document.getElementById( 'pl-calc-expr' ).value  || '' ).trim();
+            if ( ! k || ! expr ) return;
+            var key = 'calc:' + k;
+            var ol = document.getElementById( 'pl-cols-active' );
+            var empty = ol.querySelector( '.pl-cols-empty' );
+            if ( empty ) empty.remove();
+            if ( ! ol.querySelector( '[data-key="' + cssEscape( key ) + '"]' ) ) {
+                ol.appendChild( buildActiveRow( key, lbl || k, { expr: expr } ) );
+            }
+            document.getElementById( 'pl-calc-key' ).value = '';
+            document.getElementById( 'pl-calc-label' ).value = '';
+            document.getElementById( 'pl-calc-expr' ).value = '';
+            updateActiveCount();
+        } );
     }
 
     /* HTML5 drag-drop reorder */
@@ -243,10 +291,14 @@
         return Array.from( document.querySelectorAll( '#pl-cols-active .pl-cols-active-row' ) ).map( function ( row ) {
             var keyEl = row.querySelector( '.pl-col-active-key' );
             var lblEl = row.querySelector( '.pl-col-active-label' );
-            return {
-                key:   keyEl ? keyEl.textContent : row.dataset.key,
+            var key   = keyEl ? keyEl.textContent : row.dataset.key;
+            var entry = {
+                key:   key,
                 label: lblEl ? lblEl.value : ''
             };
+            if ( key.indexOf( 'static:' ) === 0 && row.dataset.value != null ) entry.value = row.dataset.value;
+            if ( key.indexOf( 'calc:' )   === 0 && row.dataset.expr  != null ) entry.expr  = row.dataset.expr;
+            return entry;
         } );
     }
 
@@ -466,7 +518,6 @@
         document.getElementById( 'pl-preview-done' ).addEventListener( 'click', close );
         document.getElementById( 'pl-preview-modal' ).addEventListener( 'click', function ( e ) { if ( e.target.id === 'pl-preview-modal' ) close(); } );
     }
-    function escHtml( s ) { return String( s ).replace( /[&<>"']/g, function ( c ) { return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]; } ); }
     function previewProfile( id ) {
         ajax( 'pelican_preview_profile', { id: id } )
             .done( function ( r ) {

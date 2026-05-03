@@ -282,6 +282,23 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                                                     <input type="text" id="pl-meta-label" placeholder="<?php esc_attr_e( 'header label', 'pelican' ); ?>" />
                                                     <button type="button" class="pl-btn pl-btn-sm" id="pl-meta-add-btn">+ <?php esc_html_e( 'Add meta column', 'pelican' ); ?></button>
                                                 </div>
+                                                <div class="pl-meta-add" style="margin-top:14px;border-top:1px solid var(--pl-border);padding-top:12px;">
+                                                    <strong style="display:block;margin-bottom:6px;">📌 <?php esc_html_e( 'Static field', 'pelican' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></strong>
+                                                    <input type="text" id="pl-static-key"   placeholder="<?php esc_attr_e( 'key (e.g. vendor)', 'pelican' ); ?>" />
+                                                    <input type="text" id="pl-static-label" placeholder="<?php esc_attr_e( 'header label', 'pelican' ); ?>" />
+                                                    <input type="text" id="pl-static-value" placeholder="<?php esc_attr_e( 'value (constant on every row)', 'pelican' ); ?>" />
+                                                    <button type="button" class="pl-btn pl-btn-sm" id="pl-static-add-btn" <?php disabled( ! Pelican_Soft_Lock::is_available( 'computed_columns' ) ); ?>>+ <?php esc_html_e( 'Add static field', 'pelican' ); ?></button>
+                                                </div>
+                                                <div class="pl-meta-add" style="margin-top:14px;border-top:1px solid var(--pl-border);padding-top:12px;">
+                                                    <strong style="display:block;margin-bottom:6px;">🧮 <?php esc_html_e( 'Calculated field', 'pelican' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></strong>
+                                                    <input type="text" id="pl-calc-key"   placeholder="<?php esc_attr_e( 'key (e.g. vat_amount)', 'pelican' ); ?>" />
+                                                    <input type="text" id="pl-calc-label" placeholder="<?php esc_attr_e( 'header label', 'pelican' ); ?>" />
+                                                    <input type="text" id="pl-calc-expr"  placeholder="{total} * 0.20" />
+                                                    <button type="button" class="pl-btn pl-btn-sm" id="pl-calc-add-btn" <?php disabled( ! Pelican_Soft_Lock::is_available( 'computed_columns' ) ); ?>>+ <?php esc_html_e( 'Add calculated field', 'pelican' ); ?></button>
+                                                    <p class="pl-muted" style="margin:6px 0 0;font-size:11px;line-height:1.45;">
+                                                        <?php esc_html_e( 'Allowed: + - * / parentheses + numeric placeholders {total} {subtotal} {tax_total} {shipping_total} {discount_total}.', 'pelican' ); ?>
+                                                    </p>
+                                                </div>
                                             <?php endif; ?>
                                         </div>
                                     <?php endforeach; ?>

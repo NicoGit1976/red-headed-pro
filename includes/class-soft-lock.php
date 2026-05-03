@@ -33,6 +33,10 @@ class Pelican_Soft_Lock {
             /* Advanced */
             'multi_destinations' => true,  /* Lite: 1 destination per profile */
             'filters_advanced'   => true,
+            'computed_columns'   => true,  /* static + calc fields */
+            'post_export_status' => true,  /* set order status after export */
+            'line_item_export'   => true,  /* one row per line item mode */
+            'wc_status_exported' => true,  /* register custom wc-rh-exported status */
             'field_mapper'       => true,
             'rest_api'           => true,
             'webhooks'           => true,

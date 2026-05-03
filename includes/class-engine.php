@@ -24,6 +24,7 @@ class Pelican_Engine {
         require_once $base . 'class-i18n.php';
         require_once $base . 'class-order-tracker.php';
         require_once $base . 'class-filename-resolver.php';
+        require_once $base . 'class-expr-evaluator.php';
 
         require_once $base . 'builders/class-builder-csv.php';
         require_once $base . 'builders/class-builder-json.php';
@@ -44,6 +45,7 @@ class Pelican_Engine {
         require_once $base . 'class-auto-trigger.php';
         require_once $base . 'class-rest-api.php';
         require_once $base . 'class-webhooks.php';
+        require_once $base . 'class-failure-notifier.php';
     }
     private function init_hooks() {
         add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
@@ -59,6 +61,7 @@ class Pelican_Engine {
         Pelican_Auto_Trigger::init();
         Pelican_Webhooks::init();
         Pelican_REST_API::init();
+        Pelican_Failure_Notifier::init();
     }
     public function on_plugins_loaded() {
         load_plugin_textdomain( 'pelican', false, dirname( PELICAN_BASENAME ) . '/languages' );
