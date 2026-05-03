@@ -58,6 +58,20 @@ class Pelican_Export_Engine {
                 'finished_at'   => current_time( 'mysql' ),
             ), array( 'id' => $job_id ) );
 
+            /* v1.4.22 — Mark each exported order so the WC orders list can show
+               an "Exported" column. Skipped when 0 rows (no orders processed). */
+            if ( count( $rows ) > 0 ) {
+                $now = current_time( 'mysql' );
+                foreach ( $orders as $order ) {
+                    if ( ! is_a( $order, 'WC_Order' ) ) continue;
+                    $count = (int) $order->get_meta( '_rh_export_count' );
+                    $order->update_meta_data( '_rh_export_count', $count + 1 );
+                    $order->update_meta_data( '_rh_last_export_at', $now );
+                    $order->update_meta_data( '_rh_last_export_job_id', $job_id );
+                    $order->save_meta_data();
+                }
+            }
+
             do_action( 'pelican_export_generated', $job_id, $profile, $file );
             if ( $delivered ) {
                 do_action( 'pelican_export_delivered', $job_id, $profile, $delivered );
