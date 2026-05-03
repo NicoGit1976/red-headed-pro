@@ -3,7 +3,7 @@
  * Plugin Name:       Red-Headed Pro — Exports Orders Everywhere, Anytime
  * Plugin URI:        https://thelionfrog.com
  * Description:       Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog).
- * Version:           1.4.5
+ * Version:           1.4.6
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            The Lion Frog Team
@@ -23,13 +23,23 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'PELICAN_VERSION', '1.4.5' );
+define( 'PELICAN_VERSION', '1.4.6' );
 define( 'PELICAN_EDITION',  'pro' );
 define( 'PELICAN_FILE',     __FILE__ );
 define( 'PELICAN_PATH',     plugin_dir_path( __FILE__ ) );
 define( 'PELICAN_URL',      plugin_dir_url( __FILE__ ) );
 define( 'PELICAN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'PELICAN_SLUG',     'red-headed-pro' );
+add_action( 'plugins_loaded', function () {
+    if ( class_exists( 'FH_Plugin_Updater' ) ) {
+        FH_Plugin_Updater::register( [
+            'slug'        => 'red-headed-pro',
+            'plugin_file' => __FILE__,
+            'name'        => 'Red-Headed Pro',
+            'icon_url'    => PELICAN_URL . 'assets/img/mascot-redheaded-v1.svg',
+        ] );
+    }
+}, 5 );
 /* Brand-rename — 301 from legacy admin URL to new (preserves bookmarks). */
 add_action( 'admin_init', function () {
     if ( isset( $_GET['page'] ) && $_GET['page'] === 'red-headed-pro' ) {
