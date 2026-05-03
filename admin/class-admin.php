@@ -15,7 +15,13 @@ class Pelican_Admin {
         add_action( 'wp_ajax_pelican_run_profile', array( $this, 'ajax_run_profile' ) );
     }
     public function register_menu() {
-        $cap = 'manage_woocommerce';
+        /* v1.4.15 — Cap lowered to 'manage_options' (was 'manage_woocommerce').
+           Admin users without WC active (or with custom WC cap mapping) were getting
+           "no permission" on ?page=red-headed-pro. Dashboard / settings / exports are
+           admin tools — manage_options is the right gate. WC-specific operations
+           (run profile, sync orders) keep their own current_user_can('manage_woocommerce')
+           checks inside AJAX handlers. */
+        $cap = 'manage_options';
         /* v1.4.14 — Dashboard registered under 'froggy-hub' parent (was: null).
            This makes the Hub placeholder dedup catch it via $submenu['froggy-hub']
            and skip creating a duplicate placeholder → no double-entry, no
