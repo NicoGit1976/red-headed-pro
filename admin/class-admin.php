@@ -16,9 +16,12 @@ class Pelican_Admin {
     }
     public function register_menu() {
         $cap = 'manage_woocommerce';
-        /* No top-level menu. All pages register under parent=null with a
-           shared in-page nav at the top (Dashboard / Exports / Settings). */
-        add_submenu_page( null, __( 'Red-Headed Dashboard', 'pelican' ), '', $cap, 'red-headed-pro',          array( $this, 'render_dashboard' ) );
+        /* v1.4.14 — Dashboard registered under 'froggy-hub' parent (was: null).
+           This makes the Hub placeholder dedup catch it via $submenu['froggy-hub']
+           and skip creating a duplicate placeholder → no double-entry, no
+           placeholder→Pelican redirect loop. Other slugs stay headless (parent=null)
+           because they're routed-to via in-page nav, not the sidebar. */
+        add_submenu_page( 'froggy-hub', __( 'Red-Headed Dashboard', 'pelican' ), 'Red-Headed Pro', $cap, 'red-headed-pro', array( $this, 'render_dashboard' ) );
         add_submenu_page( null, __( 'Red-Headed Exports',   'pelican' ), '', $cap, 'red-headed-pro-exports',  array( $this, 'render_exports' ) );
         add_submenu_page( null, __( 'Red-Headed Settings',  'pelican' ), '', $cap, 'red-headed-pro-settings', array( $this, 'render_settings' ) );
 
