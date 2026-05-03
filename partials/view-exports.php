@@ -8,9 +8,14 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 global $wpdb;
 $jobs_tbl = $wpdb->prefix . 'pl_jobs';
 
-/* Handle one-shot download via signed link */
-if ( ! empty( $_GET['pelican_dl'] ) && current_user_can( 'manage_woocommerce' ) ) {
-    $jid = (int) $_GET['pelican_dl'];
+/* Handle one-shot download via signed link.
+   v1.4.18 — Renamed query param `pelican_dl` → `rh_dl`. Old `pelican_dl`
+   still accepted for backward-compat with already-issued URLs. Cap lowered
+   from manage_woocommerce → manage_options (admin gate; WC isn't required
+   to download an existing file). */
+$_dl = ! empty( $_GET['rh_dl'] ) ? $_GET['rh_dl'] : ( ! empty( $_GET['pelican_dl'] ) ? $_GET['pelican_dl'] : 0 );
+if ( $_dl && current_user_can( 'manage_options' ) ) {
+    $jid = (int) $_dl;
     $j   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$jobs_tbl} WHERE id = %d", $jid ), ARRAY_A );
     if ( $j && ! empty( $j['file_path'] ) ) {
         $u = wp_upload_dir();
@@ -60,7 +65,7 @@ $is_pro = Pelican_Soft_Lock::is_pro();
         </div>
 
         <form class="pl-filters" method="get">
-            <input type="hidden" name="page" value="pelican-exports" />
+            <input type="hidden" name="page" value="red-headed-pro-exports" />
             <select name="status">
                 <option value=""><?php esc_html_e( 'All statuses', 'pelican' ); ?></option>
                 <?php foreach ( array( 'success', 'running', 'failed' ) as $s ) : ?>
@@ -98,7 +103,7 @@ $is_pro = Pelican_Soft_Lock::is_pro();
                 </tr></thead>
                 <tbody>
                     <?php foreach ( $jobs as $j ) :
-                        $dl = $j['file_path'] ? add_query_arg( array( 'page' => 'pelican-exports', 'pelican_dl' => (int) $j['id'] ), admin_url( 'admin.php' ) ) : '';
+                        $dl = $j['file_path'] ? add_query_arg( array( 'page' => 'red-headed-pro-exports', 'rh_dl' => (int) $j['id'] ), admin_url( 'admin.php' ) ) : '';
                         $err = $j['error_message'] ? esc_attr( $j['error_message'] ) : '';
                     ?>
                         <tr>
@@ -128,7 +133,7 @@ $is_pro = Pelican_Soft_Lock::is_pro();
             <?php if ( $total_pages > 1 ) : ?>
                 <div class="pl-pager">
                     <?php for ( $p = 1; $p <= $total_pages; $p++ ) :
-                        $url = add_query_arg( array( 'page' => 'pelican-exports', 'paged' => $p, 'status' => $f_status, 'format' => $f_format ), admin_url( 'admin.php' ) );
+                        $url = add_query_arg( array( 'page' => 'red-headed-pro-exports', 'paged' => $p, 'status' => $f_status, 'format' => $f_format ), admin_url( 'admin.php' ) );
                         $cls = $p === $paged ? 'pl-pager-link pl-pager-cur' : 'pl-pager-link';
                     ?>
                         <a href="<?php echo esc_url( $url ); ?>" class="<?php echo $cls; ?>"><?php echo $p; ?></a>
