@@ -3,7 +3,7 @@
  * Plugin Name:       Red-Headed Pro — Exports Orders Everywhere, Anytime
  * Plugin URI:        https://thelionfrog.com
  * Description:       Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog).
- * Version:           1.4.7
+ * Version:           1.4.8
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            The Lion Frog Team
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'PELICAN_VERSION', '1.4.7' );
+define( 'PELICAN_VERSION', '1.4.8' );
 define( 'PELICAN_EDITION',  'pro' );
 define( 'PELICAN_FILE',     __FILE__ );
 define( 'PELICAN_PATH',     plugin_dir_path( __FILE__ ) );
@@ -41,12 +41,33 @@ add_action( 'plugins_loaded', function () {
     }
     add_filter( 'the_froggy_hub_quick_actions', function ( $actions ) {
         $actions[] = [
-            'label'       => __( 'Export orders now', 'pelican' ),
+            'label'       => __( 'Export orders', 'pelican' ),
             'icon'        => '📦',
-            'url'         => admin_url( 'admin.php?page=pelican-exports' ),
-            'tooltip'     => __( 'Export WooCommerce orders', 'pelican' ),
+            'url'         => admin_url( 'admin.php?page=pelican-exports&action=new' ),
+            'tooltip'     => __( 'Run a manual order export', 'pelican' ),
             'plugin_slug' => 'red-headed-pro',
-            'plugin_name' => 'Red-Headed',
+            'is_primary'  => true,
+        ];
+        $actions[] = [
+            'label'       => __( 'Export history', 'pelican' ),
+            'icon'        => '📋',
+            'url'         => admin_url( 'admin.php?page=pelican-exports&tab=history' ),
+            'tooltip'     => __( 'View past export jobs and downloads', 'pelican' ),
+            'plugin_slug' => 'red-headed-pro',
+        ];
+        $actions[] = [
+            'label'       => __( 'Schedules', 'pelican' ),
+            'icon'        => '⏰',
+            'url'         => admin_url( 'admin.php?page=pelican-settings-schedules' ),
+            'tooltip'     => __( 'Configure automatic export schedules', 'pelican' ),
+            'plugin_slug' => 'red-headed-pro',
+        ];
+        $actions[] = [
+            'label'       => __( 'Settings', 'pelican' ),
+            'icon'        => '⚙️',
+            'url'         => admin_url( 'admin.php?page=pelican-settings' ),
+            'tooltip'     => __( 'Open Red-Headed settings', 'pelican' ),
+            'plugin_slug' => 'red-headed-pro',
         ];
         return $actions;
     } );
