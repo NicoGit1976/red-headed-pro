@@ -142,58 +142,69 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                         <?php esc_html_e( 'Pick the order fields to include in the export, then drag them into the order you want.', 'pelican' ); ?>
                     </p>
 
-                    <div class="pl-cols-builder">
-                        <!-- LEFT — Available column catalog grouped by category -->
-                        <div class="pl-cols-pane pl-cols-pane-available">
-                            <div class="pl-cols-pane-head">
-                                <strong><?php esc_html_e( 'Available', 'pelican' ); ?></strong>
-                                <input type="search" id="pl-cols-search" placeholder="<?php esc_attr_e( 'Search…', 'pelican' ); ?>" />
-                            </div>
-                            <div class="pl-cols-catalog" id="pl-cols-catalog">
-                                <?php
-                                $catalog = Pelican_Export_Engine::column_catalog();
-                                $groups  = Pelican_Export_Engine::column_groups();
-                                $by_group = array();
-                                foreach ( $catalog as $key => $meta ) {
-                                    $g = $meta['group'] ?? 'order';
-                                    $by_group[ $g ][ $key ] = $meta;
-                                }
-                                foreach ( $groups as $g_key => $g_label ) :
-                                    if ( empty( $by_group[ $g_key ] ) && $g_key !== 'meta' ) continue;
-                                ?>
-                                    <div class="pl-cols-group" data-group="<?php echo esc_attr( $g_key ); ?>">
-                                        <div class="pl-cols-group-title"><?php echo esc_html( $g_label ); ?></div>
-                                        <?php if ( ! empty( $by_group[ $g_key ] ) ) : foreach ( $by_group[ $g_key ] as $key => $meta ) : ?>
-                                            <label class="pl-col-row" data-key="<?php echo esc_attr( $key ); ?>" data-label="<?php echo esc_attr( $meta['label'] ); ?>">
-                                                <input type="checkbox" class="pl-col-toggle" />
-                                                <span class="pl-col-label"><?php echo esc_html( $meta['label'] ); ?></span>
-                                                <code class="pl-col-key"><?php echo esc_html( $key ); ?></code>
-                                                <?php if ( ! empty( $meta['hint'] ) ) : ?><span class="pl-col-hint" title="<?php echo esc_attr( $meta['hint'] ); ?>">ⓘ</span><?php endif; ?>
-                                            </label>
-                                        <?php endforeach; endif; ?>
-                                        <?php if ( $g_key === 'meta' ) : ?>
-                                            <div class="pl-meta-add">
-                                                <input type="text" id="pl-meta-key" placeholder="<?php esc_attr_e( 'meta_key (e.g. _vat_number)', 'pelican' ); ?>" />
-                                                <input type="text" id="pl-meta-label" placeholder="<?php esc_attr_e( 'header label', 'pelican' ); ?>" />
-                                                <button type="button" class="pl-btn pl-btn-sm" id="pl-meta-add-btn">+ <?php esc_html_e( 'Add meta column', 'pelican' ); ?></button>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-
-                        <!-- RIGHT — Active columns (drag to reorder) -->
+                    <!-- v1.4.12 — Active columns full-width + "Browse fields" button opens a centered modal
+                                  with the field catalog (multi-column grid, much more readable than
+                                  a cramped sidebar). Per `feedback_field_picker_modal_pattern.md`. -->
+                    <div class="pl-cols-builder pl-cols-builder--single">
                         <div class="pl-cols-pane pl-cols-pane-selected">
                             <div class="pl-cols-pane-head">
                                 <strong><?php esc_html_e( 'Active columns', 'pelican' ); ?></strong>
                                 <span class="pl-cols-count" id="pl-cols-count">0</span>
+                                <button type="button" class="pl-btn pl-btn-primary pl-btn-sm" id="pl-cols-open-picker">+ <?php esc_html_e( 'Browse fields', 'pelican' ); ?></button>
                                 <button type="button" class="pl-btn pl-btn-sm pl-cols-defaults" id="pl-cols-defaults"><?php esc_html_e( 'Use defaults', 'pelican' ); ?></button>
                                 <button type="button" class="pl-btn pl-btn-sm pl-cols-clear" id="pl-cols-clear"><?php esc_html_e( 'Clear', 'pelican' ); ?></button>
                             </div>
                             <ol class="pl-cols-active" id="pl-cols-active">
-                                <li class="pl-cols-empty pl-muted"><?php esc_html_e( 'No columns yet. Tick boxes on the left to add them.', 'pelican' ); ?></li>
+                                <li class="pl-cols-empty pl-muted"><?php esc_html_e( 'No columns yet. Click "Browse fields" to add them.', 'pelican' ); ?></li>
                             </ol>
+                        </div>
+                    </div>
+
+                    <!-- Modal overlay (hidden by default) -->
+                    <div class="pl-modal-overlay" id="pl-cols-modal" aria-hidden="true">
+                        <div class="pl-modal" role="dialog" aria-modal="true" aria-labelledby="pl-cols-modal-title">
+                            <div class="pl-modal-head">
+                                <h3 id="pl-cols-modal-title">🗂 <?php esc_html_e( 'Browse export fields', 'pelican' ); ?></h3>
+                                <input type="search" id="pl-cols-search" placeholder="<?php esc_attr_e( 'Search…', 'pelican' ); ?>" />
+                                <button type="button" class="pl-modal-close" id="pl-cols-modal-close" aria-label="<?php esc_attr_e( 'Close', 'pelican' ); ?>">×</button>
+                            </div>
+                            <div class="pl-modal-body">
+                                <div class="pl-cols-catalog" id="pl-cols-catalog">
+                                    <?php
+                                    $catalog = Pelican_Export_Engine::column_catalog();
+                                    $groups  = Pelican_Export_Engine::column_groups();
+                                    $by_group = array();
+                                    foreach ( $catalog as $key => $meta ) {
+                                        $g = $meta['group'] ?? 'order';
+                                        $by_group[ $g ][ $key ] = $meta;
+                                    }
+                                    foreach ( $groups as $g_key => $g_label ) :
+                                        if ( empty( $by_group[ $g_key ] ) && $g_key !== 'meta' ) continue;
+                                    ?>
+                                        <div class="pl-cols-group" data-group="<?php echo esc_attr( $g_key ); ?>">
+                                            <div class="pl-cols-group-title"><?php echo esc_html( $g_label ); ?></div>
+                                            <?php if ( ! empty( $by_group[ $g_key ] ) ) : foreach ( $by_group[ $g_key ] as $key => $meta ) : ?>
+                                                <label class="pl-col-row" data-key="<?php echo esc_attr( $key ); ?>" data-label="<?php echo esc_attr( $meta['label'] ); ?>">
+                                                    <input type="checkbox" class="pl-col-toggle" />
+                                                    <span class="pl-col-label"><?php echo esc_html( $meta['label'] ); ?></span>
+                                                    <code class="pl-col-key"><?php echo esc_html( $key ); ?></code>
+                                                    <?php if ( ! empty( $meta['hint'] ) ) : ?><span class="pl-col-hint" title="<?php echo esc_attr( $meta['hint'] ); ?>">ⓘ</span><?php endif; ?>
+                                                </label>
+                                            <?php endforeach; endif; ?>
+                                            <?php if ( $g_key === 'meta' ) : ?>
+                                                <div class="pl-meta-add">
+                                                    <input type="text" id="pl-meta-key" placeholder="<?php esc_attr_e( 'meta_key (e.g. _vat_number)', 'pelican' ); ?>" />
+                                                    <input type="text" id="pl-meta-label" placeholder="<?php esc_attr_e( 'header label', 'pelican' ); ?>" />
+                                                    <button type="button" class="pl-btn pl-btn-sm" id="pl-meta-add-btn">+ <?php esc_html_e( 'Add meta column', 'pelican' ); ?></button>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <div class="pl-modal-foot">
+                                <button type="button" class="pl-btn pl-btn-primary" id="pl-cols-modal-done"><?php esc_html_e( 'Done', 'pelican' ); ?></button>
+                            </div>
                         </div>
                     </div>
                 </fieldset>

@@ -377,6 +377,23 @@
            search, defaults / clear, custom meta add). */
         if ( document.getElementById( 'pl-cols-catalog' ) ) wireCatalog();
 
+        /* v1.4.12 — Field picker modal: open / close / overlay-click / Escape. */
+        var modal     = document.getElementById( 'pl-cols-modal' );
+        var openBtn   = document.getElementById( 'pl-cols-open-picker' );
+        var closeBtn  = document.getElementById( 'pl-cols-modal-close' );
+        var doneBtn   = document.getElementById( 'pl-cols-modal-done' );
+        var openModal = function () { if ( modal ) modal.setAttribute( 'aria-hidden', 'false' ); };
+        var closeModal = function () { if ( modal ) modal.setAttribute( 'aria-hidden', 'true' ); };
+        if ( openBtn )  openBtn.addEventListener( 'click', openModal );
+        if ( closeBtn ) closeBtn.addEventListener( 'click', closeModal );
+        if ( doneBtn )  doneBtn.addEventListener( 'click', closeModal );
+        if ( modal ) {
+            modal.addEventListener( 'click', function ( e ) { if ( e.target === modal ) closeModal(); } );
+            document.addEventListener( 'keydown', function ( e ) {
+                if ( e.key === 'Escape' && modal.getAttribute( 'aria-hidden' ) === 'false' ) closeModal();
+            } );
+        }
+
         if ( add )  add.addEventListener( 'click', function () { openEditor( null ); } );
         if ( save ) save.addEventListener( 'click', saveProfile );
         if ( cls1 ) cls1.addEventListener( 'click', closeEditor );

@@ -370,9 +370,83 @@
     background: #fff; overflow: hidden; min-height: 360px;
 }
 @media (max-width: 800px) { .pl-cols-builder { grid-template-columns: 1fr; } }
+/* v1.4.12 — Active columns now full-width when picker is in modal */
+.pl-cols-builder--single { grid-template-columns: 1fr; }
 .pl-cols-pane { display: flex; flex-direction: column; min-height: 360px; }
 .pl-cols-pane-available { border-right: 1px solid var(--pl-border); }
 @media (max-width: 800px) { .pl-cols-pane-available { border-right: 0; border-bottom: 1px solid var(--pl-border); } }
+
+/* ──────────────────────────────────────────────────────────────────
+   v1.4.12 — Field picker modal (replaces cramped sidebar layout).
+   Centered overlay, multi-column responsive grid for field groups.
+   ────────────────────────────────────────────────────────────────── */
+.pl-modal-overlay {
+    position: fixed; inset: 0; z-index: 100050;
+    background: rgba(15, 23, 42, .55);
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 24px;
+    backdrop-filter: blur(2px);
+}
+.pl-modal-overlay[aria-hidden="false"] { display: flex; }
+.pl-modal {
+    background: #fff;
+    border-radius: 14px;
+    width: 100%; max-width: 1100px;
+    max-height: calc(100vh - 48px);
+    display: flex; flex-direction: column;
+    box-shadow: 0 24px 64px rgba(15, 23, 42, .35);
+    overflow: hidden;
+    animation: pl-modal-in .18s ease-out;
+}
+@keyframes pl-modal-in { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+.pl-modal-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--pl-border);
+    background: var(--pl-bg);
+}
+.pl-modal-head h3 { margin: 0; font-size: 16px; font-weight: 700; color: var(--pl-text); flex: none; }
+.pl-modal-head input[type="search"] {
+    flex: 1; max-width: 320px;
+    padding: 8px 12px; border: 1px solid var(--pl-border); border-radius: 8px;
+    font-size: 13px; background: #fff;
+}
+.pl-modal-close {
+    margin-left: auto;
+    background: transparent; border: 0; font-size: 26px; line-height: 1;
+    width: 36px; height: 36px; border-radius: 8px;
+    color: var(--pl-muted); cursor: pointer;
+    transition: background .12s, color .12s;
+}
+.pl-modal-close:hover { background: rgba(15, 23, 42, .08); color: var(--pl-text); }
+.pl-modal-body {
+    flex: 1; overflow-y: auto;
+    padding: 16px 20px;
+}
+.pl-modal-foot {
+    display: flex; justify-content: flex-end; gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--pl-border);
+    background: var(--pl-bg);
+}
+/* When inside the modal, render groups as a multi-column responsive grid. */
+.pl-modal-body .pl-cols-catalog {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px; padding: 0;
+}
+.pl-modal-body .pl-cols-group {
+    margin-bottom: 0;
+    border: 1px solid var(--pl-border); border-radius: 10px;
+    padding: 10px 12px;
+    background: #fafbfc;
+}
+.pl-modal-body .pl-cols-group-title {
+    margin-bottom: 8px;
+    border-bottom: 1px dashed var(--pl-border); padding: 4px 0;
+}
+.pl-modal-body .pl-col-row { padding: 5px 6px; }
+.pl-modal-body .pl-col-row:hover { background: #fff; }
 .pl-cols-pane-head {
     display: flex; align-items: center; gap: 8px;
     padding: 10px 12px; border-bottom: 1px solid var(--pl-border);
