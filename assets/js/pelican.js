@@ -31,6 +31,29 @@
         document.getElementById( 'pl-pf-date-from' ).value = ( p.filters && p.filters.date_from ) || '';
         document.getElementById( 'pl-pf-date-to' ).value   = ( p.filters && p.filters.date_to )   || '';
 
+        /* Advanced filters (Pro). All optional — silently skipped if the field isn't in the DOM. */
+        var f = p.filters || {};
+        var advMap = {
+            'pl-pf-sku-pattern':              f.sku_pattern,
+            'pl-pf-category':                 f.category,
+            'pl-pf-shipping-method':          f.shipping_method,
+            'pl-pf-customer-role':            f.customer_role,
+            'pl-pf-customer-email-contains':  f.customer_email_contains,
+            'pl-pf-coupon':                   f.coupon,
+            'pl-pf-total-min':                f.total_min,
+            'pl-pf-total-max':                f.total_max,
+            'pl-pf-meta-key':                 f.meta_key,
+            'pl-pf-meta-value':               f.meta_value,
+            'pl-pf-billing-city':             f.billing_city,
+            'pl-pf-billing-country':          f.billing_country,
+            'pl-pf-shipping-city':            f.shipping_city,
+            'pl-pf-shipping-country':         f.shipping_country
+        };
+        Object.keys( advMap ).forEach( function ( id ) {
+            var el = document.getElementById( id );
+            if ( el ) el.value = advMap[ id ] == null ? '' : advMap[ id ];
+        } );
+
         /* Columns — rich picker (objects: { key, label }) */
         var cols = Array.isArray( p.columns ) ? p.columns : [];
         renderActiveColumns( cols );
@@ -348,15 +371,25 @@
     function saveProfile() {
         var commaList = function ( s ) { return ( s || '' ).split( ',' ).map( function ( x ) { return x.trim(); } ).filter( Boolean ); };
         var statusList = Array.from( document.querySelectorAll( 'input[name="pl-pf-status[]"]:checked' ) ).map( function ( c ) { return c.value; } );
+        var advVal = function ( id ) { var el = document.getElementById( id ); return el ? el.value.trim() : ''; };
+        var filters = {
+            status:    statusList,
+            date_from: document.getElementById( 'pl-pf-date-from' ).value,
+            date_to:   document.getElementById( 'pl-pf-date-to' ).value
+        };
+        /* Advanced filters — only persist non-empty values (keeps the JSON tight). */
+        [ 'sku_pattern', 'category', 'shipping_method', 'customer_role',
+          'customer_email_contains', 'coupon', 'total_min', 'total_max',
+          'meta_key', 'meta_value',
+          'billing_city', 'billing_country', 'shipping_city', 'shipping_country' ].forEach( function ( k ) {
+            var v = advVal( 'pl-pf-' + k.replace( /_/g, '-' ) );
+            if ( v !== '' ) filters[ k ] = v;
+        } );
         var profile = {
             id:     parseInt( document.getElementById( 'pl-pf-id' ).value, 10 ) || 0,
             name:   document.getElementById( 'pl-pf-name' ).value,
             format: document.getElementById( 'pl-pf-format' ).value,
-            filters: {
-                status:    statusList,
-                date_from: document.getElementById( 'pl-pf-date-from' ).value,
-                date_to:   document.getElementById( 'pl-pf-date-to' ).value
-            },
+            filters: filters,
             columns:      readActiveColumns(),
             destinations: readDestinations()
         };

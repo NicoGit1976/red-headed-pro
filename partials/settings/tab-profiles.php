@@ -135,6 +135,90 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                             <input type="date" id="pl-pf-date-to" />
                         </label>
                     </div>
+
+                    <?php
+                    /* Advanced filters — Pro feature. In Lite, the whole block is wrapped in
+                       Pelican_Soft_Lock::wrap() which dims it and shows a PRO badge overlay. */
+                    $adv_render = function () {
+                    ?>
+                    <details class="pl-field-stack pl-filters-advanced" <?php echo Pelican_Soft_Lock::is_pro() ? '' : 'open'; ?>>
+                        <summary class="pl-field-sublabel" style="cursor:pointer;font-weight:600;">⚙️ <?php esc_html_e( 'Advanced filters', 'pelican' ); ?></summary>
+                        <div class="pl-grid pl-grid-2" style="margin-top:10px;">
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'SKU contains', 'pelican' ); ?></span>
+                                <input type="text" id="pl-pf-sku-pattern" placeholder="ACME-" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Product category (term ID)', 'pelican' ); ?></span>
+                                <input type="number" id="pl-pf-category" min="1" placeholder="42" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Shipping method ID', 'pelican' ); ?></span>
+                                <input type="text" id="pl-pf-shipping-method" placeholder="flat_rate" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Customer role', 'pelican' ); ?></span>
+                                <select id="pl-pf-customer-role">
+                                    <option value=""><?php esc_html_e( '— any —', 'pelican' ); ?></option>
+                                    <?php
+                                    if ( function_exists( 'wp_roles' ) ) {
+                                        foreach ( wp_roles()->roles as $slug => $info ) {
+                                            echo '<option value="' . esc_attr( $slug ) . '">' . esc_html( $info['name'] ) . '</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Customer email contains', 'pelican' ); ?></span>
+                                <input type="text" id="pl-pf-customer-email-contains" placeholder="@acme.com" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Coupon used', 'pelican' ); ?></span>
+                                <input type="text" id="pl-pf-coupon" placeholder="WELCOME10" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Order total min', 'pelican' ); ?></span>
+                                <input type="number" step="0.01" id="pl-pf-total-min" placeholder="0.00" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Order total max', 'pelican' ); ?></span>
+                                <input type="number" step="0.01" id="pl-pf-total-max" placeholder="∞" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Custom meta key', 'pelican' ); ?></span>
+                                <input type="text" id="pl-pf-meta-key" placeholder="_vat_number" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Meta value (= match)', 'pelican' ); ?></span>
+                                <input type="text" id="pl-pf-meta-value" placeholder="<?php esc_attr_e( 'leave empty = field exists', 'pelican' ); ?>" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Billing city', 'pelican' ); ?></span>
+                                <input type="text" id="pl-pf-billing-city" placeholder="Paris" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Billing country (2-letter)', 'pelican' ); ?></span>
+                                <input type="text" id="pl-pf-billing-country" placeholder="FR" maxlength="2" style="text-transform:uppercase;" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Shipping city', 'pelican' ); ?></span>
+                                <input type="text" id="pl-pf-shipping-city" placeholder="Lyon" />
+                            </label>
+                            <label class="pl-field-stack">
+                                <span class="pl-field-sublabel"><?php esc_html_e( 'Shipping country (2-letter)', 'pelican' ); ?></span>
+                                <input type="text" id="pl-pf-shipping-country" placeholder="DE" maxlength="2" style="text-transform:uppercase;" />
+                            </label>
+                        </div>
+                    </details>
+                    <?php
+                    };
+                    if ( Pelican_Soft_Lock::is_available( 'filters_advanced' ) ) {
+                        $adv_render();
+                    } else {
+                        Pelican_Soft_Lock::wrap( 'filters_advanced', $adv_render );
+                    }
+                    ?>
                 </fieldset>
 
                 <fieldset class="pl-field">

@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red-Headed Pro — Documentation</title>
+<style>
+  :root {
+    --teal: #1d6d7f;
+    --green: #10B981;
+    --orange: #F97316;
+    --gold: #F59E0B;
+    --dark: #0F172A;
+    --grey: #64748B;
+    --border: #E2E8F0;
+    --bg: #F8FAFC;
+    --white: #fff;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--dark);
+    background: var(--bg);
+  }
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+  .sidebar {
+    background: var(--dark);
+    color: #94A3B8;
+    padding: 32px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .sidebar-logo {
+    padding: 0 24px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 20px;
+  }
+  .sidebar-logo strong { color: #fff; font-size: 16px; display: block; }
+  .sidebar-logo span { font-size: 11px; color: var(--green); letter-spacing: 0.5px; }
+  .nav-group { padding: 0 16px 8px; }
+  .nav-group-title {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #475569;
+    padding: 12px 8px 6px;
+    display: block;
+  }
+  .nav-group a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: 6px;
+    color: #94A3B8;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.12s;
+  }
+  .nav-group a:hover { background: rgba(255,255,255,0.06); color: #fff; }
+  .nav-group a.active { background: rgba(16,185,129,0.12); color: var(--green); }
+  .nav-group a .icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+
+  .content { padding: 48px 64px; max-width: 860px; }
+
+  /* Typography */
+  h1 { font-size: 32px; font-weight: 800; color: var(--teal); margin-bottom: 8px; }
+  h2 {
+    font-size: 20px; font-weight: 700; color: var(--dark);
+    margin: 48px 0 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+    scroll-margin-top: 32px;
+  }
+  h3 { font-size: 15px; font-weight: 700; color: var(--dark); margin: 28px 0 10px; }
+  h4 { font-size: 13px; font-weight: 700; color: var(--teal); margin: 20px 0 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  p { margin-bottom: 12px; color: #334155; }
+  ul, ol { padding-left: 20px; margin-bottom: 12px; color: #334155; }
+  li { margin-bottom: 4px; }
+  strong { color: var(--dark); }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, var(--teal) 0%, #0e4a58 100%);
+    color: white;
+    border-radius: var(--radius);
+    padding: 32px 36px;
+    margin-bottom: 40px;
+  }
+  .hero h1 { color: #fff; margin-bottom: 10px; }
+  .hero p { color: rgba(255,255,255,0.8); margin: 0; font-size: 15px; }
+  .badge {
+    display: inline-block;
+    background: var(--green);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* Code */
+  code {
+    font-family: 'Roboto Mono', 'Fira Code', 'Courier New', monospace;
+    background: #F1F5F9;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 12px;
+    color: var(--teal);
+  }
+  pre {
+    background: var(--dark);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 16px 0;
+  }
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    color: #94A3B8;
+    line-height: 1.8;
+  }
+  pre code .key  { color: #F97316; }
+  pre code .val  { color: #10B981; }
+  pre code .comment { color: #475569; font-style: italic; }
+  pre code .tag  { color: #A78BFA; }
+  pre code .str  { color: #FBBF24; }
+
+  /* Cards */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+
+  /* Info boxes */
+  .info, .warn, .tip, .pro {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 16px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 13px;
+  }
+  .info { background: #EFF6FF; border-left: 3px solid #3B82F6; }
+  .warn { background: #FFF7ED; border-left: 3px solid var(--orange); }
+  .tip  { background: #F0FDF4; border-left: 3px solid var(--green); }
+  .pro  { background: #FDF4FF; border-left: 3px solid #A855F7; }
+  .info .ico, .warn .ico, .tip .ico, .pro .ico { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  thead th {
+    background: var(--dark);
+    color: #fff;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tbody tr:nth-child(even) { background: #F8FAFC; }
+  tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody td:first-child { font-family: 'Roboto Mono', monospace; font-size: 12px; color: var(--teal); font-weight: 600; }
+
+  /* Glossary */
+  .glos-entry {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--teal);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .glos-entry h4 { margin-top: 0; margin-bottom: 4px; }
+  .glos-entry .syntax { font-family: monospace; font-size: 12px; background: #F1F5F9; display: inline-block; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; color: var(--teal); }
+  .glos-entry.orange { border-left-color: var(--orange); }
+  .glos-entry.orange h4 { color: var(--orange); }
+  .glos-entry.green { border-left-color: var(--green); }
+  .glos-entry.green h4 { color: var(--green); }
+  .glos-entry.purple { border-left-color: #8B5CF6; }
+  .glos-entry.purple h4 { color: #8B5CF6; }
+
+  /* Steps */
+  .steps { counter-reset: step; margin: 20px 0; }
+  .step {
+    display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start;
+    counter-increment: step;
+  }
+  .step-num {
+    width: 32px; height: 32px; flex-shrink: 0;
+    background: var(--teal); color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+  }
+  .step-body h4 { margin-top: 2px; }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--grey);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <strong>Red-Headed Pro</strong>
+    <span>Documentation</span>
+  </div>
+  <div class="nav-group">
+    <span class="nav-group-title">Get started</span>
+    <a href="#intro" class="active"><span class="icon">&#x1F680;</span> Introduction</a>
+    <a href="#install"><span class="icon">&#x1F4E6;</span> Installation</a>
+    <a href="#first-export"><span class="icon">&#x2728;</span> Your first export</a>
+  </div>
+  <div class="nav-group">
+    <span class="nav-group-title">Profiles</span>
+    <a href="#profiles"><span class="icon">&#x1F4C4;</span> Export profiles</a>
+    <a href="#filters"><span class="icon">&#x1F50D;</span> Filters</a>
+    <a href="#columns"><span class="icon">&#x1F5C2;&#xFE0F;</span> Columns</a>
+    <a href="#destinations"><span class="icon">&#x1F4E4;</span> Destinations</a>
+    <a href="#filename"><span class="icon">&#x1F3F7;&#xFE0F;</span> Filename pattern</a>
+  </div>
+  <div class="nav-group">
+    <span class="nav-group-title">Automation</span>
+    <a href="#schedule"><span class="icon">&#x23F0;</span> Schedule</a>
+    <a href="#auto-trigger"><span class="icon">&#x26A1;</span> Auto-trigger</a>
+    <a href="#bulk"><span class="icon">&#x2611;&#xFE0F;</span> Bulk action</a>
+  </div>
+  <div class="nav-group">
+    <span class="nav-group-title">Activity</span>
+    <a href="#exports-list"><span class="icon">&#x1F4CB;</span> Exports list</a>
+    <a href="#tracking"><span class="icon">&#x1F4E6;</span> Order tracking</a>
+    <a href="#preview"><span class="icon">&#x1F441;&#xFE0F;</span> Preview</a>
+  </div>
+  <div class="nav-group">
+    <span class="nav-group-title">Reference</span>
+    <a href="#troubleshooting"><span class="icon">&#x1FA7A;</span> Troubleshooting</a>
+    <a href="#performance"><span class="icon">&#x1F4C8;</span> Performance &amp; limits</a>
+    <a href="#developers"><span class="icon">&#x1F4BB;</span> For developers</a>
+    <a href="#cross-plugin"><span class="icon">&#x1F517;</span> Cross-plugin links</a>
+  </div>
+</nav>
+
+<!-- CONTENT -->
+<main class="content">
+
+<div class="hero">
+  <h1>Red-Headed Pro <span class="badge">v1.4</span></h1>
+  <p>Export your WooCommerce orders everywhere, anytime &mdash; multi-format, multi-destination, by hand or on a schedule, or the moment an order changes status.</p>
+</div>
+
+<!-- INTRODUCTION -->
+<h2 id="intro">Introduction</h2>
+<p>Red-Headed Pro builds a file from your orders, then delivers that file where you want it. The format, the columns, the orders included, and the destination are all configured per profile. Run as many profiles in parallel as you need &mdash; one for accounting, one for the shipping carrier, one for a marketplace partner.</p>
+
+<div class="card-grid">
+  <div class="card">
+    <h4>Build</h4>
+    <p>Six file formats: CSV, TSV, JSON, NDJSON, XML, XLSX. Pick columns and order them visually. Add custom meta fields.</p>
+  </div>
+  <div class="card">
+    <h4>Filter</h4>
+    <p>Status, date range, payment method. Preview the matches before running.</p>
+  </div>
+  <div class="card">
+    <h4>Deliver</h4>
+    <p>Email, SFTP, Google Drive, REST endpoint, Local ZIP, or a one-click download.</p>
+  </div>
+  <div class="card">
+    <h4>Automate</h4>
+    <p>Manual, hourly, daily, weekly, or fired the moment an order changes status.</p>
+  </div>
+</div>
+
+<div class="info">
+  <span class="ico">&#x2139;&#xFE0F;</span>
+  <div><strong>Built on top of WooCommerce.</strong> Red-Headed reads your orders directly &mdash; no duplication, no sync delay. Compatible with High-Performance Order Storage (HPOS) and WPML / Polylang out of the box.</div>
+</div>
+
+
+<!-- INSTALLATION -->
+<h2 id="install">Installation &amp; Requirements</h2>
+
+<h3>Requirements</h3>
+<ul>
+  <li>WordPress 6.2+ with PHP 8.1+</li>
+  <li>WooCommerce 8.0+</li>
+  <li><strong>The Froggy Hub</strong> plugin (required &mdash; provides the license manager and shared framework)</li>
+</ul>
+
+<h3>Installation steps</h3>
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h4>Install The Froggy Hub</h4>
+      <p>Upload and activate the Froggy Hub plugin first. Red-Headed Pro will not load without it.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h4>Upload Red-Headed Pro</h4>
+      <p>Go to <strong>Plugins &rarr; Add New &rarr; Upload Plugin</strong> and upload the <code>.zip</code> file. Activate it.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h4>Activate your license</h4>
+      <p>Open <strong>The Froggy Hub &rarr; Licenses</strong>. Paste your license key. The Red-Headed dashboard appears as soon as the license is validated.</p>
+    </div>
+  </div>
+</div>
+
+<div class="warn">
+  <span class="ico">&#x26A0;&#xFE0F;</span>
+  <div><strong>Lite vs Pro.</strong> If Red-Headed Lite is active, it is deactivated automatically when Pro loads. No data is lost &mdash; profiles and history carry over.</div>
+</div>
+
+
+<!-- FIRST EXPORT -->
+<h2 id="first-export">Your first export</h2>
+<p>Three steps to a working export.</p>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h4>Create a profile</h4>
+      <p>Open <strong>Red-Headed Pro &rarr; Settings &rarr; Profiles</strong> and click <strong>+ New profile</strong>. Name it (e.g. <code>Daily completed</code>) and pick a format. CSV is the safe default.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h4>Pick filters and a destination</h4>
+      <p>Tick the order statuses you want (start with all, narrow later). Add a destination &mdash; Email is the fastest to test.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h4>Run it</h4>
+      <p>Save the profile, then click <strong>&#x25B6; Run</strong>. The job appears in the Exports tab. Open it to download the file or preview the first rows.</p>
+    </div>
+  </div>
+</div>
+
+<div class="tip">
+  <span class="ico">&#x1F4A1;</span>
+  <div><strong>Preview before you run.</strong> Click the <strong>&#x1F441;&#xFE0F;</strong> icon next to <strong>&#x25B6; Run</strong> to see which orders match the profile filters. No job is created, no file is saved.</div>
+</div>
+
+
+<!-- PROFILES -->
+<h2 id="profiles">Export profiles</h2>
+<p>A profile is a saved recipe combining four ingredients:</p>
+<ul>
+  <li><strong>Format</strong> &mdash; CSV, TSV, JSON, NDJSON, XML, or XLSX.</li>
+  <li><strong>Filters</strong> &mdash; which orders to include.</li>
+  <li><strong>Columns</strong> &mdash; which fields to put in the file.</li>
+  <li><strong>Destinations</strong> &mdash; where to send the file.</li>
+</ul>
+<p>Optional add-ons: <strong>schedule</strong> (recurring) and <strong>auto-trigger</strong> (event-driven on order status change).</p>
+
+<div class="info">
+  <span class="ico">&#x2139;&#xFE0F;</span>
+  <div>Profiles are independent. Run as many as you need: one for accounting, one for shipping, one per marketplace.</div>
+</div>
+
+
+<!-- FILTERS -->
+<h2 id="filters">Filters</h2>
+<p>Three filters narrow which orders end up in the file.</p>
+
+<table>
+  <thead><tr><th>Filter</th><th>What it does</th><th>Recommended start</th></tr></thead>
+  <tbody>
+    <tr><td>Statuses</td><td>Only orders matching one of the ticked statuses are included.</td><td>Tick all to start. Narrow later (e.g. Completed only for accounting).</td></tr>
+    <tr><td>Date from / to</td><td>Filters by order creation date.</td><td>Leave both blank for "all time", or set <em>Date from</em> only to capture from a cut-off.</td></tr>
+    <tr><td>Payment method</td><td>Filters by payment gateway slug (e.g. <code>stripe</code>, <code>paypal</code>).</td><td>Leave blank to include all payment methods.</td></tr>
+  </tbody>
+</table>
+
+<div class="warn">
+  <span class="ico">&#x26A0;&#xFE0F;</span>
+  <div><strong>Empty file?</strong> The most common cause is a filter that excludes every order. The Exports list shows a "&#x26A0; check filters" badge next to the 0-record line. Click <strong>&#x1F441;&#xFE0F; Preview</strong> on the profile to see what matches and adjust.</div>
+</div>
+
+
+<!-- COLUMNS -->
+<h2 id="columns">Columns</h2>
+<p>The column picker is where you choose which fields end up in the exported file. Open it from the profile editor: <strong>+ Browse fields</strong>.</p>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h4>Open the picker</h4>
+      <p>The picker opens centered with all available fields grouped by category &mdash; order, customer, billing, shipping, totals, items, custom fields.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h4>Tick the fields you want</h4>
+      <p>Each field appears in the active list as you tick it. Untick to remove.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h4>Reorder and rename</h4>
+      <p>Drag active columns to reorder. Click the column header label to rename it for the exported file.</p>
+    </div>
+  </div>
+</div>
+
+<div class="tip">
+  <span class="ico">&#x1F4A1;</span>
+  <div><strong>Custom meta fields.</strong> The <em>Meta</em> group at the bottom of the picker lets you add any order custom field by key &mdash; e.g. <code>_vat_number</code>, <code>_shipping_carrier</code>.</div>
+</div>
+
+
+<!-- DESTINATIONS -->
+<h2 id="destinations">Destinations</h2>
+<p>A destination is where the file goes once it is built. A profile can stack many destinations &mdash; the same file is delivered to all of them in one run.</p>
+
+<table>
+  <thead><tr><th>Type</th><th>Required fields</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Email</td><td>Recipient email</td><td>The file is attached. Use a comma to send to multiple recipients.</td></tr>
+    <tr><td>SFTP</td><td>Host, port, user, password, path</td><td>Optional filename pattern. The remote folder must exist and be writable.</td></tr>
+    <tr><td>Google Drive</td><td>OAuth access_token, optional folder ID</td><td>Tokens last roughly 1 hour. Full OAuth flow with auto-refresh ships in a future release.</td></tr>
+    <tr><td>REST</td><td>URL, auth type, token / credentials</td><td>POSTs the file as a multipart upload. Bearer, Basic, or custom header auth.</td></tr>
+    <tr><td>Local ZIP</td><td>None</td><td>The file is also saved as a ZIP archive in <code>wp-content/uploads/lion-frog/exports/</code>.</td></tr>
+    <tr><td>Download</td><td>None</td><td>The Exports tab shows a one-click download link.</td></tr>
+  </tbody>
+</table>
+
+<div class="info">
+  <span class="ico">&#x2139;&#xFE0F;</span>
+  <div><strong>Stacking destinations.</strong> Add the same file to Email + SFTP + Google Drive in one profile &mdash; everyone gets a copy in one run.</div>
+</div>
+
+
+<!-- FILENAME PATTERN -->
+<h2 id="filename">Filename pattern</h2>
+<p>Customize the name of the delivered file using placeholders. Available on Google Drive and SFTP destinations. An empty pattern keeps the auto-generated filename.</p>
+
+<h3>Available placeholders</h3>
+<table>
+  <thead><tr><th>Placeholder</th><th>Resolves to</th></tr></thead>
+  <tbody>
+    <tr><td><code>{profile}</code></td><td>Profile name</td></tr>
+    <tr><td><code>{format}</code></td><td>csv, tsv, json, ndjson, xml, xlsx</td></tr>
+    <tr><td><code>{records}</code></td><td>Number of rows in this export</td></tr>
+    <tr><td><code>{job_id}</code></td><td>Internal job ID (useful for log correlation)</td></tr>
+    <tr><td><code>{date}</code></td><td>Y-m-d</td></tr>
+    <tr><td><code>{time}</code></td><td>H-i-s</td></tr>
+    <tr><td><code>{datetime}</code></td><td>Y-m-d_H-i-s</td></tr>
+    <tr><td><code>{timestamp}</code></td><td>Unix epoch seconds</td></tr>
+    <tr><td><code>{order_id}</code></td><td>First order ID</td></tr>
+    <tr><td><code>{order_number}</code></td><td>First order number (e.g. <code>e-4123</code>)</td></tr>
+    <tr><td><code>{customer_id}</code></td><td>First order customer ID</td></tr>
+    <tr><td><code>{customer_email}</code></td><td>First order billing email</td></tr>
+    <tr><td><code>{customer_name}</code></td><td>First order billing first + last name</td></tr>
+    <tr><td><code>{random}</code></td><td>6-character alphanumeric (uniqueness)</td></tr>
+  </tbody>
+</table>
+
+<div class="tip">
+  <span class="ico">&#x1F4A1;</span>
+  <div><strong>Useful patterns.</strong> Single-order exports: <code>order-{order_number}-{date}.{format}</code>. Daily batch: <code>orders-{date}.{format}</code>. Carrier feed: <code>{profile}-{datetime}.{format}</code>.</div>
+</div>
+
+
+<!-- SCHEDULE -->
+<h2 id="schedule">Schedule</h2>
+<p>Run a profile automatically on a recurring cycle.</p>
+
+<table>
+  <thead><tr><th>Schedule</th><th>Cycle</th></tr></thead>
+  <tbody>
+    <tr><td>Manual only</td><td>The profile runs only when you click <strong>&#x25B6; Run</strong>.</td></tr>
+    <tr><td>Hourly</td><td>Every hour, at the top of the hour.</td></tr>
+    <tr><td>Daily</td><td>Once per day.</td></tr>
+    <tr><td>Weekly</td><td>Once per week.</td></tr>
+    <tr><td>Monthly</td><td>Once per month.</td></tr>
+  </tbody>
+</table>
+
+<div class="warn">
+  <span class="ico">&#x26A0;&#xFE0F;</span>
+  <div><strong>WordPress cron caveat.</strong> Schedules use the WordPress cron, which only fires on traffic. On a low-traffic site, expected runs may slip by minutes or hours. For precise timing, disable WP-Cron and call <code>wp-cron.php</code> from a system cron once a minute.</div>
+</div>
+
+
+<!-- AUTO-TRIGGER -->
+<h2 id="auto-trigger">Auto-trigger (on status change)</h2>
+<p>Fire the export the moment an order moves to a specific status. This runs on top of (and independently from) the schedule.</p>
+
+<h3>Setup</h3>
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h4>Edit the profile</h4>
+      <p>Scroll to the <strong>Auto-trigger</strong> block.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h4>List the trigger statuses</h4>
+      <p>Type one or more order statuses, comma-separated &mdash; e.g. <code>completed</code> or <code>completed, processing</code>.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h4>Set guards (optional)</h4>
+      <p><strong>Min total</strong> ignores orders below the threshold. <strong>Fire only once per order</strong> avoids duplicates if the order's status flaps.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- BULK ACTION -->
+<h2 id="bulk">Bulk action from the orders list</h2>
+<p>Export selected orders directly from <strong>WooCommerce &rarr; Orders</strong>.</p>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h4>Select orders</h4>
+      <p>Tick the orders you want to export.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h4>Pick the bulk action</h4>
+      <p>Open the <strong>Actions</strong> dropdown &rarr; <strong>Export with Red-Headed</strong> &rarr; click <strong>Apply</strong>.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h4>Find the result</h4>
+      <p>The job appears in <strong>Red-Headed Pro &rarr; Exports</strong>. Download or preview from there.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- EXPORTS LIST -->
+<h2 id="exports-list">Exports list</h2>
+<p>The Exports tab is the activity log of every run. Each row shows the format, record count, file size, what triggered it, when it started, how long it took, and whether it succeeded.</p>
+
+<h3>Per-row actions</h3>
+<table>
+  <thead><tr><th>Action</th><th>Icon</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>Preview</td><td>&#x1F441;&#xFE0F;</td><td>Opens a modal showing the first 10 rows of the file. Available on CSV, TSV, JSON, NDJSON. Other formats fall back to "click Download".</td></tr>
+    <tr><td>Download</td><td>&#x2B07;</td><td>Downloads the file directly.</td></tr>
+    <tr><td>Re-run</td><td>&#x21BB;</td><td>Triggers a fresh run of the same profile.</td></tr>
+  </tbody>
+</table>
+
+<h3>Status badges</h3>
+<table>
+  <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td>success</td><td>The file was built and every destination accepted it.</td></tr>
+    <tr><td>running</td><td>The job is in progress.</td></tr>
+    <tr><td>failed</td><td>The build threw an exception. Hover the badge for the error message.</td></tr>
+  </tbody>
+</table>
+
+<div class="info">
+  <span class="ico">&#x2139;&#xFE0F;</span>
+  <div><strong>"&#x26A0; check filters" badge.</strong> A successful job that produced 0 rows still logs as success &mdash; the badge appears next to the records count to flag a likely filter mismatch.</div>
+</div>
+
+
+<!-- ORDER TRACKING -->
+<h2 id="tracking">Order tracking</h2>
+<p>Every order remembers when it was last exported and how many times.</p>
+
+<h3>Where to see it</h3>
+<p>Open <strong>WooCommerce &rarr; Orders</strong>. The new <strong>&#x1F4E6; Exported</strong> column shows:</p>
+<ul>
+  <li><strong>&mdash;</strong> (gray) if the order has never been exported.</li>
+  <li><strong>&#x2713; 3&times;</strong> (green) if the order has been exported three times. Hover for the date of the last export.</li>
+</ul>
+
+<div class="tip">
+  <span class="ico">&#x1F4A1;</span>
+  <div><strong>Audit-friendly.</strong> The Exported column lets the operations team confirm at a glance which orders have already shipped to the accounting / shipping / partner pipeline.</div>
+</div>
+
+
+<!-- PREVIEW -->
+<h2 id="preview">Preview</h2>
+<p>Two preview surfaces, both opened by clicking the <strong>&#x1F441;&#xFE0F;</strong> icon.</p>
+
+<table>
+  <thead><tr><th>Where</th><th>What it shows</th></tr></thead>
+  <tbody>
+    <tr><td>On a profile (next to <strong>&#x25B6; Run</strong>)</td><td>Dry-runs the filters and shows the first 5 orders that <em>would</em> be exported, with the columns mapped. No job is created, no file saved.</td></tr>
+    <tr><td>On a job in the Exports list</td><td>Reads the saved file inline and shows the first 10 rows. Lets you spot-check the content without downloading.</td></tr>
+  </tbody>
+</table>
+
+
+<!-- TROUBLESHOOTING -->
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<table>
+  <thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Export ran, file is empty (only headers)</td>
+      <td>Filters exclude every order &mdash; most often the date window or the status list.</td>
+      <td>Click <strong>&#x1F441;&#xFE0F; Preview</strong> on the profile. Widen the date range or tick more statuses.</td>
+    </tr>
+    <tr>
+      <td>SFTP fails with "SFTP authentication failed"</td>
+      <td>Wrong password or the user lacks permission on the target folder.</td>
+      <td>Test the credentials in a desktop SFTP client. Confirm the remote folder exists and is writable.</td>
+    </tr>
+    <tr>
+      <td>Google Drive upload returns 401 Unauthorized</td>
+      <td>The access token expired (tokens last roughly 1 hour).</td>
+      <td>Generate a fresh token from Google's OAuth Playground and paste it into the destination.</td>
+    </tr>
+    <tr>
+      <td>Email is sent but the recipient never gets it</td>
+      <td>The site has no SMTP configured, so the message lands in spam or is dropped.</td>
+      <td>Install an SMTP plugin (e.g. WP Mail SMTP) and configure a transactional sender.</td>
+    </tr>
+    <tr>
+      <td>The schedule never fires</td>
+      <td>WordPress cron only runs on traffic. Low-traffic sites can wait minutes or hours.</td>
+      <td>Disable WP-Cron and call <code>wp-cron.php</code> from a system cron once a minute.</td>
+    </tr>
+    <tr>
+      <td>XLSX export fails with "ZipArchive missing"</td>
+      <td>The host's PHP build is missing the ZipArchive extension.</td>
+      <td>Ask the host to enable ZipArchive, or switch the profile format to CSV / JSON in the meantime.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+<!-- PERFORMANCE -->
+<h2 id="performance">Performance &amp; limits</h2>
+<ul>
+  <li><strong>Order volume.</strong> Exports stream row by row. Tens of thousands of orders work; hundreds of thousands take minutes &mdash; schedule those overnight.</li>
+  <li><strong>Memory.</strong> XLSX is the heaviest format because the spreadsheet engine builds in memory. CSV / JSON / NDJSON are much lighter &mdash; prefer them for large exports.</li>
+  <li><strong>HPOS.</strong> Compatible with WooCommerce High-Performance Order Storage. No configuration needed.</li>
+  <li><strong>WPML / Polylang.</strong> Compatible. Order language is preserved in the export.</li>
+  <li><strong>File retention.</strong> Generated files live in <code>wp-content/uploads/lion-frog/exports/</code>. Old files are not auto-deleted &mdash; clean up periodically if disk space matters.</li>
+</ul>
+
+
+<!-- DEVELOPERS -->
+<h2 id="developers">For developers</h2>
+
+<h3>Hooks &amp; filters</h3>
+<table>
+  <thead><tr><th>Hook</th><th>When it fires</th><th>Use it to</th></tr></thead>
+  <tbody>
+    <tr><td>pelican_export_generated</td><td>After the file is built and the job logs success.</td><td>React to a fresh export (e.g. notify an external system).</td></tr>
+    <tr><td>pelican_export_delivered</td><td>After every destination has been attempted.</td><td>Audit which destinations succeeded.</td></tr>
+    <tr><td>pelican_export_failed</td><td>When an exception bubbles up from the engine.</td><td>Send an alert.</td></tr>
+    <tr><td>pelican_column_catalog</td><td>When the column picker is built.</td><td>Inject custom columns to expose your own data.</td></tr>
+    <tr><td>pelican_resolve_column</td><td>When mapping a row, for keys not handled internally.</td><td>Resolve custom column keys.</td></tr>
+  </tbody>
+</table>
+
+<h3>REST API</h3>
+<p>Endpoints under <code>/wp-json/pelican/v1/</code>:</p>
+<ul>
+  <li><code>POST /profiles</code> &mdash; create / update a profile.</li>
+  <li><code>GET /profiles/{id}</code> &mdash; read a profile.</li>
+  <li><code>POST /run/{profile_id}</code> &mdash; trigger an export (returns the job ID).</li>
+  <li><code>GET /jobs</code> &mdash; list past jobs with filters.</li>
+</ul>
+
+<h3>Per-order meta</h3>
+<table>
+  <thead><tr><th>Meta key</th><th>Type</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td>_rh_export_count</td><td>int</td><td>Number of times the order was exported.</td></tr>
+    <tr><td>_rh_last_export_at</td><td>datetime</td><td>Timestamp of the last export.</td></tr>
+    <tr><td>_rh_last_export_job_id</td><td>int</td><td>pl_jobs ID of the last export.</td></tr>
+  </tbody>
+</table>
+
+
+<!-- CROSS-PLUGIN -->
+<h2 id="cross-plugin">Cross-plugin links</h2>
+<ul>
+  <li><strong>Settings backup &amp; restore.</strong> All plugin settings are exported / imported in one ZIP from <strong>The Froggy Hub &rarr; Backup</strong>. Red-Headed Pro does not ship its own backup tool.</li>
+  <li><strong>License.</strong> Activate or view your Pro license in <strong>The Froggy Hub &rarr; Licenses</strong>.</li>
+  <li><strong>Updates.</strong> Updates land automatically via <strong>The Froggy Hub &rarr; Marketplace &rarr; Check for updates</strong>, or wait for the daily heartbeat.</li>
+  <li><strong>Logs / sync history.</strong> The <em>Exports</em> tab is the activity log. Same filters and Clear behavior as every other plugin in the suite.</li>
+</ul>
+
+
+<!-- FOOTER -->
+<div class="doc-footer">
+  Built by The Lion Frog Team &middot; Part of Froggy Woo Powertools &middot; Support: <a href="https://thelionfrog.com/support" target="_blank" rel="noopener">thelionfrog.com/support</a>
+</div>
+
+</main>
+</div>
+</body>
+</html>

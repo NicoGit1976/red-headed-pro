@@ -99,45 +99,104 @@ class Pelican_Export_Engine {
         if ( ! function_exists( 'wc_get_orders' ) ) return array();
         $args = array( 'limit' => -1, 'orderby' => 'date', 'order' => 'DESC' );
         $args['status'] = isset( $filters['status'] ) && $filters['status'] ? (array) $filters['status'] : array_keys( wc_get_order_statuses() );
+
+        /* Auto-trigger override — single-order fetch path (used by Pelican_Auto_Trigger). */
+        if ( ! empty( $filters['order_ids_override'] ) ) {
+            $args['post__in'] = array_map( 'intval', (array) $filters['order_ids_override'] );
+            $args['status']   = array_keys( wc_get_order_statuses() ); /* don't re-filter by status */
+        }
+
         if ( ! empty( $filters['date_from'] ) || ! empty( $filters['date_to'] ) ) {
             $from = ! empty( $filters['date_from'] ) ? sanitize_text_field( $filters['date_from'] ) : '1970-01-01';
             $to   = ! empty( $filters['date_to'] )   ? sanitize_text_field( $filters['date_to'] )   : current_time( 'Y-m-d' );
             $args['date_created'] = $from . '...' . $to;
         }
         if ( ! empty( $filters['payment_method'] ) ) $args['payment_method'] = sanitize_key( $filters['payment_method'] );
+
+        /* Customer email — exact match shortcut handled by WC core; "contains" handled post-fetch. */
+        if ( ! empty( $filters['customer_email'] ) ) $args['billing_email'] = sanitize_email( $filters['customer_email'] );
+
         $orders = wc_get_orders( $args );
-        if ( ! empty( $filters['shipping_method'] ) || ! empty( $filters['sku_pattern'] ) || ! empty( $filters['category'] ) ) {
-            /* Pro filters — refined post-fetch */
-            if ( ! Pelican_Soft_Lock::is_available( 'filters_advanced' ) ) {
-                return $orders;
+
+        /* Post-fetch refinement (Pro). All advanced predicates run here so we can short-circuit
+           cleanly when the Lite edition hits any locked filter. */
+        $advanced_keys = array(
+            'shipping_method', 'sku_pattern', 'category',
+            'customer_role', 'customer_email_contains',
+            'total_min', 'total_max',
+            'meta_key', 'meta_value',
+            'coupon',
+            'billing_city', 'billing_country', 'shipping_city', 'shipping_country',
+        );
+        $has_advanced = false;
+        foreach ( $advanced_keys as $k ) { if ( isset( $filters[ $k ] ) && $filters[ $k ] !== '' && $filters[ $k ] !== array() ) { $has_advanced = true; break; } }
+        if ( ! $has_advanced ) return $orders;
+        if ( ! Pelican_Soft_Lock::is_available( 'filters_advanced' ) ) return $orders;
+
+        return array_values( array_filter( $orders, function ( $o ) use ( $filters ) {
+            if ( ! empty( $filters['shipping_method'] ) ) {
+                $methods = array();
+                foreach ( $o->get_shipping_methods() as $m ) $methods[] = $m->get_method_id();
+                if ( ! in_array( $filters['shipping_method'], $methods, true ) ) return false;
             }
-            $orders = array_filter( $orders, function ( $o ) use ( $filters ) {
-                if ( ! empty( $filters['shipping_method'] ) ) {
-                    $methods = array();
-                    foreach ( $o->get_shipping_methods() as $m ) $methods[] = $m->get_method_id();
-                    if ( ! in_array( $filters['shipping_method'], $methods, true ) ) return false;
+            if ( ! empty( $filters['sku_pattern'] ) ) {
+                $pattern = (string) $filters['sku_pattern'];
+                $hit = false;
+                foreach ( $o->get_items() as $it ) {
+                    $sku = $it->get_product() ? $it->get_product()->get_sku() : '';
+                    if ( $sku && stripos( $sku, $pattern ) !== false ) { $hit = true; break; }
                 }
-                if ( ! empty( $filters['sku_pattern'] ) ) {
-                    $pattern = (string) $filters['sku_pattern'];
-                    $hit = false;
-                    foreach ( $o->get_items() as $it ) {
-                        $sku = $it->get_product() ? $it->get_product()->get_sku() : '';
-                        if ( $sku && stripos( $sku, $pattern ) !== false ) { $hit = true; break; }
-                    }
-                    if ( ! $hit ) return false;
+                if ( ! $hit ) return false;
+            }
+            if ( ! empty( $filters['category'] ) ) {
+                $hit = false;
+                foreach ( $o->get_items() as $it ) {
+                    $pid = $it->get_product() ? $it->get_product()->get_id() : 0;
+                    if ( $pid && has_term( (int) $filters['category'], 'product_cat', $pid ) ) { $hit = true; break; }
                 }
-                if ( ! empty( $filters['category'] ) ) {
-                    $hit = false;
-                    foreach ( $o->get_items() as $it ) {
-                        $pid = $it->get_product() ? $it->get_product()->get_id() : 0;
-                        if ( $pid && has_term( (int) $filters['category'], 'product_cat', $pid ) ) { $hit = true; break; }
-                    }
-                    if ( ! $hit ) return false;
+                if ( ! $hit ) return false;
+            }
+            if ( ! empty( $filters['customer_role'] ) ) {
+                $uid = (int) $o->get_customer_id();
+                if ( ! $uid ) return false;
+                $u = get_userdata( $uid );
+                if ( ! $u || ! in_array( (string) $filters['customer_role'], (array) $u->roles, true ) ) return false;
+            }
+            if ( ! empty( $filters['customer_email_contains'] ) ) {
+                if ( stripos( (string) $o->get_billing_email(), (string) $filters['customer_email_contains'] ) === false ) return false;
+            }
+            if ( isset( $filters['total_min'] ) && $filters['total_min'] !== '' ) {
+                if ( (float) $o->get_total() < (float) $filters['total_min'] ) return false;
+            }
+            if ( isset( $filters['total_max'] ) && $filters['total_max'] !== '' ) {
+                if ( (float) $o->get_total() > (float) $filters['total_max'] ) return false;
+            }
+            if ( ! empty( $filters['meta_key'] ) ) {
+                $val = $o->get_meta( (string) $filters['meta_key'] );
+                if ( isset( $filters['meta_value'] ) && $filters['meta_value'] !== '' ) {
+                    if ( (string) $val !== (string) $filters['meta_value'] ) return false;
+                } else {
+                    if ( $val === '' || $val === null ) return false;
                 }
-                return true;
-            } );
-        }
-        return $orders;
+            }
+            if ( ! empty( $filters['coupon'] ) ) {
+                $codes = array_map( 'strtolower', (array) $o->get_coupon_codes() );
+                if ( ! in_array( strtolower( (string) $filters['coupon'] ), $codes, true ) ) return false;
+            }
+            if ( ! empty( $filters['billing_city'] ) ) {
+                if ( stripos( (string) $o->get_billing_city(), (string) $filters['billing_city'] ) === false ) return false;
+            }
+            if ( ! empty( $filters['billing_country'] ) ) {
+                if ( strcasecmp( (string) $o->get_billing_country(), (string) $filters['billing_country'] ) !== 0 ) return false;
+            }
+            if ( ! empty( $filters['shipping_city'] ) ) {
+                if ( stripos( (string) $o->get_shipping_city(), (string) $filters['shipping_city'] ) === false ) return false;
+            }
+            if ( ! empty( $filters['shipping_country'] ) ) {
+                if ( strcasecmp( (string) $o->get_shipping_country(), (string) $filters['shipping_country'] ) !== 0 ) return false;
+            }
+            return true;
+        } ) );
     }
 
     /* ────────── Order → row (columns) ────────── */
