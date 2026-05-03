@@ -280,8 +280,26 @@
                 '<input type="url" class="pl-dest-url" placeholder="https://api.example.com/orders" value="' + ( d.url || '' ) + '" />' +
                 '<select class="pl-dest-auth"><option value="bearer">Bearer</option><option value="basic">Basic</option><option value="header">Custom header</option></select>' +
                 '<input type="text" class="pl-dest-token" placeholder="token / user:pass / header value" />';
+        } else if ( type === 'gdrive' ) {
+            /* v1.4.23 — Google Drive config: paste an OAuth access_token + optional folder ID.
+               Full OAuth flow (consent screen, refresh tokens) ships in a future release.
+               For now, generate a token at the OAuth Playground (Drive API v3, scope drive.file). */
+            box.innerHTML =
+                '<input type="password" class="pl-dest-gdrive-token" placeholder="OAuth access_token (paste here)" autocomplete="new-password" value="' + ( d.access_token || '' ) + '" />' +
+                '<input type="text" class="pl-dest-gdrive-folder" placeholder="Folder ID (optional — leave blank for Drive root)" value="' + ( d.folder_id || '' ) + '" />' +
+                '<p class="pl-muted" style="margin:6px 0 0;font-size:11px;line-height:1.45;">' +
+                    '⚙ <strong>How to get a token (manual, ~1 min):</strong><br>' +
+                    '1. Open <a href="https://developers.google.com/oauthplayground/" target="_blank" rel="noopener">developers.google.com/oauthplayground</a><br>' +
+                    '2. Find <code>Drive API v3</code> → check <code>https://www.googleapis.com/auth/drive.file</code> → "Authorize APIs"<br>' +
+                    '3. Sign in → "Exchange authorization code for tokens" → copy the <code>access_token</code> here.<br>' +
+                    '<em>Note: tokens expire after ~1h. For long-running automation, wait for the full OAuth flow in a future Pro release.</em>' +
+                '</p>';
+        } else if ( type === 'local_zip' ) {
+            box.innerHTML = '<p class="pl-muted" style="margin:0;font-size:12px;">📦 <strong>No configuration needed.</strong> The export file is also saved as a <code>.zip</code> archive in <code>wp-content/uploads/lion-frog/exports/</code>.</p>';
+        } else if ( type === 'download' ) {
+            box.innerHTML = '<p class="pl-muted" style="margin:0;font-size:12px;">⬇ <strong>No configuration needed.</strong> A one-click download link appears on the Exports page after the run completes.</p>';
         } else {
-            box.innerHTML = '<p class="pl-muted">' + type + ' — configured in next step (Pro).</p>';
+            box.innerHTML = '<p class="pl-muted">' + type + ' — destination not yet implemented.</p>';
         }
     }
 
@@ -305,6 +323,12 @@
                 d.auth  = wrap.querySelector( '.pl-dest-auth' ).value;
                 d.token = wrap.querySelector( '.pl-dest-token' ).value;
             }
+            if ( type === 'gdrive' ) {
+                var tok = wrap.querySelector( '.pl-dest-gdrive-token' ).value;
+                if ( tok ) d.access_token = tok;
+                d.folder_id = wrap.querySelector( '.pl-dest-gdrive-folder' ).value;
+            }
+            /* local_zip + download: no config needed, type alone is enough. */
             out.push( d );
         } );
         return out;

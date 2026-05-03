@@ -13,9 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  */
 class Pelican_Destination_GDrive extends Pelican_Destination_Base {
     public static function ship( $file, $config ) {
-        $token = isset( $config['access_token_enc'] ) ? self::decrypt( $config['access_token_enc'] ) : '';
+        /* v1.4.23 — accept either pre-encrypted token (access_token_enc) or plain
+           token pasted by the user (access_token). Mirrors the SFTP pattern. */
+        $token = isset( $config['access_token_enc'] ) ? self::decrypt( $config['access_token_enc'] )
+               : ( isset( $config['access_token'] ) ? (string) $config['access_token'] : '' );
         if ( ! $token ) {
-            return new \WP_Error( 'gdrive_no_token', __( 'Google Drive: no OAuth access token configured. Open Settings → Destinations → Google Drive to connect.', 'pelican' ) );
+            return new \WP_Error( 'gdrive_no_token', __( 'Google Drive: no OAuth access token configured. Paste one in the destination config (helper text under the field shows where to get it).', 'pelican' ) );
         }
         $folder_id = isset( $config['folder_id'] ) ? sanitize_text_field( $config['folder_id'] ) : '';
 
