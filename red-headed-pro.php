@@ -3,7 +3,7 @@
  * Plugin Name:       Red-Headed Pro — Exports Orders Everywhere, Anytime
  * Plugin URI:        https://thelionfrog.com
  * Description:       Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog).
- * Version:           1.4.18
+ * Version:           1.4.19
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            The Lion Frog Team
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'PELICAN_VERSION', '1.4.18' );
+define( 'PELICAN_VERSION', '1.4.19' );
 define( 'PELICAN_EDITION',  'pro' );
 define( 'PELICAN_FILE',     __FILE__ );
 define( 'PELICAN_PATH',     plugin_dir_path( __FILE__ ) );
@@ -90,6 +90,28 @@ add_action( 'plugins_loaded', function () {
         return $stats;
     } );
 }, 5 );
+/* v1.4.19 — Download handler. Fires at admin_init prio 1 BEFORE WP outputs
+   any HTML header. Streams the export file as a clean attachment. */
+add_action( 'admin_init', function () {
+    $dl = ! empty( $_GET['rh_dl'] ) ? (int) $_GET['rh_dl'] : ( ! empty( $_GET['pelican_dl'] ) ? (int) $_GET['pelican_dl'] : 0 );
+    if ( ! $dl ) return;
+    if ( ! current_user_can( 'manage_options' ) ) return;
+    global $wpdb;
+    $jobs_tbl = $wpdb->prefix . 'pl_jobs';
+    $j = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$jobs_tbl} WHERE id = %d", $dl ), ARRAY_A );
+    if ( ! $j || empty( $j['file_path'] ) ) return;
+    $u = wp_upload_dir();
+    $abs = trailingslashit( $u['basedir'] ) . ltrim( $j['file_path'], '/\\' );
+    if ( ! file_exists( $abs ) ) return;
+    while ( ob_get_level() ) ob_end_clean(); // drop any buffered HTML
+    nocache_headers();
+    header( 'Content-Type: application/octet-stream' );
+    header( 'Content-Disposition: attachment; filename="' . basename( $abs ) . '"' );
+    header( 'Content-Length: ' . filesize( $abs ) );
+    readfile( $abs );
+    exit;
+}, 1 );
+
 /* Brand-rename — 301 from legacy 'pelican*' admin URLs to new 'red-headed-pro*'
    (preserves bookmarks). Covers dashboard + exports + settings + settings tabs. */
 add_action( 'admin_init', function () {

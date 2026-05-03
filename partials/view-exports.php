@@ -8,28 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 global $wpdb;
 $jobs_tbl = $wpdb->prefix . 'pl_jobs';
 
-/* Handle one-shot download via signed link.
-   v1.4.18 — Renamed query param `pelican_dl` → `rh_dl`. Old `pelican_dl`
-   still accepted for backward-compat with already-issued URLs. Cap lowered
-   from manage_woocommerce → manage_options (admin gate; WC isn't required
-   to download an existing file). */
-$_dl = ! empty( $_GET['rh_dl'] ) ? $_GET['rh_dl'] : ( ! empty( $_GET['pelican_dl'] ) ? $_GET['pelican_dl'] : 0 );
-if ( $_dl && current_user_can( 'manage_options' ) ) {
-    $jid = (int) $_dl;
-    $j   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$jobs_tbl} WHERE id = %d", $jid ), ARRAY_A );
-    if ( $j && ! empty( $j['file_path'] ) ) {
-        $u = wp_upload_dir();
-        $abs = trailingslashit( $u['basedir'] ) . ltrim( $j['file_path'], '/\\' );
-        if ( file_exists( $abs ) ) {
-            nocache_headers();
-            header( 'Content-Type: application/octet-stream' );
-            header( 'Content-Disposition: attachment; filename="' . basename( $abs ) . '"' );
-            header( 'Content-Length: ' . filesize( $abs ) );
-            readfile( $abs );
-            exit;
-        }
-    }
-}
+/* v1.4.19 — Download handler moved to an `admin_init` action in the main plugin
+   file. It used to run here at view-render time, but by then WP had already
+   flushed the admin HTML header → headers() were ignored → user got an HTML
+   page mixed with binary, not a clean CSV. The handler now fires BEFORE any
+   admin output. See red-headed-pro.php "Download handler" block. */
 
 /* Filters */
 $f_status = isset( $_GET['status'] ) ? sanitize_key( $_GET['status'] ) : '';
