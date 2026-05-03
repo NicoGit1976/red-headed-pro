@@ -8,7 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  */
 class Pelican_Admin {
     public function __construct() {
-        add_action( 'admin_menu', array( $this, 'register_menu' ), 11 );
+        /* v1.4.16 — admin_menu prio 110 (was: 11). Hub registers parent 'froggy-hub'
+           at prio 98. If Pelican registers BEFORE the parent exists, WP computes
+           the wrong hookname (admin_page_* instead of froggy-hub_page_*) → ?page=
+           lookup fails → "no permission". Must fire AFTER prio 98. */
+        add_action( 'admin_menu', array( $this, 'register_menu' ), 110 );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
         add_action( 'wp_ajax_pelican_save_profile', array( $this, 'ajax_save_profile' ) );
         add_action( 'wp_ajax_pelican_delete_profile', array( $this, 'ajax_delete_profile' ) );
