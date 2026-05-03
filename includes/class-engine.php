@@ -47,7 +47,10 @@ class Pelican_Engine {
         add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
         add_action( 'admin_init', array( 'Pelican_Installer', 'maybe_upgrade' ) );
 
-        Pelican_Hub_Registry::init();
+        /* v1.4.10 — disabled: the Hub is the single source of truth for the
+           ecosystem registry (per `feedback_three_layer_ecosystem.md`). This
+           plugin's local override duplicated the entry → 2 sidebar menu items. */
+        // Pelican_Hub_Registry::init();
         Pelican_I18n::init();
         Pelican_Cron::init();
         Pelican_Auto_Trigger::init();
