@@ -107,7 +107,18 @@ class Pelican_Admin {
         $orders  = Pelican_Export_Engine::fetch_orders( isset( $p['filters'] ) ? (array) $p['filters'] : array() );
         $columns = Pelican_Export_Engine::normalize_columns( ! empty( $p['columns'] ) ? (array) $p['columns'] : Pelican_Export_Engine::default_columns() );
         $sample  = array_slice( $orders, 0, 5 );
-        $rows    = array_map( function ( $o ) use ( $columns ) { return Pelican_Export_Engine::map_row( $o, $columns ); }, $sample );
+        /* map_row returns an assoc array keyed by column slug. Normalize to
+           indexed values (in column order) so the JS preview can render rows
+           with .map() — same shape as the CSV preview path (fgetcsv). */
+        $rows = array_map( function ( $o ) use ( $columns ) {
+            $assoc = Pelican_Export_Engine::map_row( $o, $columns );
+            $vals = array();
+            foreach ( $columns as $c ) {
+                $k = is_array( $c ) ? ( $c['key'] ?? '' ) : (string) $c;
+                $vals[] = isset( $assoc[ $k ] ) ? $assoc[ $k ] : '';
+            }
+            return $vals;
+        }, $sample );
         wp_send_json_success( array(
             'count'   => count( $orders ),
             'columns' => array_map( function ( $c ) { return $c['label'] ?? ( $c['key'] ?? '' ); }, $columns ),

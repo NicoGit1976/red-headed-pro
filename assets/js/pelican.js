@@ -389,7 +389,8 @@
                 '<div style="overflow-x:auto;"><table class="pl-table pl-table-zebra" style="font-size:12px;">' +
                 '<thead><tr>' + ( data.columns || [] ).map( function ( c ) { return '<th>' + escHtml( c ) + '</th>'; } ).join( '' ) + '</tr></thead>' +
                 '<tbody>' + data.rows.map( function ( row ) {
-                    return '<tr>' + ( row || [] ).map( function ( v ) { return '<td>' + escHtml( v == null ? '' : String( v ) ) + '</td>'; } ).join( '' ) + '</tr>';
+                    var arr = Array.isArray( row ) ? row : Object.values( row || {} );
+                    return '<tr>' + arr.map( function ( v ) { return '<td>' + escHtml( v == null ? '' : String( v ) ) + '</td>'; } ).join( '' ) + '</tr>';
                 } ).join( '' ) + '</tbody></table></div>';
         }
         body.innerHTML = content;
