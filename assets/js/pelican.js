@@ -281,14 +281,16 @@
                 '<select class="pl-dest-auth"><option value="bearer">Bearer</option><option value="basic">Basic</option><option value="header">Custom header</option></select>' +
                 '<input type="text" class="pl-dest-token" placeholder="token / user:pass / header value" />';
         } else if ( type === 'gdrive' ) {
-            /* v1.4.23 — Google Drive config: paste an OAuth access_token + optional folder ID.
-               Full OAuth flow (consent screen, refresh tokens) ships in a future release.
-               For now, generate a token at the OAuth Playground (Drive API v3, scope drive.file). */
+            /* v1.4.24 — Google Drive config: token + folder ID + custom filename pattern. */
             box.innerHTML =
                 '<input type="password" class="pl-dest-gdrive-token" placeholder="OAuth access_token (paste here)" autocomplete="new-password" value="' + ( d.access_token || '' ) + '" />' +
                 '<input type="text" class="pl-dest-gdrive-folder" placeholder="Folder ID (optional — leave blank for Drive root)" value="' + ( d.folder_id || '' ) + '" />' +
+                '<input type="text" class="pl-dest-gdrive-filename" placeholder="Filename pattern, e.g. orders-{date}.{format}" value="' + ( d.filename_pattern || '' ).replace( /"/g, '&quot;' ) + '" />' +
                 '<p class="pl-muted" style="margin:6px 0 0;font-size:11px;line-height:1.45;">' +
-                    '⚙ <strong>How to get a token (manual, ~1 min):</strong><br>' +
+                    '⚙ <strong>Filename placeholders:</strong> ' +
+                    '<code>{profile}</code> · <code>{date}</code> (Y-m-d) · <code>{time}</code> (H-i-s) · <code>{datetime}</code> (Y-m-d_H-i-s) · <code>{format}</code> · <code>{records}</code> · <code>{job_id}</code> · <code>{random}</code>. ' +
+                    'Leave blank to keep the auto-generated filename.<br><br>' +
+                    '⚙ <strong>How to get an access_token (manual, ~1 min):</strong><br>' +
                     '1. Open <a href="https://developers.google.com/oauthplayground/" target="_blank" rel="noopener">developers.google.com/oauthplayground</a><br>' +
                     '2. Find <code>Drive API v3</code> → check <code>https://www.googleapis.com/auth/drive.file</code> → "Authorize APIs"<br>' +
                     '3. Sign in → "Exchange authorization code for tokens" → copy the <code>access_token</code> here.<br>' +
@@ -327,6 +329,7 @@
                 var tok = wrap.querySelector( '.pl-dest-gdrive-token' ).value;
                 if ( tok ) d.access_token = tok;
                 d.folder_id = wrap.querySelector( '.pl-dest-gdrive-folder' ).value;
+                d.filename_pattern = wrap.querySelector( '.pl-dest-gdrive-filename' ).value;
             }
             /* local_zip + download: no config needed, type alone is enough. */
             out.push( d );

@@ -22,6 +22,12 @@ class Pelican_Destination_Dispatcher {
                 return Pelican_Destination_REST::ship( $file, $destination );
             case 'gdrive':
                 if ( Pelican_Soft_Lock::is_locked( 'dest_gdrive' ) ) return new \WP_Error( 'locked', __( 'Google Drive destination requires Pro.', 'pelican' ) );
+                /* v1.4.24 — pass profile context so ship() can resolve the
+                   filename pattern ({profile}, {records}, {date}, etc.). */
+                $destination['_profile_name'] = isset( $profile['name'] ) ? (string) $profile['name'] : '';
+                $destination['_format']       = (string) $format;
+                $destination['_job_id']       = isset( $profile['_job_id'] ) ? (int) $profile['_job_id'] : 0;
+                $destination['_records']      = isset( $profile['_records'] ) ? (int) $profile['_records'] : 0;
                 return Pelican_Destination_GDrive::ship( $file, $destination );
             case 'download':
                 /* Download is not really a "ship" — the file already lives on disk and

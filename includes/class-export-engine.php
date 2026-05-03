@@ -44,6 +44,11 @@ class Pelican_Export_Engine {
                 throw new \RuntimeException( 'File build failed.' );
             }
 
+            /* v1.4.24 — Inject runtime context into $profile so destinations
+               (e.g. Google Drive filename pattern) can resolve placeholders
+               like {records}, {job_id}. */
+            $profile['_job_id']  = $job_id;
+            $profile['_records'] = count( $rows );
             $delivered = self::deliver( $file, $profile, $format );
 
             $duration = (int) round( microtime( true ) * 1000 ) - $started;
