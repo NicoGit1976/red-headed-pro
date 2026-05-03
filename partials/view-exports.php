@@ -74,14 +74,14 @@ $is_pro = Pelican_Soft_Lock::is_pro();
                 <?php endforeach; ?>
             </select>
             <button class="pl-btn"><?php esc_html_e( 'Filter', 'pelican' ); ?></button>
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=pelican-exports' ) ); ?>" class="pl-link"><?php esc_html_e( 'Reset', 'pelican' ); ?></a>
+            <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-exports' ) ); ?>" class="pl-link"><?php esc_html_e( 'Reset', 'pelican' ); ?></a>
         </form>
 
         <?php if ( empty( $jobs ) ) : ?>
             <div class="pl-empty">
                 <div class="pl-empty-icon">🃏</div>
                 <p><?php esc_html_e( 'No exports yet. Configure a profile in Settings or run a bulk export from the WC orders list.', 'pelican' ); ?></p>
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=pelican-settings-profiles' ) ); ?>" class="pl-btn pl-btn-primary"><?php esc_html_e( '+ Create profile', 'pelican' ); ?></a>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-settings-profiles' ) ); ?>" class="pl-btn pl-btn-primary"><?php esc_html_e( '+ Create profile', 'pelican' ); ?></a>
             </div>
         <?php else : ?>
             <table class="pl-table pl-table-zebra">

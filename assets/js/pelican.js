@@ -353,7 +353,7 @@
             .done( function ( r ) {
                 if ( r && r.success ) {
                     alert( '✓ Export started — job #' + r.data.job_id );
-                    window.location.href = '?page=pelican-exports';
+                    window.location.href = '?page=red-headed-pro-exports';
                 } else { alert( ( r && r.data && r.data.message ) || 'Run failed' ); }
             } )
             .fail( function () { alert( 'Network error' ); } );

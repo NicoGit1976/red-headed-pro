@@ -42,7 +42,7 @@ class Pelican_Bulk_Actions {
         if ( empty( $_GET['pelican_bulk'] ) ) return;
         if ( $_GET['pelican_bulk'] === '1' ) {
             $job_id = (int) $_GET['pelican_job'];
-            $url    = admin_url( 'admin.php?page=pelican-exports' );
+            $url    = admin_url( 'admin.php?page=red-headed-pro-exports' );
             echo '<div class="notice notice-success is-dismissible"><p>';
             printf(
                 /* translators: 1: job id, 2: link to exports list */

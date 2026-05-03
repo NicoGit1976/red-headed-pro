@@ -23,7 +23,7 @@ if ( ! isset( $tabs[ $active ] ) ) $active = 'profiles';
 
         <nav class="pl-tabs" role="tablist">
             <?php foreach ( $tabs as $slug => $meta ) :
-                $url = admin_url( 'admin.php?page=pelican-settings-' . $slug );
+                $url = admin_url( 'admin.php?page=red-headed-pro-settings-' . $slug );
                 $cur = $slug === $active ? 'pl-tab-active' : '';
                 $locked = $meta['lock'] && Pelican_Soft_Lock::is_locked( $meta['lock'] );
             ?>

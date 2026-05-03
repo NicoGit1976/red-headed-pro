@@ -82,7 +82,7 @@ $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $
     <section class="pl-section">
         <div class="pl-section-head">
             <h2 class="pl-h2"><?php esc_html_e( '🕒 Recent exports', 'pelican' ); ?></h2>
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=pelican-exports' ) ); ?>" class="pl-link"><?php esc_html_e( 'See all →', 'pelican' ); ?></a>
+            <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-exports' ) ); ?>" class="pl-link"><?php esc_html_e( 'See all →', 'pelican' ); ?></a>
         </div>
         <?php if ( empty( $recent ) ) : ?>
             <div class="pl-empty">
@@ -120,12 +120,12 @@ $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $
     <section class="pl-section">
         <h2 class="pl-h2"><?php esc_html_e( '⚡ Quick actions', 'pelican' ); ?></h2>
         <div class="pl-actions">
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=pelican-settings-profiles' ) ); ?>" class="pl-action">
+            <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-settings-profiles' ) ); ?>" class="pl-action">
                 <span class="pl-action-icon">📁</span>
                 <span class="pl-action-label"><?php esc_html_e( 'Profiles', 'pelican' ); ?></span>
                 <span class="pl-action-meta"><?php echo (int) $profiles_n; ?> / <?php echo $is_pro ? '∞' : '1'; ?></span>
             </a>
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=pelican-exports' ) ); ?>" class="pl-action">
+            <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-exports' ) ); ?>" class="pl-action">
                 <span class="pl-action-icon">📦</span>
                 <span class="pl-action-label"><?php esc_html_e( 'Exports', 'pelican' ); ?></span>
             </a>
@@ -133,16 +133,16 @@ $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $
                 <span class="pl-action-icon">🛒</span>
                 <span class="pl-action-label"><?php esc_html_e( 'WC Orders', 'pelican' ); ?></span>
             </a>
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=pelican-settings-destinations' ) ); ?>" class="pl-action">
+            <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-settings-destinations' ) ); ?>" class="pl-action">
                 <span class="pl-action-icon">📡</span>
                 <span class="pl-action-label"><?php esc_html_e( 'Destinations', 'pelican' ); ?></span>
             </a>
             <?php if ( $is_pro ) : ?>
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=pelican-settings-cron' ) ); ?>" class="pl-action">
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-settings-cron' ) ); ?>" class="pl-action">
                     <span class="pl-action-icon">⏰</span>
                     <span class="pl-action-label"><?php esc_html_e( 'Cron schedules', 'pelican' ); ?></span>
                 </a>
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=pelican-settings-webhooks' ) ); ?>" class="pl-action">
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-settings-webhooks' ) ); ?>" class="pl-action">
                     <span class="pl-action-icon">🔔</span>
                     <span class="pl-action-label"><?php esc_html_e( 'Webhooks', 'pelican' ); ?></span>
                 </a>
