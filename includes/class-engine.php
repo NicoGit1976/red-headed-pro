@@ -23,6 +23,7 @@ class Pelican_Engine {
         require_once $base . 'class-hub-registry.php';
         require_once $base . 'class-i18n.php';
         require_once $base . 'class-order-tracker.php';
+        require_once $base . 'class-filename-resolver.php';
 
         require_once $base . 'builders/class-builder-csv.php';
         require_once $base . 'builders/class-builder-json.php';

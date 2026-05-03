@@ -274,27 +274,32 @@
                 '<input type="number" class="pl-dest-port" placeholder="22" value="' + ( d.port || 22 ) + '" />' +
                 '<input type="text" class="pl-dest-user" placeholder="user" value="' + ( d.user || '' ) + '" />' +
                 '<input type="password" class="pl-dest-pass" placeholder="password" autocomplete="new-password" />' +
-                '<input type="text" class="pl-dest-path" placeholder="/incoming/" value="' + ( d.path || '/' ) + '" />';
+                '<input type="text" class="pl-dest-path" placeholder="/incoming/" value="' + ( d.path || '/' ) + '" />' +
+                '<input type="text" class="pl-dest-sftp-filename" placeholder="Filename pattern (optional, e.g. order-{order_number}-{date}.{format})" value="' + ( d.filename_pattern || '' ).replace( /"/g, '&quot;' ) + '" />' +
+                '<p class="pl-muted" style="margin:6px 0 0;font-size:11px;line-height:1.45;">' +
+                    '⚙ <strong>Filename placeholders:</strong> <code>{profile}</code> · <code>{format}</code> · <code>{records}</code> · <code>{job_id}</code> · <code>{date}</code> · <code>{time}</code> · <code>{datetime}</code> · <code>{timestamp}</code> · <code>{order_id}</code> · <code>{order_number}</code> · <code>{customer_id}</code> · <code>{customer_email}</code> · <code>{customer_name}</code> · <code>{random}</code>. Empty = auto-generated name.' +
+                '</p>';
         } else if ( type === 'rest' ) {
             box.innerHTML =
                 '<input type="url" class="pl-dest-url" placeholder="https://api.example.com/orders" value="' + ( d.url || '' ) + '" />' +
                 '<select class="pl-dest-auth"><option value="bearer">Bearer</option><option value="basic">Basic</option><option value="header">Custom header</option></select>' +
                 '<input type="text" class="pl-dest-token" placeholder="token / user:pass / header value" />';
         } else if ( type === 'gdrive' ) {
-            /* v1.4.24 — Google Drive config: token + folder ID + custom filename pattern. */
+            /* v1.4.26 — Google Drive: token + folder ID + filename pattern (full placeholder set). */
             box.innerHTML =
                 '<input type="password" class="pl-dest-gdrive-token" placeholder="OAuth access_token (paste here)" autocomplete="new-password" value="' + ( d.access_token || '' ) + '" />' +
                 '<input type="text" class="pl-dest-gdrive-folder" placeholder="Folder ID (optional — leave blank for Drive root)" value="' + ( d.folder_id || '' ) + '" />' +
-                '<input type="text" class="pl-dest-gdrive-filename" placeholder="Filename pattern, e.g. orders-{date}.{format}" value="' + ( d.filename_pattern || '' ).replace( /"/g, '&quot;' ) + '" />' +
+                '<input type="text" class="pl-dest-gdrive-filename" placeholder="Filename pattern, e.g. order-{order_number}-{date}.{format}" value="' + ( d.filename_pattern || '' ).replace( /"/g, '&quot;' ) + '" />' +
                 '<p class="pl-muted" style="margin:6px 0 0;font-size:11px;line-height:1.45;">' +
                     '⚙ <strong>Filename placeholders:</strong> ' +
-                    '<code>{profile}</code> · <code>{date}</code> (Y-m-d) · <code>{time}</code> (H-i-s) · <code>{datetime}</code> (Y-m-d_H-i-s) · <code>{format}</code> · <code>{records}</code> · <code>{job_id}</code> · <code>{random}</code>. ' +
-                    'Leave blank to keep the auto-generated filename.<br><br>' +
+                    '<code>{profile}</code> · <code>{format}</code> · <code>{records}</code> · <code>{job_id}</code> · <code>{date}</code> · <code>{time}</code> · <code>{datetime}</code> · <code>{timestamp}</code> · ' +
+                    '<code>{order_id}</code> · <code>{order_number}</code> · <code>{customer_id}</code> · <code>{customer_email}</code> · <code>{customer_name}</code> · <code>{random}</code>. ' +
+                    'Empty = auto-generated. Order placeholders use the FIRST order in the export.<br><br>' +
                     '⚙ <strong>How to get an access_token (manual, ~1 min):</strong><br>' +
                     '1. Open <a href="https://developers.google.com/oauthplayground/" target="_blank" rel="noopener">developers.google.com/oauthplayground</a><br>' +
                     '2. Find <code>Drive API v3</code> → check <code>https://www.googleapis.com/auth/drive.file</code> → "Authorize APIs"<br>' +
                     '3. Sign in → "Exchange authorization code for tokens" → copy the <code>access_token</code> here.<br>' +
-                    '<em>Note: tokens expire after ~1h. For long-running automation, wait for the full OAuth flow in a future Pro release.</em>' +
+                    '<em>Note: tokens expire after ~1h. Full OAuth flow (refresh tokens, consent screen) in a future Pro release.</em>' +
                 '</p>';
         } else if ( type === 'local_zip' ) {
             box.innerHTML = '<p class="pl-muted" style="margin:0;font-size:12px;">📦 <strong>No configuration needed.</strong> The export file is also saved as a <code>.zip</code> archive in <code>wp-content/uploads/lion-frog/exports/</code>.</p>';
@@ -319,6 +324,8 @@
                 var pw = wrap.querySelector( '.pl-dest-pass' ).value;
                 if ( pw ) d.pass = pw;
                 d.path = wrap.querySelector( '.pl-dest-path' ).value;
+                var sftpFn = wrap.querySelector( '.pl-dest-sftp-filename' );
+                if ( sftpFn ) d.filename_pattern = sftpFn.value;
             }
             if ( type === 'rest' ) {
                 d.url   = wrap.querySelector( '.pl-dest-url' ).value;

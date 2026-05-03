@@ -51,29 +51,19 @@ class Pelican_Destination_GDrive extends Pelican_Destination_Base {
         }
         return true;
     }
-    /* v1.4.24 — Filename pattern resolver. Returns either the resolved pattern
-       or basename($file) if the pattern is empty. Strips path traversal + WP
-       sanitizes the final name. */
+    /* v1.4.26 — delegated to the shared Pelican_Filename_Resolver. */
     protected static function resolve_filename( $file, $config ) {
-        $pattern = isset( $config['filename_pattern'] ) ? trim( (string) $config['filename_pattern'] ) : '';
-        if ( $pattern === '' ) return basename( $file );
-        $ext = pathinfo( $file, PATHINFO_EXTENSION );
-        $repl = array(
-            '{profile}'  => isset( $config['_profile_name'] ) ? sanitize_file_name( $config['_profile_name'] ) : '',
-            '{date}'     => current_time( 'Y-m-d' ),
-            '{time}'     => current_time( 'H-i-s' ),
-            '{datetime}' => current_time( 'Y-m-d_H-i-s' ),
-            '{format}'   => isset( $config['_format'] ) ? sanitize_key( $config['_format'] ) : ( $ext ?: 'csv' ),
-            '{records}'  => isset( $config['_records'] ) ? (string) (int) $config['_records'] : '0',
-            '{job_id}'   => isset( $config['_job_id'] ) ? (string) (int) $config['_job_id'] : '0',
-            '{random}'   => wp_generate_password( 6, false ),
+        return Pelican_Filename_Resolver::resolve(
+            isset( $config['filename_pattern'] ) ? $config['filename_pattern'] : '',
+            array(
+                'file'         => $file,
+                'profile_name' => $config['_profile_name'] ?? '',
+                'format'       => $config['_format']       ?? '',
+                'records'      => $config['_records']      ?? 0,
+                'job_id'       => $config['_job_id']       ?? 0,
+                'first_order'  => $config['_first_order']  ?? null,
+            )
         );
-        $resolved = strtr( $pattern, $repl );
-        /* If the user didn't include the extension, append it. */
-        if ( $ext && stripos( $resolved, '.' . $ext ) === false ) {
-            $resolved .= '.' . $ext;
-        }
-        return sanitize_file_name( $resolved );
     }
     protected static function mime( $file ) {
         $ext = strtolower( pathinfo( $file, PATHINFO_EXTENSION ) );

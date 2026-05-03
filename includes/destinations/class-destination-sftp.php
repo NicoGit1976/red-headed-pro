@@ -16,7 +16,19 @@ class Pelican_Destination_SFTP extends Pelican_Destination_Base {
         $dir  = isset( $config['path'] ) ? rtrim( sanitize_text_field( $config['path'] ), '/' ) : '/';
         if ( ! $host || ! $user ) return new \WP_Error( 'sftp_missing', __( 'Missing SFTP host or user.', 'pelican' ) );
 
-        $remote_name = basename( $file );
+        /* v1.4.26 — Optional filename pattern. Falls back to basename($file). */
+        $remote_name = Pelican_Filename_Resolver::resolve(
+            isset( $config['filename_pattern'] ) ? $config['filename_pattern'] : '',
+            array(
+                'file'         => $file,
+                'profile_name' => $config['_profile_name'] ?? '',
+                'format'       => $config['_format']       ?? '',
+                'records'      => $config['_records']      ?? 0,
+                'job_id'       => $config['_job_id']       ?? 0,
+                'first_order'  => $config['_first_order']  ?? null,
+            )
+        );
+        if ( $remote_name === '' ) $remote_name = basename( $file );
         $remote_path = $dir . '/' . $remote_name;
 
         if ( class_exists( '\phpseclib3\Net\SFTP' ) ) {
