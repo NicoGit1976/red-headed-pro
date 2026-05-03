@@ -15,6 +15,7 @@ if ( isset( $_POST['pl_general_save'] ) && check_admin_referer( 'pl_general_save
     update_option( 'pelican_notify_on_failure',         ! empty( $_POST['notify_on_failure'] ) ? 1 : 0 );
     update_option( 'pelican_notify_recipients',         sanitize_text_field( $_POST['notify_recipients']     ?? '' ) );
     update_option( 'pelican_notify_subject',            sanitize_text_field( $_POST['notify_subject']        ?? '' ) );
+    update_option( 'pelican_register_wc_status_exported', ! empty( $_POST['register_wc_status_exported'] ) ? 1 : 0 );
     echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( '✓ Settings saved.', 'pelican' ) . '</p></div>';
 }
 
@@ -52,6 +53,17 @@ if ( isset( $_POST['pl_purge_jobs'] ) && check_admin_referer( 'pl_purge_jobs' ) 
                 <span class="pl-field-lbl"><?php esc_html_e( 'Retention (days)', 'pelican' ); ?></span>
                 <input type="number" min="0" name="retention_days" value="<?php echo (int) get_option( 'pelican_retention_days', 30 ); ?>" />
                 <small class="pl-muted"><?php esc_html_e( 'Files older than this are auto-deleted from /uploads/pelican/exports. 0 = keep forever.', 'pelican' ); ?></small>
+            </label>
+        </fieldset>
+
+        <fieldset class="pl-card">
+            <legend class="pl-card-title">🏷️ <?php esc_html_e( 'Custom order status', 'pelican' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></legend>
+            <p class="pl-muted"><?php esc_html_e( 'Add an "Exported" status to WooCommerce. Use it as the post-export action target so already-exported orders are easy to filter out.', 'pelican' ); ?></p>
+            <label class="pl-checkbox">
+                <input type="checkbox" name="register_wc_status_exported" value="1"
+                    <?php checked( (int) get_option( 'pelican_register_wc_status_exported', 0 ), 1 ); ?>
+                    <?php disabled( ! Pelican_Soft_Lock::is_available( 'wc_status_exported' ) ); ?> />
+                <span><?php esc_html_e( 'Register the "📦 Exported" custom WooCommerce order status (wc-rh-exported)', 'pelican' ); ?></span>
             </label>
         </fieldset>
 

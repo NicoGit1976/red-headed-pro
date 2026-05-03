@@ -37,6 +37,24 @@ $jobs  = $wpdb->get_results(
 
 $total_pages = max( 1, (int) ceil( $total / $per ) );
 $is_pro = Pelican_Soft_Lock::is_pro();
+
+/* 24h aggregate stats (mirrors the Waxy Monkey Sync History pill bar). */
+$stats_24h = $wpdb->get_row( "SELECT
+        SUM( status = 'success' ) AS success_count,
+        SUM( status = 'failed' )  AS error_count,
+        COUNT(*)                  AS total_syncs,
+        ROUND( AVG( duration_ms ), 0 ) AS avg_duration
+    FROM {$jobs_tbl}
+    WHERE started_at >= DATE_SUB( NOW(), INTERVAL 24 HOUR )", ARRAY_A );
+
+/* Clear-all handler — purges every job row. Disarms guard via wp_nonce + capability. */
+if ( isset( $_POST['pl_clear_logs'] ) && check_admin_referer( 'pl_clear_logs' ) && current_user_can( 'manage_woocommerce' ) ) {
+    $cleared = (int) $wpdb->query( "DELETE FROM {$jobs_tbl}" );
+    echo '<div class="notice notice-success is-dismissible"><p>' . sprintf( esc_html__( '✓ Cleared %d job rows.', 'pelican' ), $cleared ) . '</p></div>';
+    $jobs  = array();
+    $total = 0;
+    $stats_24h = array( 'success_count' => 0, 'error_count' => 0, 'total_syncs' => 0, 'avg_duration' => 0 );
+}
 ?>
 <div class="pl-wrap wrap">
     <?php
@@ -59,6 +77,15 @@ $is_pro = Pelican_Soft_Lock::is_pro();
             <span class="pl-muted"><?php printf( esc_html__( '%d jobs total', 'pelican' ), (int) $total ); ?></span>
         </div>
 
+        <div class="pl-stats-bar" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+            <span class="pl-stat-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:#dcfce7;color:#166534;font-size:12px;font-weight:600;">✓ <?php printf( esc_html__( '%d success', 'pelican' ), (int) ( $stats_24h['success_count'] ?? 0 ) ); ?></span>
+            <span class="pl-stat-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:#fee2e2;color:#991b1b;font-size:12px;font-weight:600;">⚠ <?php printf( esc_html__( '%d errors', 'pelican' ), (int) ( $stats_24h['error_count'] ?? 0 ) ); ?></span>
+            <span class="pl-stat-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:#f1f5f9;color:#334155;font-size:12px;font-weight:600;"><?php printf( esc_html__( '%d total (24h)', 'pelican' ), (int) ( $stats_24h['total_syncs'] ?? 0 ) ); ?></span>
+            <?php if ( ! empty( $stats_24h['avg_duration'] ) ) : ?>
+                <span class="pl-stat-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:#f1f5f9;color:#334155;font-size:12px;font-weight:600;">~<?php echo esc_html( round( ( (int) $stats_24h['avg_duration'] ) / 1000, 2 ) ); ?>s avg</span>
+            <?php endif; ?>
+        </div>
+
         <form class="pl-filters" method="get">
             <input type="hidden" name="page" value="red-headed-pro-exports" />
             <select name="status">
@@ -76,6 +103,13 @@ $is_pro = Pelican_Soft_Lock::is_pro();
             <button class="pl-btn"><?php esc_html_e( 'Filter', 'pelican' ); ?></button>
             <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-exports' ) ); ?>" class="pl-link"><?php esc_html_e( 'Reset', 'pelican' ); ?></a>
         </form>
+
+        <?php if ( $total > 0 ) : ?>
+            <form method="post" style="display:inline-block;margin:0 0 12px;" onsubmit="return confirm('<?php echo esc_js( __( 'Clear ALL export job rows? Files on disk are kept.', 'pelican' ) ); ?>');">
+                <?php wp_nonce_field( 'pl_clear_logs' ); ?>
+                <button type="submit" name="pl_clear_logs" class="pl-btn pl-btn-sm" style="color:#991b1b;">🗑 <?php esc_html_e( 'Clear all logs', 'pelican' ); ?></button>
+            </form>
+        <?php endif; ?>
 
         <?php if ( empty( $jobs ) ) : ?>
             <div class="pl-empty">

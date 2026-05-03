@@ -59,6 +59,16 @@
         renderActiveColumns( cols );
 
         if ( document.getElementById( 'pl-pf-schedule' ) ) document.getElementById( 'pl-pf-schedule' ).value = p.schedule || 'manual';
+        var em = document.getElementById( 'pl-pf-export-mode' );
+        if ( em ) {
+            em.value = p.export_mode || 'per_order';
+            toggleLineItemFill();
+            em.addEventListener( 'change', toggleLineItemFill );
+        }
+        var liFill = ( p.line_item_header_fill === 'first_only' ) ? 'first_only' : 'every';
+        document.querySelectorAll( 'input[name="pl-pf-line-item-fill"]' ).forEach( function ( r ) { r.checked = ( r.value === liFill ); } );
+        var pes = document.getElementById( 'pl-pf-post-export-status' );
+        if ( pes ) pes.value = p.post_export_status || '';
         if ( document.getElementById( 'pl-pf-auto-status' ) ) {
             var at = p.auto_trigger || {};
             document.getElementById( 'pl-pf-auto-status' ).value   = Array.isArray( at.on_status ) ? at.on_status.join( ', ' ) : ( at.on_status || '' );
@@ -304,6 +314,12 @@
 
     function closeEditor() { if ( ed ) ed.hidden = true; }
 
+    function toggleLineItemFill() {
+        var em = document.getElementById( 'pl-pf-export-mode' );
+        var wrap = document.getElementById( 'pl-pf-line-item-fill-wrap' );
+        if ( em && wrap ) wrap.style.display = ( em.value === 'per_line_item' ) ? '' : 'none';
+    }
+
     /* ────────── Destinations rows ────────── */
     function renderDestinations( dests ) {
         var box = document.getElementById( 'pl-pf-destinations' );
@@ -446,6 +462,14 @@
             destinations: readDestinations()
         };
         if ( document.getElementById( 'pl-pf-schedule' ) ) profile.schedule = document.getElementById( 'pl-pf-schedule' ).value;
+        if ( document.getElementById( 'pl-pf-export-mode' ) ) {
+            profile.export_mode = document.getElementById( 'pl-pf-export-mode' ).value;
+            var checked = document.querySelector( 'input[name="pl-pf-line-item-fill"]:checked' );
+            profile.line_item_header_fill = checked ? checked.value : 'every';
+        }
+        if ( document.getElementById( 'pl-pf-post-export-status' ) ) {
+            profile.post_export_status = document.getElementById( 'pl-pf-post-export-status' ).value;
+        }
         if ( document.getElementById( 'pl-pf-auto-status' ) ) {
             profile.auto_trigger = {
                 on_status: commaList( document.getElementById( 'pl-pf-auto-status' ).value ),

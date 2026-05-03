@@ -46,6 +46,7 @@ class Pelican_Engine {
         require_once $base . 'class-rest-api.php';
         require_once $base . 'class-webhooks.php';
         require_once $base . 'class-failure-notifier.php';
+        require_once $base . 'class-wc-status.php';
     }
     private function init_hooks() {
         add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
@@ -62,6 +63,7 @@ class Pelican_Engine {
         Pelican_Webhooks::init();
         Pelican_REST_API::init();
         Pelican_Failure_Notifier::init();
+        Pelican_WC_Status::init();
     }
     public function on_plugins_loaded() {
         load_plugin_textdomain( 'pelican', false, dirname( PELICAN_BASENAME ) . '/languages' );

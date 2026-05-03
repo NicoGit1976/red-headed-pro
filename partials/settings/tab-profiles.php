@@ -318,6 +318,40 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                     <button type="button" class="pl-btn pl-btn-sm" id="pl-pf-add-dest">+ <?php esc_html_e( 'Add destination', 'pelican' ); ?></button>
                 </fieldset>
 
+                <fieldset class="pl-field">
+                    <legend class="pl-field-lbl">📤 <?php esc_html_e( 'Export mode', 'pelican' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></legend>
+                    <label class="pl-field-stack">
+                        <span class="pl-field-sublabel"><?php esc_html_e( 'Row layout', 'pelican' ); ?></span>
+                        <select id="pl-pf-export-mode" <?php disabled( ! Pelican_Soft_Lock::is_available( 'line_item_export' ) ); ?>>
+                            <option value="per_order"><?php esc_html_e( 'One row per order', 'pelican' ); ?></option>
+                            <option value="per_line_item"><?php esc_html_e( 'One row per line item (product)', 'pelican' ); ?></option>
+                        </select>
+                    </label>
+                    <div class="pl-field-stack" id="pl-pf-line-item-fill-wrap" style="display:none;">
+                        <span class="pl-field-sublabel"><?php esc_html_e( 'Fill order columns…', 'pelican' ); ?></span>
+                        <label class="pl-checkbox" style="display:inline-flex;margin-right:14px;"><input type="radio" name="pl-pf-line-item-fill" value="every" checked /> <span><?php esc_html_e( 'on every line', 'pelican' ); ?></span></label>
+                        <label class="pl-checkbox" style="display:inline-flex;"><input type="radio" name="pl-pf-line-item-fill" value="first_only" /> <span><?php esc_html_e( 'first line only', 'pelican' ); ?></span></label>
+                    </div>
+                </fieldset>
+
+                <fieldset class="pl-field">
+                    <legend class="pl-field-lbl">🔄 <?php esc_html_e( 'Post-export action', 'pelican' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></legend>
+                    <label class="pl-field-stack">
+                        <span class="pl-field-sublabel"><?php esc_html_e( 'After a successful export, set order status to', 'pelican' ); ?></span>
+                        <select id="pl-pf-post-export-status" <?php disabled( ! Pelican_Soft_Lock::is_available( 'post_export_status' ) ); ?>>
+                            <option value=""><?php esc_html_e( '— do nothing —', 'pelican' ); ?></option>
+                            <?php
+                            $wc_statuses = function_exists( 'wc_get_order_statuses' ) ? wc_get_order_statuses() : array();
+                            foreach ( $wc_statuses as $slug => $label ) {
+                                $clean = preg_replace( '/^wc-/', '', $slug );
+                                echo '<option value="' . esc_attr( $clean ) . '">' . esc_html( $label ) . '</option>';
+                            }
+                            ?>
+                        </select>
+                        <small class="pl-muted"><?php esc_html_e( 'Useful to mark exported orders so they are skipped on the next run.', 'pelican' ); ?></small>
+                    </label>
+                </fieldset>
+
                 <?php if ( $is_pro ) : ?>
                 <fieldset class="pl-field">
                     <legend class="pl-field-lbl">⏰ <?php esc_html_e( 'Schedule', 'pelican' ); ?></legend>

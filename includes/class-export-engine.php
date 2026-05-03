@@ -32,9 +32,18 @@ class Pelican_Export_Engine {
             $columns = self::normalize_columns(
                 ! empty( $profile['columns'] ) ? (array) $profile['columns'] : self::default_columns()
             );
-            $rows    = array_map( function ( $order ) use ( $columns ) {
-                return self::map_row( $order, $columns );
-            }, $orders );
+            $mode = isset( $profile['export_mode'] ) ? sanitize_key( $profile['export_mode'] ) : 'per_order';
+            if ( $mode === 'per_line_item' && Pelican_Soft_Lock::is_available( 'line_item_export' ) ) {
+                $hf   = isset( $profile['line_item_header_fill'] ) && $profile['line_item_header_fill'] === 'first_only' ? 'first_only' : 'every';
+                $rows = array();
+                foreach ( $orders as $order ) {
+                    foreach ( self::map_line_item_rows( $order, $columns, $hf ) as $r ) $rows[] = $r;
+                }
+            } else {
+                $rows = array_map( function ( $order ) use ( $columns ) {
+                    return self::map_row( $order, $columns );
+                }, $orders );
+            }
 
             $format = isset( $profile['format'] ) ? sanitize_key( $profile['format'] ) : 'csv';
             $format = self::guard_format( $format );
@@ -258,6 +267,57 @@ class Pelican_Export_Engine {
         return $row;
     }
 
+    /**
+     * Expand one order to N rows — one per line item — for the per_line_item export mode.
+     * Header fill: 'every' (default) repeats order columns on every line; 'first_only' blanks them past row 1.
+     */
+    public static function map_line_item_rows( $order, $columns, $header_fill = 'every' ) {
+        $items = method_exists( $order, 'get_items' ) ? $order->get_items() : array();
+        if ( empty( $items ) ) return array( self::map_row( $order, $columns ) ); /* keep behavior consistent for orders without items */
+        $rows = array();
+        $idx = 0;
+        foreach ( $items as $item ) {
+            $row = array();
+            foreach ( $columns as $col ) {
+                $key = is_array( $col ) ? ( $col['key'] ?? '' ) : (string) $col;
+                if ( strpos( $key, 'line_' ) === 0 ) {
+                    $row[ $key ] = self::resolve_line_column( $order, $item, $key );
+                    continue;
+                }
+                if ( is_array( $col ) && strpos( $key, 'static:' ) === 0 ) {
+                    $row[ $key ] = isset( $col['value'] ) ? (string) $col['value'] : '';
+                    continue;
+                }
+                if ( is_array( $col ) && strpos( $key, 'calc:' ) === 0 ) {
+                    $row[ $key ] = self::resolve_calc( $order, isset( $col['expr'] ) ? (string) $col['expr'] : '' );
+                    continue;
+                }
+                if ( $idx > 0 && $header_fill === 'first_only' ) { $row[ $key ] = ''; continue; }
+                $row[ $key ] = self::resolve_column( $order, $key );
+            }
+            $rows[] = $row;
+            $idx++;
+        }
+        return $rows;
+    }
+
+    protected static function resolve_line_column( $order, $item, $key ) {
+        if ( ! is_a( $item, 'WC_Order_Item_Product' ) ) return '';
+        $product = $item->get_product();
+        switch ( $key ) {
+            case 'line_sku':       return $product ? (string) $product->get_sku() : '';
+            case 'line_name':      return (string) $item->get_name();
+            case 'line_qty':       return (int)    $item->get_quantity();
+            case 'line_price':     return $product ? (float) $product->get_price() : ( $item->get_quantity() ? (float) $item->get_subtotal() / max( 1, (int) $item->get_quantity() ) : 0 );
+            case 'line_total':     return (float) $item->get_total();
+            case 'line_subtotal':  return (float) $item->get_subtotal();
+            case 'line_tax':       return (float) $item->get_total_tax();
+            case 'line_product_id':return (int)   $item->get_product_id();
+            case 'line_variation': return $item->get_variation_id() ? (int) $item->get_variation_id() : '';
+        }
+        return '';
+    }
+
     /** Substitute {placeholder} tokens with order field values, then evaluate the math expression. */
     protected static function resolve_calc( $order, $expr ) {
         if ( $expr === '' ) return '';
@@ -331,6 +391,17 @@ class Pelican_Export_Engine {
             'shipping_city'       => array( 'label' => 'Shipping city',       'group' => 'shipping' ),
             'shipping_postcode'   => array( 'label' => 'Shipping postcode',   'group' => 'shipping' ),
             'shipping_country'    => array( 'label' => 'Shipping country',    'group' => 'shipping' ),
+
+            /* Line item — only emit values when export mode = "one row per line item". */
+            'line_sku'        => array( 'label' => 'Line — SKU',          'group' => 'line', 'hint' => 'per-line-item mode only' ),
+            'line_name'       => array( 'label' => 'Line — Product name', 'group' => 'line', 'hint' => 'per-line-item mode only' ),
+            'line_qty'        => array( 'label' => 'Line — Quantity',     'group' => 'line', 'hint' => 'per-line-item mode only' ),
+            'line_price'      => array( 'label' => 'Line — Unit price',   'group' => 'line', 'hint' => 'per-line-item mode only' ),
+            'line_subtotal'   => array( 'label' => 'Line — Subtotal',     'group' => 'line', 'hint' => 'per-line-item mode only' ),
+            'line_total'      => array( 'label' => 'Line — Total',        'group' => 'line', 'hint' => 'per-line-item mode only' ),
+            'line_tax'        => array( 'label' => 'Line — Tax',          'group' => 'line', 'hint' => 'per-line-item mode only' ),
+            'line_product_id' => array( 'label' => 'Line — Product ID',   'group' => 'line', 'hint' => 'per-line-item mode only' ),
+            'line_variation'  => array( 'label' => 'Line — Variation ID', 'group' => 'line', 'hint' => 'per-line-item mode only' ),
         );
         /* Allow third-party plugins to register custom columns. */
         return apply_filters( 'pelican_column_catalog', $cat );
@@ -343,6 +414,7 @@ class Pelican_Export_Engine {
             'payment'  => __( 'Payment & Shipping', 'pelican' ),
             'billing'  => __( 'Billing address',    'pelican' ),
             'shipping' => __( 'Shipping address',   'pelican' ),
+            'line'     => __( 'Line item',          'pelican' ),
             'meta'     => __( 'Custom meta',        'pelican' ),
         );
     }
