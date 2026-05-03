@@ -18,20 +18,20 @@ class Pelican_Admin {
         $cap = 'manage_woocommerce';
         /* No top-level menu. All pages register under parent=null with a
            shared in-page nav at the top (Dashboard / Exports / Settings). */
-        add_submenu_page( null, __( 'Red-Headed Dashboard', 'pelican' ), '', $cap, 'pelican',          array( $this, 'render_dashboard' ) );
-        add_submenu_page( null, __( 'Red-Headed Exports',   'pelican' ), '', $cap, 'pelican-exports',  array( $this, 'render_exports' ) );
-        add_submenu_page( null, __( 'Red-Headed Settings',  'pelican' ), '', $cap, 'pelican-settings', array( $this, 'render_settings' ) );
+        add_submenu_page( null, __( 'Red-Headed Dashboard', 'pelican' ), '', $cap, 'red-headed-pro',          array( $this, 'render_dashboard' ) );
+        add_submenu_page( null, __( 'Red-Headed Exports',   'pelican' ), '', $cap, 'red-headed-pro-exports',  array( $this, 'render_exports' ) );
+        add_submenu_page( null, __( 'Red-Headed Settings',  'pelican' ), '', $cap, 'red-headed-pro-settings', array( $this, 'render_settings' ) );
 
         /* Settings deep-links forced ?tab= */
         foreach ( array( 'profiles', 'destinations', 'cron', 'webhooks', 'general' ) as $tab ) {
             $self = $this;
-            add_submenu_page( null, ucfirst( $tab ), '', $cap, 'pelican-settings-' . $tab, function () use ( $self, $tab ) {
+            add_submenu_page( null, ucfirst( $tab ), '', $cap, 'red-headed-pro-settings-' . $tab, function () use ( $self, $tab ) {
                 $_GET['tab'] = $tab; $self->render_settings();
             } );
         }
     }
     public function enqueue_assets( $hook ) {
-        if ( strpos( (string) $hook, 'pelican' ) === false ) return;
+        if ( strpos( (string) $hook, 'red-headed-pro' ) === false ) return;
         wp_enqueue_style( 'pelican', PELICAN_URL . 'assets/css/pelican.css', array(), PELICAN_VERSION );
         wp_enqueue_script( 'pelican', PELICAN_URL . 'assets/js/pelican.js', array( 'jquery' ), PELICAN_VERSION, true );
         wp_localize_script( 'pelican', 'PelicanData', array(

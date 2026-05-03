@@ -3,7 +3,7 @@
  * Plugin Name:       Red-Headed Pro — Exports Orders Everywhere, Anytime
  * Plugin URI:        https://thelionfrog.com
  * Description:       Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog).
- * Version:           1.4.10
+ * Version:           1.4.11
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            The Lion Frog Team
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'PELICAN_VERSION', '1.4.10' );
+define( 'PELICAN_VERSION', '1.4.11' );
 define( 'PELICAN_EDITION',  'pro' );
 define( 'PELICAN_FILE',     __FILE__ );
 define( 'PELICAN_PATH',     plugin_dir_path( __FILE__ ) );
@@ -43,7 +43,7 @@ add_action( 'plugins_loaded', function () {
         $actions[] = [
             'label'       => __( 'Export orders', 'pelican' ),
             'icon'        => '📦',
-            'url'         => admin_url( 'admin.php?page=pelican-exports&action=new' ),
+            'url'         => admin_url( 'admin.php?page=red-headed-pro-exports&action=new' ),
             'tooltip'     => __( 'Run a manual order export', 'pelican' ),
             'plugin_slug' => 'red-headed-pro',
             'is_primary'  => true,
@@ -51,21 +51,21 @@ add_action( 'plugins_loaded', function () {
         $actions[] = [
             'label'       => __( 'Export history', 'pelican' ),
             'icon'        => '📋',
-            'url'         => admin_url( 'admin.php?page=pelican-exports&tab=history' ),
+            'url'         => admin_url( 'admin.php?page=red-headed-pro-exports&tab=history' ),
             'tooltip'     => __( 'View past export jobs and downloads', 'pelican' ),
             'plugin_slug' => 'red-headed-pro',
         ];
         $actions[] = [
             'label'       => __( 'Schedules', 'pelican' ),
             'icon'        => '⏰',
-            'url'         => admin_url( 'admin.php?page=pelican-settings-schedules' ),
+            'url'         => admin_url( 'admin.php?page=red-headed-pro-settings-cron' ),
             'tooltip'     => __( 'Configure automatic export schedules', 'pelican' ),
             'plugin_slug' => 'red-headed-pro',
         ];
         $actions[] = [
             'label'       => __( 'Settings', 'pelican' ),
             'icon'        => '⚙️',
-            'url'         => admin_url( 'admin.php?page=pelican-settings' ),
+            'url'         => admin_url( 'admin.php?page=red-headed-pro-settings' ),
             'tooltip'     => __( 'Open Red-Headed settings', 'pelican' ),
             'plugin_slug' => 'red-headed-pro',
         ];
@@ -90,10 +90,27 @@ add_action( 'plugins_loaded', function () {
         return $stats;
     } );
 }, 5 );
-/* Brand-rename — 301 from legacy admin URL to new (preserves bookmarks). */
+/* Brand-rename — 301 from legacy 'pelican*' admin URLs to new 'red-headed-pro*'
+   (preserves bookmarks). Covers dashboard + exports + settings + settings tabs. */
 add_action( 'admin_init', function () {
-    if ( isset( $_GET['page'] ) && $_GET['page'] === 'red-headed-pro' ) {
-        wp_safe_redirect( admin_url( 'admin.php?page=red-headed-pro' ), 301 );
+    if ( ! isset( $_GET['page'] ) ) return;
+    $p = (string) $_GET['page'];
+    $map = [
+        'pelican'                       => 'red-headed-pro',
+        'pelican-exports'               => 'red-headed-pro-exports',
+        'pelican-settings'              => 'red-headed-pro-settings',
+        'pelican-settings-profiles'     => 'red-headed-pro-settings-profiles',
+        'pelican-settings-destinations' => 'red-headed-pro-settings-destinations',
+        'pelican-settings-cron'         => 'red-headed-pro-settings-cron',
+        'pelican-settings-webhooks'     => 'red-headed-pro-settings-webhooks',
+        'pelican-settings-general'      => 'red-headed-pro-settings-general',
+        'pelican-settings-schedules'    => 'red-headed-pro-settings-cron',
+    ];
+    if ( isset( $map[ $p ] ) ) {
+        $url = add_query_arg( 'page', $map[ $p ], admin_url( 'admin.php' ) );
+        $extras = $_GET; unset( $extras['page'] );
+        if ( ! empty( $extras ) ) $url = add_query_arg( $extras, $url );
+        wp_safe_redirect( $url, 301 );
         exit;
     }
 }, 1 );
@@ -155,7 +172,7 @@ add_action( 'plugins_loaded', function () {
             Pelican_Engine::boot_admin();
         } else {
             FH_Soft_Lock::register( PELICAN_SLUG, array(
-                'page_slug'      => 'pelican',
+                'page_slug'      => PELICAN_SLUG, // v1.4.11 — match Hub placeholder slug to dedupe sidebar entry
                 'plugin_name'    => 'Red-Headed Pro',
                 'plugin_icon'    => PELICAN_URL . 'assets/img/icon.png',
                 'license_status' => $status,
