@@ -86,7 +86,19 @@ class Pelican_Export_Engine {
             $args['date_created'] = $from . '...' . $to;
         }
         if ( ! empty( $filters['payment_method'] ) ) $args['payment_method'] = sanitize_key( $filters['payment_method'] );
+        /* TEMP DEBUG v1.4.20 */
+        error_log( '[PELICAN-DEBUG] === EXPORT START ===' );
+        error_log( '[PELICAN-DEBUG] filters=' . wp_json_encode( $filters ) );
+        error_log( '[PELICAN-DEBUG] wc_args=' . wp_json_encode( $args ) );
         $orders = wc_get_orders( $args );
+        error_log( '[PELICAN-DEBUG] matched=' . count( $orders ) );
+        /* Diagnostic queries */
+        $any_completed = wc_get_orders( array( 'limit' => 5, 'status' => 'completed' ) );
+        error_log( '[PELICAN-DEBUG] orders with status=completed (no date filter): ' . count( $any_completed ) . ' — sample: ' . ( $any_completed ? '#' . $any_completed[0]->get_id() . ' status=' . $any_completed[0]->get_status() . ' date=' . $any_completed[0]->get_date_created()->format( 'Y-m-d H:i:s' ) : 'none' ) );
+        $any_status = wc_get_orders( array( 'limit' => 5, 'status' => 'any' ) );
+        foreach ( $any_status as $o ) {
+            error_log( '[PELICAN-DEBUG] DB sample: order #' . $o->get_id() . ' status=' . $o->get_status() . ' date_created=' . $o->get_date_created()->format( 'Y-m-d H:i:s' ) . ' total=' . $o->get_total() );
+        }
         if ( ! empty( $filters['shipping_method'] ) || ! empty( $filters['sku_pattern'] ) || ! empty( $filters['category'] ) ) {
             /* Pro filters — refined post-fetch */
             if ( ! Pelican_Soft_Lock::is_available( 'filters_advanced' ) ) {

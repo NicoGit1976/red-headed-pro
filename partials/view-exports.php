@@ -92,7 +92,12 @@ $is_pro = Pelican_Soft_Lock::is_pro();
                         <tr>
                             <td>#<?php echo (int) $j['id']; ?></td>
                             <td><span class="pl-pill"><?php echo esc_html( strtoupper( $j['format'] ) ); ?></span></td>
-                            <td><?php echo (int) $j['records_count']; ?></td>
+                            <td>
+                                <?php echo (int) $j['records_count']; ?>
+                                <?php if ( $j['status'] === 'success' && (int) $j['records_count'] === 0 ) : ?>
+                                    <span class="pl-pill pl-pill-warn" title="<?php esc_attr_e( 'No orders matched your filters. Check the profile settings (statuses, dates).', 'pelican' ); ?>" style="background:#fef3c7;color:#92400e;border-color:#fcd34d;font-size:10px;margin-left:4px;">⚠ <?php esc_html_e( 'check filters', 'pelican' ); ?></span>
+                                <?php endif; ?>
+                            </td>
                             <td><?php echo $j['file_size'] ? esc_html( size_format( (int) $j['file_size'] ) ) : '—'; ?></td>
                             <td class="pl-muted"><?php echo esc_html( $j['trigger_source'] ); ?></td>
                             <td class="pl-muted"><?php echo esc_html( $j['started_at'] ); ?></td>
@@ -101,8 +106,11 @@ $is_pro = Pelican_Soft_Lock::is_pro();
                                 <span class="pl-status pl-status-<?php echo esc_attr( $j['status'] ); ?>" <?php echo $err ? 'title="' . $err . '"' : ''; ?>><?php echo esc_html( $j['status'] ); ?></span>
                             </td>
                             <td>
+                                <?php if ( $j['file_path'] && (int) $j['records_count'] > 0 ) : ?>
+                                    <button type="button" class="pl-btn pl-btn-sm pl-btn-preview" data-job="<?php echo (int) $j['id']; ?>" title="<?php esc_attr_e( 'Preview the first rows of this export', 'pelican' ); ?>">👁</button>
+                                <?php endif; ?>
                                 <?php if ( $dl ) : ?>
-                                    <a href="<?php echo esc_url( $dl ); ?>" class="pl-btn pl-btn-sm">⬇</a>
+                                    <a href="<?php echo esc_url( $dl ); ?>" class="pl-btn pl-btn-sm" title="<?php esc_attr_e( 'Download the file', 'pelican' ); ?>">⬇</a>
                                 <?php endif; ?>
                                 <?php if ( $j['profile_id'] ) : ?>
                                     <button type="button" class="pl-btn pl-btn-sm pl-btn-rerun" data-profile="<?php echo (int) $j['profile_id']; ?>" title="<?php esc_attr_e( 'Re-run profile', 'pelican' ); ?>">↻</button>

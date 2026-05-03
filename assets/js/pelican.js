@@ -352,11 +352,66 @@
         ajax( 'pelican_run_profile', { id: id } )
             .done( function ( r ) {
                 if ( r && r.success ) {
-                    alert( '✓ Export started — job #' + r.data.job_id );
+                    var msg = '✓ Export complete — job #' + r.data.job_id + ' · ' + ( r.data.records || 0 ) + ' rows.';
+                    if ( r.data.warning ) {
+                        msg += '\n\n⚠ ' + r.data.warning;
+                    }
+                    alert( msg );
                     window.location.href = '?page=red-headed-pro-exports';
                 } else { alert( ( r && r.data && r.data.message ) || 'Run failed' ); }
             } )
             .fail( function () { alert( 'Network error' ); } );
+    }
+
+    /* v1.4.20 — Preview modal helpers */
+    function showPreviewModal( title, data ) {
+        var existing = document.getElementById( 'pl-preview-modal' );
+        if ( existing ) existing.remove();
+        var html = '<div id="pl-preview-modal" class="pl-modal-overlay" aria-hidden="false" style="display:flex;">' +
+            '<div class="pl-modal" role="dialog" aria-modal="true">' +
+                '<div class="pl-modal-head">' +
+                    '<h3 style="margin:0;flex:1;">' + title + '</h3>' +
+                    '<button type="button" class="pl-modal-close" id="pl-preview-close" aria-label="Close">×</button>' +
+                '</div>' +
+                '<div class="pl-modal-body" id="pl-preview-body"></div>' +
+                '<div class="pl-modal-foot"><button type="button" class="pl-btn pl-btn-primary" id="pl-preview-done">Close</button></div>' +
+            '</div></div>';
+        document.body.insertAdjacentHTML( 'beforeend', html );
+        var body = document.getElementById( 'pl-preview-body' );
+        var content = '';
+        if ( data.unsupported ) {
+            content = '<p class="pl-muted">Format <code>' + data.format + '</code> can\'t be previewed inline. Click Download to inspect.</p>';
+        } else if ( ! data.rows || data.rows.length === 0 ) {
+            content = '<div class="pl-empty"><div class="pl-empty-icon">⚠</div><p><strong>No matching orders.</strong></p>' +
+                '<p class="pl-muted">Check the profile filters: status list, date range, payment method, etc. Make sure your orders fall within the date_from / date_to window and match the selected statuses.</p></div>';
+        } else {
+            content = '<p class="pl-muted">Showing ' + data.rows.length + ' of ' + ( data.count || data.total || data.rows.length ) + ' matching rows.</p>' +
+                '<div style="overflow-x:auto;"><table class="pl-table pl-table-zebra" style="font-size:12px;">' +
+                '<thead><tr>' + ( data.columns || [] ).map( function ( c ) { return '<th>' + escHtml( c ) + '</th>'; } ).join( '' ) + '</tr></thead>' +
+                '<tbody>' + data.rows.map( function ( row ) {
+                    return '<tr>' + ( row || [] ).map( function ( v ) { return '<td>' + escHtml( v == null ? '' : String( v ) ) + '</td>'; } ).join( '' ) + '</tr>';
+                } ).join( '' ) + '</tbody></table></div>';
+        }
+        body.innerHTML = content;
+        var close = function () { var m = document.getElementById( 'pl-preview-modal' ); if ( m ) m.remove(); };
+        document.getElementById( 'pl-preview-close' ).addEventListener( 'click', close );
+        document.getElementById( 'pl-preview-done' ).addEventListener( 'click', close );
+        document.getElementById( 'pl-preview-modal' ).addEventListener( 'click', function ( e ) { if ( e.target.id === 'pl-preview-modal' ) close(); } );
+    }
+    function escHtml( s ) { return String( s ).replace( /[&<>"']/g, function ( c ) { return ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]; } ); }
+    function previewProfile( id ) {
+        ajax( 'pelican_preview_profile', { id: id } )
+            .done( function ( r ) {
+                if ( r && r.success ) showPreviewModal( '👁 Preview profile #' + id, r.data );
+                else alert( ( r && r.data && r.data.message ) || 'Preview failed' );
+            } );
+    }
+    function previewJob( id ) {
+        ajax( 'pelican_preview_job', { id: id } )
+            .done( function ( r ) {
+                if ( r && r.success ) showPreviewModal( '👁 Preview export #' + id, r.data );
+                else alert( ( r && r.data && r.data.message ) || 'Preview failed' );
+            } );
     }
 
     /* ────────── Boot ──────────
@@ -418,6 +473,13 @@
         } );
         document.querySelectorAll( '.pl-btn-run, .pl-btn-rerun' ).forEach( function ( b ) {
             b.addEventListener( 'click', function () { runProfile( parseInt( this.dataset.id || this.dataset.profile, 10 ) ); } );
+        } );
+        /* v1.4.20 — Preview profile (dry-run) + Preview job (read first 10 rows of file). */
+        document.querySelectorAll( '.pl-btn-preview-profile' ).forEach( function ( b ) {
+            b.addEventListener( 'click', function () { previewProfile( parseInt( this.dataset.id, 10 ) ); } );
+        } );
+        document.querySelectorAll( '.pl-btn-preview' ).forEach( function ( b ) {
+            b.addEventListener( 'click', function () { previewJob( parseInt( this.dataset.job, 10 ) ); } );
         } );
     }
     if ( document.readyState === 'loading' ) {

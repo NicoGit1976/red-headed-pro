@@ -54,6 +54,7 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                         <td><?php echo esc_html( $p['schedule'] ?: 'manual' ); ?></td>
                         <td><span class="pl-status pl-status-<?php echo esc_attr( $p['status'] ); ?>"><?php echo esc_html( $p['status'] ); ?></span></td>
                         <td>
+                            <button type="button" class="pl-btn pl-btn-sm pl-btn-preview-profile" data-id="<?php echo (int) $p['id']; ?>" title="<?php esc_attr_e( 'Preview which orders match this profile', 'pelican' ); ?>">👁</button>
                             <button type="button" class="pl-btn pl-btn-sm pl-btn-run" data-id="<?php echo (int) $p['id']; ?>">▶ <?php esc_html_e( 'Run', 'pelican' ); ?></button>
                             <button type="button" class="pl-btn pl-btn-sm pl-btn-edit" data-id="<?php echo (int) $p['id']; ?>">✎</button>
                             <button type="button" class="pl-btn pl-btn-sm pl-btn-danger pl-btn-del" data-id="<?php echo (int) $p['id']; ?>">×</button>

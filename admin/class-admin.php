@@ -13,6 +13,8 @@ class Pelican_Admin {
            the wrong hookname (admin_page_* instead of froggy-hub_page_*) → ?page=
            lookup fails → "no permission". Must fire AFTER prio 98. */
         add_action( 'admin_menu', array( $this, 'register_menu' ), 110 );
+        add_action( 'wp_ajax_pelican_preview_profile', array( $this, 'ajax_preview_profile' ) );
+        add_action( 'wp_ajax_pelican_preview_job',     array( $this, 'ajax_preview_job' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
         add_action( 'wp_ajax_pelican_save_profile', array( $this, 'ajax_save_profile' ) );
         add_action( 'wp_ajax_pelican_delete_profile', array( $this, 'ajax_delete_profile' ) );
@@ -84,6 +86,85 @@ class Pelican_Admin {
         if ( ! $p ) wp_send_json_error( array( 'message' => 'Profile not found.' ) );
         $job = Pelican_Export_Engine::run( $p, 'manual' );
         if ( is_wp_error( $job ) ) wp_send_json_error( array( 'message' => $job->get_error_message() ) );
-        wp_send_json_success( array( 'job_id' => $job ) );
+        /* v1.4.20 — surface a warning when the export ran but matched 0 orders. */
+        global $wpdb;
+        $row = $wpdb->get_row( $wpdb->prepare( "SELECT records_count FROM {$wpdb->prefix}pl_jobs WHERE id = %d", $job ), ARRAY_A );
+        $payload = array( 'job_id' => $job, 'records' => isset( $row['records_count'] ) ? (int) $row['records_count'] : 0 );
+        if ( $payload['records'] === 0 ) {
+            $payload['warning'] = __( 'Export ran but no orders matched your filters. Check the profile settings (statuses, date range).', 'pelican' );
+        }
+        wp_send_json_success( $payload );
+    }
+
+    /* v1.4.20 — Preview profile: dry-run the filters and return the first 5 mapped rows
+       (no job created, no file saved). Lets the user check their filters before running. */
+    public function ajax_preview_profile() {
+        check_ajax_referer( 'pelican', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
+        $id = (int) ( $_POST['id'] ?? 0 );
+        $p  = Pelican_Profile_Repo::get( $id );
+        if ( ! $p ) wp_send_json_error( array( 'message' => 'Profile not found.' ) );
+        $orders  = Pelican_Export_Engine::fetch_orders( isset( $p['filters'] ) ? (array) $p['filters'] : array() );
+        $columns = Pelican_Export_Engine::normalize_columns( ! empty( $p['columns'] ) ? (array) $p['columns'] : Pelican_Export_Engine::default_columns() );
+        $sample  = array_slice( $orders, 0, 5 );
+        $rows    = array_map( function ( $o ) use ( $columns ) { return Pelican_Export_Engine::map_row( $o, $columns ); }, $sample );
+        wp_send_json_success( array(
+            'count'   => count( $orders ),
+            'columns' => array_map( function ( $c ) { return $c['label'] ?? ( $c['key'] ?? '' ); }, $columns ),
+            'rows'    => $rows,
+        ) );
+    }
+
+    /* v1.4.20 — Preview job: read the first ~10 lines of the export file (CSV/JSON only;
+       binary formats fall back to "open file directly"). */
+    public function ajax_preview_job() {
+        check_ajax_referer( 'pelican', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
+        $jid = (int) ( $_POST['id'] ?? 0 );
+        global $wpdb;
+        $j = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}pl_jobs WHERE id = %d", $jid ), ARRAY_A );
+        if ( ! $j || empty( $j['file_path'] ) ) wp_send_json_error( array( 'message' => 'Job or file not found.' ) );
+        $u   = wp_upload_dir();
+        $abs = trailingslashit( $u['basedir'] ) . ltrim( $j['file_path'], '/\\' );
+        if ( ! file_exists( $abs ) ) wp_send_json_error( array( 'message' => 'File missing on disk.' ) );
+        $format = strtolower( $j['format'] );
+        $rows = array(); $columns = array();
+        if ( in_array( $format, array( 'csv', 'tsv' ), true ) ) {
+            $sep = $format === 'tsv' ? "\t" : ',';
+            if ( ( $fh = fopen( $abs, 'r' ) ) !== false ) {
+                $header = fgetcsv( $fh, 0, $sep );
+                if ( is_array( $header ) ) $columns = $header;
+                $count = 0;
+                while ( ( $r = fgetcsv( $fh, 0, $sep ) ) !== false && $count < 10 ) {
+                    $rows[] = $r; $count++;
+                }
+                fclose( $fh );
+            }
+        } elseif ( $format === 'json' || $format === 'ndjson' ) {
+            $fh = fopen( $abs, 'r' ); $count = 0;
+            if ( $fh ) {
+                if ( $format === 'json' ) {
+                    $raw = stream_get_contents( $fh ); $data = json_decode( $raw, true );
+                    $sample = is_array( $data ) ? array_slice( $data, 0, 10 ) : array();
+                    if ( $sample && is_array( $sample[0] ) ) $columns = array_keys( $sample[0] );
+                    foreach ( $sample as $r ) $rows[] = array_values( (array) $r );
+                } else {
+                    while ( ! feof( $fh ) && $count < 10 ) {
+                        $line = trim( fgets( $fh ) ); if ( $line === '' ) continue;
+                        $r = json_decode( $line, true );
+                        if ( $count === 0 && is_array( $r ) ) $columns = array_keys( $r );
+                        $rows[] = array_values( (array) $r ); $count++;
+                    }
+                }
+                fclose( $fh );
+            }
+        } else {
+            wp_send_json_success( array( 'unsupported' => true, 'format' => $format ) );
+        }
+        wp_send_json_success( array(
+            'columns' => $columns,
+            'rows'    => $rows,
+            'total'   => (int) $j['records_count'],
+        ) );
     }
 }
