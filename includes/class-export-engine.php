@@ -105,19 +105,7 @@ class Pelican_Export_Engine {
             $args['date_created'] = $from . '...' . $to;
         }
         if ( ! empty( $filters['payment_method'] ) ) $args['payment_method'] = sanitize_key( $filters['payment_method'] );
-        /* TEMP DEBUG v1.4.20 */
-        error_log( '[PELICAN-DEBUG] === EXPORT START ===' );
-        error_log( '[PELICAN-DEBUG] filters=' . wp_json_encode( $filters ) );
-        error_log( '[PELICAN-DEBUG] wc_args=' . wp_json_encode( $args ) );
         $orders = wc_get_orders( $args );
-        error_log( '[PELICAN-DEBUG] matched=' . count( $orders ) );
-        /* Diagnostic queries */
-        $any_completed = wc_get_orders( array( 'limit' => 5, 'status' => 'completed' ) );
-        error_log( '[PELICAN-DEBUG] orders with status=completed (no date filter): ' . count( $any_completed ) . ' — sample: ' . ( $any_completed ? '#' . $any_completed[0]->get_id() . ' status=' . $any_completed[0]->get_status() . ' date=' . $any_completed[0]->get_date_created()->format( 'Y-m-d H:i:s' ) : 'none' ) );
-        $any_status = wc_get_orders( array( 'limit' => 5, 'status' => 'any' ) );
-        foreach ( $any_status as $o ) {
-            error_log( '[PELICAN-DEBUG] DB sample: order #' . $o->get_id() . ' status=' . $o->get_status() . ' date_created=' . $o->get_date_created()->format( 'Y-m-d H:i:s' ) . ' total=' . $o->get_total() );
-        }
         if ( ! empty( $filters['shipping_method'] ) || ! empty( $filters['sku_pattern'] ) || ! empty( $filters['category'] ) ) {
             /* Pro filters — refined post-fetch */
             if ( ! Pelican_Soft_Lock::is_available( 'filters_advanced' ) ) {
@@ -359,6 +347,23 @@ class Pelican_Export_Engine {
             if ( $i > 1 && ! $multi_ok ) break; /* Lite caps to 1 destination per run */
             $ok = Pelican_Destination_Dispatcher::ship( $dest, $file, $profile, $format );
             $delivered[] = array( 'destination' => $dest, 'ok' => $ok );
+            /* v1.4.25 — log delivery result so the user can debug silent failures.
+               The job stays "success" because the file IS built; but each destination
+               outcome is now visible in debug.log + we surface the error in the
+               job's error_message so it appears in the Exports list tooltip. */
+            if ( is_wp_error( $ok ) ) {
+                $msg = '[Pelican] destination ' . ( $dest['type'] ?? '?' ) . ' failed: ' . $ok->get_error_code() . ' — ' . $ok->get_error_message();
+                error_log( $msg );
+                global $wpdb;
+                $jid = isset( $profile['_job_id'] ) ? (int) $profile['_job_id'] : 0;
+                if ( $jid ) {
+                    $existing = (string) $wpdb->get_var( $wpdb->prepare( "SELECT error_message FROM {$wpdb->prefix}pl_jobs WHERE id = %d", $jid ) );
+                    $append = trim( $existing . "\n" . $msg );
+                    $wpdb->update( "{$wpdb->prefix}pl_jobs", array( 'error_message' => substr( $append, 0, 1500 ) ), array( 'id' => $jid ) );
+                }
+            } else {
+                error_log( '[Pelican] destination ' . ( $dest['type'] ?? '?' ) . ' OK' );
+            }
         }
         return $delivered;
     }
