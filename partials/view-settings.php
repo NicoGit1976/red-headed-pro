@@ -21,7 +21,7 @@ if ( ! isset( $tabs[ $active ] ) ) $active = 'profiles';
         FH_UI_Helper::render_header(
             'Red Headed Pro',
             __( 'Exports Orders Everywhere, Anytime', 'pelican' ),
-            'mascot-redheaded-v1.svg',
+            'red-headed-pro.webp',
             array(),
             'red-headed-pro'
         );

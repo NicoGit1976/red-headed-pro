@@ -62,7 +62,7 @@ if ( isset( $_POST['pl_clear_logs'] ) && check_admin_referer( 'pl_clear_logs' ) 
         FH_UI_Helper::render_header(
             'Red Headed Pro',
             __( 'Exports Orders Everywhere, Anytime', 'pelican' ),
-            'mascot-redheaded-v1.svg',
+            'red-headed-pro.webp',
             array(),
             'red-headed-pro'
         );
