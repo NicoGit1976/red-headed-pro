@@ -16,6 +16,7 @@ if ( isset( $_POST['pl_general_save'] ) && check_admin_referer( 'pl_general_save
     update_option( 'pelican_notify_recipients',         sanitize_text_field( $_POST['notify_recipients']     ?? '' ) );
     update_option( 'pelican_notify_subject',            sanitize_text_field( $_POST['notify_subject']        ?? '' ) );
     update_option( 'pelican_register_wc_status_exported', ! empty( $_POST['register_wc_status_exported'] ) ? 1 : 0 );
+    update_option( 'pelican_uninstall_clean', ! empty( $_POST['uninstall_clean'] ) ? 1 : 0 );
     echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( '✓ Settings saved.', 'pelican' ) . '</p></div>';
 }
 
@@ -100,6 +101,17 @@ if ( isset( $_POST['pl_purge_jobs'] ) && check_admin_referer( 'pl_purge_jobs' ) 
                 <span class="pl-field-lbl"><?php esc_html_e( 'Body', 'pelican' ); ?></span>
                 <textarea name="email_body" rows="5"><?php echo esc_textarea( get_option( 'pelican_email_body', "Hi,\n\nYour Red-Headed export is ready: {{filename}} ({{records}} orders).\n\n— The Lion Frog" ) ); ?></textarea>
             </label>
+        </fieldset>
+
+        <fieldset class="pl-card">
+            <legend class="pl-card-title">🧹 <?php esc_html_e( 'Data hygiene', 'pelican' ); ?></legend>
+            <label class="pl-checkbox">
+                <input type="checkbox" name="uninstall_clean" value="1" <?php checked( (int) get_option( 'pelican_uninstall_clean', 1 ), 1 ); ?> />
+                <span><?php esc_html_e( 'Clean on uninstall', 'pelican' ); ?></span>
+            </label>
+            <p class="pl-muted">
+                <?php esc_html_e( 'When ON (default), deleting Red-Headed from Plugins removes its options (settings, webhooks, cron flags), the pl_profiles + pl_jobs tables and the pelican_cron_tick cron. Tables are preserved if the sister edition (Pro/Lite) is still installed. Turn OFF if you plan to reinstall later.', 'pelican' ); ?>
+            </p>
         </fieldset>
 
         <p>

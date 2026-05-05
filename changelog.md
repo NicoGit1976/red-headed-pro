@@ -1,4 +1,15 @@
-# Harlequin — Changelog
+# Red-Headed Pro — Changelog
+
+## 1.4.36 — 2026-05-05
+
+### Added
+- `uninstall.php` — full data cleanup when the plugin is deleted (default ON).
+  Wipes `pelican_*` options, the `pelican_last_run_*` per-profile flags and
+  the `pelican_cron_tick` cron. Drops the `pl_profiles` and `pl_jobs`
+  tables only if the sister edition (`red-headed-lite`) is no longer
+  installed (so cross-edition switches preserve history).
+- "Clean on uninstall" toggle in Settings > General > Data hygiene
+  (default ON).
 
 ## 1.4.0 — 2026-04-30
 
