@@ -3,7 +3,7 @@
  * Plugin Name:       Red-Headed Pro — Exports Orders Everywhere, Anytime
  * Plugin URI:        https://thelionfrog.com
  * Description:       Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog).
- * Version:           1.4.36
+ * Version:           1.4.37
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            The Lion Frog Team
@@ -79,7 +79,7 @@ add_action( 'plugins_loaded', function () {
         $jobs_t     = $wpdb->prefix . 'pl_jobs';
         $profiles_t = $wpdb->prefix . 'pl_profiles';
         $week_ago   = date( 'Y-m-d H:i:s', strtotime( '-7 days' ) );
-        $week       = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $jobs_t WHERE created_at >= %s", $week_ago ) );
+        $week       = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $jobs_t WHERE started_at >= %s", $week_ago ) );
         $profiles   = (int) $wpdb->get_var( "SELECT COUNT(*) FROM $profiles_t" );
         $kpis = [
             [ 'icon' => '📦', 'value' => (string) $week,     'label' => __( 'last 7 days', 'pelican' ), 'tone' => 'success' ],
