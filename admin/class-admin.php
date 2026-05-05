@@ -33,7 +33,7 @@ class Pelican_Admin {
            and skip creating a duplicate placeholder → no double-entry, no
            placeholder→Pelican redirect loop. Other slugs stay headless (parent=null)
            because they're routed-to via in-page nav, not the sidebar. */
-        add_submenu_page( 'froggy-hub', __( 'Red Headed Dashboard', 'pelican' ), 'Red Headed (Pro)', $cap, 'red-headed-pro', array( $this, 'render_dashboard' ) );
+        add_submenu_page( 'froggy-hub', __( 'Red Headed Dashboard', 'pelican' ), 'Red Headed', $cap, 'red-headed-pro', array( $this, 'render_dashboard' ) );
         add_submenu_page( null, __( 'Red Headed Exports',   'pelican' ), '', $cap, 'red-headed-pro-exports',  array( $this, 'render_exports' ) );
         add_submenu_page( null, __( 'Red Headed Settings',  'pelican' ), '', $cap, 'red-headed-pro-settings', array( $this, 'render_settings' ) );
 
