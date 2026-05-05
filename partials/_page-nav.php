@@ -13,7 +13,7 @@ $_pl_pages = array(
 $_pl_current = isset( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : 'red-headed-pro';
 if ( strpos( $_pl_current, 'red-headed-pro-settings' ) === 0 ) $_pl_current = 'red-headed-pro-settings';
 ?>
-<nav class="pl-page-nav" role="navigation" aria-label="Red-Headed sections">
+<nav class="pl-page-nav" role="navigation" aria-label="Red Headed sections">
     <?php foreach ( $_pl_pages as $slug => $meta ) :
         $url = admin_url( 'admin.php?page=' . $slug );
         $is_cur = ( $slug === $_pl_current );

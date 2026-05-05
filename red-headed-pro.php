@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name:       Red-Headed Pro — Exports Orders Everywhere, Anytime
+ * Plugin Name:       Red Headed (Pro) — Orders Export Manager
  * Plugin URI:        https://thelionfrog.com
  * Description:       Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog).
- * Version:           1.4.37
+ * Version:           1.4.38
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            The Lion Frog Team
@@ -35,7 +35,7 @@ add_action( 'plugins_loaded', function () {
         FH_Plugin_Updater::register( [
             'slug'        => 'red-headed-pro',
             'plugin_file' => __FILE__,
-            'name'        => 'Red-Headed Pro',
+            'name'        => 'Red Headed Pro',
             'icon_url'    => PELICAN_URL . 'assets/img/mascot-redheaded-v1.svg',
         ] );
     }
@@ -173,8 +173,8 @@ add_action( 'admin_notices', function () {
     if ( ! get_transient( 'pelican_lite_was_deactivated' ) ) return;
     delete_transient( 'pelican_lite_was_deactivated' );
     echo '<div class="notice notice-success is-dismissible" style="border-left-color:#10B981;">';
-    echo '<p><strong>🃏 ' . esc_html__( 'Red-Headed Pro activated.', 'pelican' ) . '</strong></p>';
-    echo '<p>' . esc_html__( 'Red-Headed Lite has been deactivated automatically. All your data and settings have been preserved.', 'pelican' ) . '</p>';
+    echo '<p><strong>🃏 ' . esc_html__( 'Red Headed Pro activated.', 'pelican' ) . '</strong></p>';
+    echo '<p>' . esc_html__( 'Red Headed Lite has been deactivated automatically. All your data and settings have been preserved.', 'pelican' ) . '</p>';
     echo '</div>';
 } );
 
@@ -195,7 +195,7 @@ add_action( 'plugins_loaded', function () {
         } else {
             FH_Soft_Lock::register( PELICAN_SLUG, array(
                 'page_slug'      => PELICAN_SLUG, // v1.4.11 — match Hub placeholder slug to dedupe sidebar entry
-                'plugin_name'    => 'Red-Headed (Pro)',
+                'plugin_name'    => 'Red Headed (Pro)',
                 'plugin_icon'    => PELICAN_URL . 'assets/img/icon.png',
                 'license_status' => $status,
                 'features'       => array(

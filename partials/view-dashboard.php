@@ -36,7 +36,7 @@ $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $
        chrome — `FH_UI_Helper::render_header()` is the single source. */
     if ( class_exists( 'FH_UI_Helper' ) ) {
         FH_UI_Helper::render_header(
-            'Red-Headed Pro',
+            'Red Headed Pro',
             __( 'Exports Orders Everywhere, Anytime', 'pelican' ),
             'mascot-redheaded-v1.svg',
             array(),

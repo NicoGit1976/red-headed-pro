@@ -18,7 +18,7 @@ class Pelican_Hub_Registry {
     public static function register( $ecosystem ) {
         if ( ! is_array( $ecosystem ) ) $ecosystem = array();
         $ecosystem['pelican'] = array(
-            'title' => 'Red-Headed Pro',
+            'title' => 'Red Headed Pro',
         'baseline' => 'Exports Orders Everywhere, Anytime',
             'desc'  => __( 'Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format, multi-destination, cron + status-driven triggers. Mascot: Red-Headed Poison Frog.', 'pelican' ),
             'lite'  => array(

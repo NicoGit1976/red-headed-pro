@@ -1,26 +1,26 @@
 {
-  "slug": "red-headed-pro",
-  "title": "Red-Headed Pro",
-  "display_name": "Red-Headed Pro",
-  "subtitle": "Exports Orders Everywhere, Anytime",
-  "baseline": "Exports Orders Everywhere, Anytime",
-  "tagline": "Exports orders everywhere, anytime.",
-  "mascot": "redheaded",
-  "edition": "pro",
-  "version": "1.4.36",
-  "license_required": true,
-  "shop_url": "https://thelionfrog.com/products/plugins/woo-order-pro",
-  "lite_slug": "woo-order-lite",
-  "icon": "\ud83c\udccf",
-  "category": "ecommerce-export",
-  "requires": {
-    "wp": "6.2",
-    "php": "8.1",
-    "wc": "8.0"
-  },
-  "depends_on": [
-    "the-froggy-hub",
-    "woocommerce"
-  ],
-  "name": "woo-order-pro"
+    "slug": "red-headed-pro",
+    "title": "Red Headed Pro",
+    "display_name": "Red Headed Pro",
+    "subtitle": "Exports Orders Everywhere, Anytime",
+    "baseline": "Orders Export Manager",
+    "tagline": "Orders Export Manager",
+    "mascot": "redheaded",
+    "edition": "pro",
+    "version": "1.4.38",
+    "license_required": true,
+    "shop_url": "https://thelionfrog.com/products/plugins/woo-order-pro",
+    "lite_slug": "woo-order-lite",
+    "icon": "🃏",
+    "category": "ecommerce-export",
+    "requires": {
+        "wp": "6.2",
+        "php": "8.1",
+        "wc": "8.0"
+    },
+    "depends_on": [
+        "the-froggy-hub",
+        "woocommerce"
+    ],
+    "name": "Red Headed (Pro)"
 }
