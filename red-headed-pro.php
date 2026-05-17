@@ -3,9 +3,9 @@
  * Plugin Name:       Red Headed (Pro) — Orders Export Manager
  * Plugin URI:        https://thelionfrog.com
  * Description:       Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog).
- * Version:           1.4.42
+ * Version:           1.4.44
  * Requires at least: 6.0
- * Requires PHP:      7.4
+ * Requires PHP:      8.0
  * Author:            The Lion Frog Team
  * Author URI:        https://thelionfrog.com
  * License:           GPL-2.0-or-later
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'PELICAN_VERSION', '1.4.42' );
+define( 'PELICAN_VERSION', '1.4.44' );
 define( 'PELICAN_EDITION',  'pro' );
 define( 'PELICAN_FILE',     __FILE__ );
 define( 'PELICAN_PATH',     plugin_dir_path( __FILE__ ) );
@@ -200,16 +200,22 @@ add_action( 'plugins_loaded', function () {
                 'plugin_icon'    => PELICAN_URL . 'assets/img/icon.png',
                 'license_status' => $status,
                 'features'       => array(
-                    __( 'Bulk + manual exports of WooCommerce orders', 'pelican' ),
-                    __( '6 formats: CSV · XLSX · JSON · NDJSON · XML · TSV', 'pelican' ),
-                    __( 'Multi-destinations: Email · SFTP · Google Drive · Download · Local ZIP · REST', 'pelican' ),
-                    __( 'Cron triggers: hourly · twice-daily · daily · weekly · custom', 'pelican' ),
-                    __( 'Auto-trigger on order status change (rules engine)', 'pelican' ),
-                    __( 'Advanced filters: dates · status · payment · shipping · category · SKU · customer role', 'pelican' ),
-                    __( 'Field mapper: pick columns, rename headers, transform values', 'pelican' ),
+                    __( '6 formats: CSV · TSV · JSON · NDJSON · XML · XLSX', 'pelican' ),
+                    __( 'Unlimited email delivery (no 30/24h cap)', 'pelican' ),
+                    __( '6 destinations: Email · SFTP · Google Drive · REST · Local ZIP · Direct download', 'pelican' ),
+                    __( 'Unlimited export profiles', 'pelican' ),
+                    __( 'Multi-destinations per profile (simultaneous fan-out)', 'pelican' ),
+                    __( 'Cron schedules: hourly · daily · weekly · custom interval', 'pelican' ),
+                    __( 'Auto-trigger on WC order status change (dedupe + min-total threshold)', 'pelican' ),
+                    __( 'Advanced filters: date range · payment · category · SKU · min/max amount', 'pelican' ),
+                    __( 'Visual field mapper (drag-and-drop column picker)', 'pelican' ),
+                    __( 'Computed columns (formulas across order fields)', 'pelican' ),
+                    __( 'Line-item export mode (one row per product)', 'pelican' ),
+                    __( 'Post-export status change (auto-set order status after export)', 'pelican' ),
+                    __( 'Custom WC statuses support (non-native order statuses)', 'pelican' ),
+                    __( 'REST API endpoints (/pelican/v1/profiles, /jobs)', 'pelican' ),
+                    __( 'HMAC SHA-256 signed webhooks with retry x3 exponential', 'pelican' ),
                     __( 'PolyLang & WPML compatibility', 'pelican' ),
-                    __( 'REST API + Webhooks (Zapier / n8n / your CRM)', 'pelican' ),
-                    __( 'HPOS compatible · Hub auto-register · Lion Frog DNA UI', 'pelican' ),
                 ),
                 'parent_slug' => 'froggy-hub',
                 'shop_url'    => 'https://thelionfrog.com/products/plugins/woo-order-pro',
