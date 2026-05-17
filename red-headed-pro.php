@@ -3,7 +3,7 @@
  * Plugin Name:       Red Headed (Pro) — Orders Export Manager
  * Plugin URI:        https://thelionfrog.com
  * Description:       Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog).
- * Version:           1.4.41
+ * Version:           1.4.42
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            The Lion Frog Team
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'PELICAN_VERSION', '1.4.41' );
+define( 'PELICAN_VERSION', '1.4.42' );
 define( 'PELICAN_EDITION',  'pro' );
 define( 'PELICAN_FILE',     __FILE__ );
 define( 'PELICAN_PATH',     plugin_dir_path( __FILE__ ) );
@@ -157,8 +157,9 @@ register_activation_hook( __FILE__, function () {
     if ( ! function_exists( 'is_plugin_active' ) ) {
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
     }
-    if ( is_plugin_active( 'woo-order-lite/woo-order-lite.php' ) ) {
-        deactivate_plugins( 'woo-order-lite/woo-order-lite.php' );
+    /* v1.4.42 — path post-rebrand (was legacy 'woo-order-lite/...'). */
+    if ( is_plugin_active( 'red-headed-lite/red-headed-lite.php' ) ) {
+        deactivate_plugins( 'red-headed-lite/red-headed-lite.php' );
         set_transient( 'pelican_lite_was_deactivated', 1, 30 );
     }
     require_once PELICAN_PATH . 'includes/class-installer.php';
