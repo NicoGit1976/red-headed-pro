@@ -112,30 +112,9 @@ add_action( 'admin_init', function () {
     exit;
 }, 1 );
 
-/* Brand-rename — 301 from legacy 'pelican*' admin URLs to new 'red-headed-pro*'
-   (preserves bookmarks). Covers dashboard + exports + settings + settings tabs. */
-add_action( 'admin_init', function () {
-    if ( ! isset( $_GET['page'] ) ) return;
-    $p = (string) $_GET['page'];
-    $map = [
-        'pelican'                       => 'red-headed-pro',
-        'pelican-exports'               => 'red-headed-pro-exports',
-        'pelican-settings'              => 'red-headed-pro-settings',
-        'pelican-settings-profiles'     => 'red-headed-pro-settings-profiles',
-        'pelican-settings-destinations' => 'red-headed-pro-settings-destinations',
-        'pelican-settings-cron'         => 'red-headed-pro-settings-cron',
-        'pelican-settings-webhooks'     => 'red-headed-pro-settings-webhooks',
-        'pelican-settings-general'      => 'red-headed-pro-settings-general',
-        'pelican-settings-schedules'    => 'red-headed-pro-settings-cron',
-    ];
-    if ( isset( $map[ $p ] ) ) {
-        $url = add_query_arg( 'page', $map[ $p ], admin_url( 'admin.php' ) );
-        $extras = $_GET; unset( $extras['page'] );
-        if ( ! empty( $extras ) ) $url = add_query_arg( $extras, $url );
-        wp_safe_redirect( $url, 301 );
-        exit;
-    }
-}, 1 );
+/* Legacy 'pelican*' admin-URL 301 redirects were removed in the de-Pelican
+   refactor (v1.5.3). The admin pages have shipped as 'red-headed-pro*' for many
+   versions; keeping a self-referential map here would risk a redirect loop. */
 
 
 /* Composer autoloader (mPDF/PhpSpreadsheet/phpseclib live in vendor when installed). */
