@@ -169,8 +169,10 @@ class Red_Headed_Export_Engine {
         /* Auto-trigger override — single-order fetch path (used by Red_Headed_Auto_Trigger
            and bulk action). Uses `include` (HPOS-safe) instead of legacy `post__in`. */
         if ( ! empty( $filters['order_ids_override'] ) ) {
-            $args['include'] = array_map( 'intval', (array) $filters['order_ids_override'] );
-            $args['status']  = array_keys( wc_get_order_statuses() ); /* don't re-filter by status */
+            $ids = array_map( 'intval', (array) $filters['order_ids_override'] );
+            $args['include']  = $ids;   /* HPOS storage */
+            $args['post__in'] = $ids;   /* legacy CPT storage — wc_get_orders ignores `include` on some CPT / query-filtering setups */
+            $args['status']   = array_keys( wc_get_order_statuses() ); /* don't re-filter by status */
         }
 
         if ( ! empty( $filters['date_from'] ) || ! empty( $filters['date_to'] ) ) {
@@ -184,6 +186,19 @@ class Red_Headed_Export_Engine {
         if ( ! empty( $filters['customer_email'] ) ) $args['billing_email'] = sanitize_email( $filters['customer_email'] );
 
         $orders = wc_get_orders( $args );
+
+        /* v1.5.5 — HARD GUARANTEE for targeted exports (bulk action / auto-trigger).
+           Some setups (legacy CPT storage, query-filtering plugins) silently ignore
+           `include`/`post__in`, which let a single-order export leak ALL matching
+           orders to the destination (e.g. 600 orders pushed to SAP instead of 1).
+           Enforce the override post-fetch so a targeted export can NEVER contain
+           another order, whatever the storage/query layer does. */
+        if ( ! empty( $filters['order_ids_override'] ) ) {
+            $want = array_flip( array_map( 'intval', (array) $filters['order_ids_override'] ) );
+            $orders = array_values( array_filter( (array) $orders, function ( $o ) use ( $want ) {
+                return is_a( $o, 'WC_Order' ) && isset( $want[ (int) $o->get_id() ] );
+            } ) );
+        }
 
         /* Post-fetch refinement (Pro). All advanced predicates run here so we can short-circuit
            cleanly when the Lite edition hits any locked filter. */

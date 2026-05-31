@@ -3,7 +3,7 @@
  * Plugin Name:       Red Headed (Pro) — Orders Export Manager
  * Plugin URI:        https://thelionfrog.com
  * Description:       Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV) with structured JSON shapes (labeled, nested line items, bare array), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP / Local folder), custom filename patterns, one-file-per-order split, cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog).
- * Version:           1.5.4
+ * Version:           1.5.5
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            The Lion Frog Team
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'RED_HEADED_VERSION', '1.5.4' );
+define( 'RED_HEADED_VERSION', '1.5.5' );
 define( 'RED_HEADED_EDITION',  'pro' );
 define( 'RED_HEADED_FILE',     __FILE__ );
 define( 'RED_HEADED_PATH',     plugin_dir_path( __FILE__ ) );
