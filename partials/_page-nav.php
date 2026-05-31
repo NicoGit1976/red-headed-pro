@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Shared in-page nav (Harlequin). Dashboard / Exports / Settings.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
 $_pl_pages = array(
     'red-headed-pro'          => array( 'icon' => '📊', 'label' => __( 'Dashboard', 'red-headed-pro' ) ),

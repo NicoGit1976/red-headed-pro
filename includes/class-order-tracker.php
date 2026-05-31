@@ -1,17 +1,17 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
- * Pelican_Order_Tracker — adds an "Exported" column on the WC orders list
+ * Red_Headed_Order_Tracker — adds an "Exported" column on the WC orders list
  * (both HPOS and legacy posts table). Source of truth = post/order meta:
  *   _rh_export_count       — how many times the order has been exported
  *   _rh_last_export_at     — datetime of the last export (mysql format)
- *   _rh_last_export_job_id — pl_jobs.id of the last export
+ *   _rh_last_export_job_id — rh_jobs.id of the last export
  *
- * v1.4.22 (Pelican Pro+Lite).
+ * v1.4.22 (Red_Headed_Pro Pro+Lite).
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Order_Tracker {
+class Red_Headed_Order_Tracker {
 
     public static function init() {
         /* Legacy WC orders list (post type shop_order) */

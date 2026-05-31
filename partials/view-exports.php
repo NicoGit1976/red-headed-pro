@@ -3,10 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Exports — list of jobs, with download / re-run / delete.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
 global $wpdb;
-$jobs_tbl = $wpdb->prefix . 'pl_jobs';
+$jobs_tbl = $wpdb->prefix . 'rh_jobs';
 
 /* v1.4.19 — Download handler moved to an `admin_init` action in the main plugin
    file. It used to run here at view-render time, but by then WP had already
@@ -36,7 +36,7 @@ $jobs  = $wpdb->get_results(
 ) ?: array();
 
 $total_pages = max( 1, (int) ceil( $total / $per ) );
-$is_pro = Pelican_Soft_Lock::is_pro();
+$is_pro = Red_Headed_Soft_Lock::is_pro();
 
 /* 24h aggregate stats (mirrors the Waxy Monkey Sync History pill bar). */
 $stats_24h = $wpdb->get_row( "SELECT
@@ -48,7 +48,7 @@ $stats_24h = $wpdb->get_row( "SELECT
     WHERE started_at >= DATE_SUB( NOW(), INTERVAL 24 HOUR )", ARRAY_A );
 
 /* Clear-all handler — purges every job row. Disarms guard via wp_nonce + capability. */
-if ( isset( $_POST['pl_clear_logs'] ) && check_admin_referer( 'pl_clear_logs' ) && current_user_can( 'manage_woocommerce' ) ) {
+if ( isset( $_POST['rh_clear_logs'] ) && check_admin_referer( 'rh_clear_logs' ) && current_user_can( 'manage_woocommerce' ) ) {
     $cleared = (int) $wpdb->query( "DELETE FROM {$jobs_tbl}" );
     echo '<div class="notice notice-success is-dismissible"><p>' . sprintf( esc_html__( '✓ Cleared %d job rows.', 'red-headed-pro' ), $cleared ) . '</p></div>';
     $jobs  = array();
@@ -69,7 +69,7 @@ if ( isset( $_POST['pl_clear_logs'] ) && check_admin_referer( 'pl_clear_logs' ) 
     }
     ?>
 
-    <?php include PELICAN_PATH . 'partials/_page-nav.php'; ?>
+    <?php include RED_HEADED_PATH . 'partials/_page-nav.php'; ?>
 
     <section class="pl-section">
         <div class="pl-section-head">
@@ -106,8 +106,8 @@ if ( isset( $_POST['pl_clear_logs'] ) && check_admin_referer( 'pl_clear_logs' ) 
 
         <?php if ( $total > 0 ) : ?>
             <form method="post" style="display:inline-block;margin:0 0 12px;" onsubmit="return confirm('<?php echo esc_js( __( 'Clear ALL export job rows? Files on disk are kept.', 'red-headed-pro' ) ); ?>');">
-                <?php wp_nonce_field( 'pl_clear_logs' ); ?>
-                <button type="submit" name="pl_clear_logs" class="pl-btn pl-btn-sm" style="color:#991b1b;">🗑 <?php esc_html_e( 'Clear all logs', 'red-headed-pro' ); ?></button>
+                <?php wp_nonce_field( 'rh_clear_logs' ); ?>
+                <button type="submit" name="rh_clear_logs" class="pl-btn pl-btn-sm" style="color:#991b1b;">🗑 <?php esc_html_e( 'Clear all logs', 'red-headed-pro' ); ?></button>
             </form>
         <?php endif; ?>
 

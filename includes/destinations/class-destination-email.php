@@ -9,15 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * v1.5.1: subject / from / CC / BCC configurable per destination; attachment
  *         toggle; subject supports {placeholders} resolved from context.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Destination_Email extends Pelican_Destination_Base {
-    const RATE_OPTION = 'pelican_email_rate';
+class Red_Headed_Destination_Email extends Red_Headed_Destination_Base {
+    const RATE_OPTION = 'red_headed_email_rate';
     const RATE_LIMIT_LITE = 30;
     const RATE_WINDOW = DAY_IN_SECONDS;
 
     public static function ship( $file, $config ) {
-        if ( ! Pelican_Soft_Lock::is_pro() ) {
+        if ( ! Red_Headed_Soft_Lock::is_pro() ) {
             $rate = self::current_rate();
             if ( $rate >= self::RATE_LIMIT_LITE ) {
                 return new \WP_Error( 'rate_limited', __( 'Email quota reached (30/24h Lite limit). Upgrade to Pro for unlimited emails.', 'red-headed-pro' ) );
@@ -27,14 +27,14 @@ class Pelican_Destination_Email extends Pelican_Destination_Base {
         $to_raw = '';
         if ( ! empty( $config['to'] ) )        $to_raw = (string) $config['to'];
         elseif ( ! empty( $config['email'] ) ) $to_raw = (string) $config['email'];
-        else                                   $to_raw = (string) get_option( 'pelican_default_email_to', '' );
+        else                                   $to_raw = (string) get_option( 'red_headed_default_email_to', '' );
         $to = self::sanitize_multi_email( $to_raw );
         if ( ! $to ) return new \WP_Error( 'no_recipient', __( 'No recipient email configured.', 'red-headed-pro' ) );
 
         /* ── Subject ─────────────────────────────────────────── */
         $subject_raw = '';
         if ( ! empty( $config['subject'] ) )     $subject_raw = (string) $config['subject'];
-        else                                     $subject_raw = (string) get_option( 'pelican_default_email_subject', '' );
+        else                                     $subject_raw = (string) get_option( 'red_headed_default_email_subject', '' );
         if ( $subject_raw === '' ) {
             $subject_raw = __( 'New order received', 'red-headed-pro' );
         }
@@ -43,14 +43,14 @@ class Pelican_Destination_Email extends Pelican_Destination_Base {
         /* ── From ────────────────────────────────────────────── */
         $from_email = ! empty( $config['from_email'] )
             ? sanitize_email( $config['from_email'] )
-            : sanitize_email( get_option( 'pelican_default_email_from', '' ) );
+            : sanitize_email( get_option( 'red_headed_default_email_from', '' ) );
         $from_name  = ! empty( $config['from_name'] )
             ? sanitize_text_field( $config['from_name'] )
-            : sanitize_text_field( get_option( 'pelican_default_email_from_name', '' ) );
+            : sanitize_text_field( get_option( 'red_headed_default_email_from_name', '' ) );
 
         /* ── Body ────────────────────────────────────────────── */
         $body_raw = isset( $config['email_body'] ) ? (string) $config['email_body'] : '';
-        if ( $body_raw === '' ) $body_raw = (string) get_option( 'pelican_default_email_body', '' );
+        if ( $body_raw === '' ) $body_raw = (string) get_option( 'red_headed_default_email_body', '' );
         if ( $body_raw === '' ) $body_raw = __( 'Your Red-Headed order export is attached.', 'red-headed-pro' );
         $body = wp_kses_post( self::resolve_subject( $body_raw, $file, $config ) );
 
@@ -60,8 +60,8 @@ class Pelican_Destination_Email extends Pelican_Destination_Base {
             $name = $from_name ?: wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
             $headers[] = 'From: ' . $name . ' <' . $from_email . '>';
         }
-        $cc  = ! empty( $config['cc'] )  ? self::sanitize_multi_email( $config['cc'] )  : self::sanitize_multi_email( get_option( 'pelican_default_email_cc', '' ) );
-        $bcc = ! empty( $config['bcc'] ) ? self::sanitize_multi_email( $config['bcc'] ) : self::sanitize_multi_email( get_option( 'pelican_default_email_bcc', '' ) );
+        $cc  = ! empty( $config['cc'] )  ? self::sanitize_multi_email( $config['cc'] )  : self::sanitize_multi_email( get_option( 'red_headed_default_email_cc', '' ) );
+        $bcc = ! empty( $config['bcc'] ) ? self::sanitize_multi_email( $config['bcc'] ) : self::sanitize_multi_email( get_option( 'red_headed_default_email_bcc', '' ) );
         if ( $cc )  $headers[] = 'Cc: ' . $cc;
         if ( $bcc ) $headers[] = 'Bcc: ' . $bcc;
 
@@ -71,7 +71,7 @@ class Pelican_Destination_Email extends Pelican_Destination_Base {
 
         $sent = wp_mail( $to, $subject, $body, $headers, $attachments );
         if ( ! $sent ) return new \WP_Error( 'mail_failed', __( 'wp_mail returned false.', 'red-headed-pro' ) );
-        if ( ! Pelican_Soft_Lock::is_pro() ) self::increment_rate();
+        if ( ! Red_Headed_Soft_Lock::is_pro() ) self::increment_rate();
         return true;
     }
 
@@ -142,8 +142,8 @@ class Pelican_Destination_Email extends Pelican_Destination_Base {
         $sent = self::current_rate();
         return array(
             'sent_24h'  => $sent,
-            'limit'     => Pelican_Soft_Lock::is_pro() ? PHP_INT_MAX : self::RATE_LIMIT_LITE,
-            'remaining' => Pelican_Soft_Lock::is_pro() ? PHP_INT_MAX : max( 0, self::RATE_LIMIT_LITE - $sent ),
+            'limit'     => Red_Headed_Soft_Lock::is_pro() ? PHP_INT_MAX : self::RATE_LIMIT_LITE,
+            'remaining' => Red_Headed_Soft_Lock::is_pro() ? PHP_INT_MAX : max( 0, self::RATE_LIMIT_LITE - $sent ),
         );
     }
 }

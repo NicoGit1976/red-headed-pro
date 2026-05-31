@@ -5,9 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *
  * Pro feature. Supports Bearer / Basic / custom-header auth.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Destination_REST extends Pelican_Destination_Base {
+class Red_Headed_Destination_REST extends Red_Headed_Destination_Base {
     public static function ship( $file, $config ) {
         $url = isset( $config['endpoint'] ) ? esc_url_raw( $config['endpoint'] ) : '';
         if ( ! $url ) return new \WP_Error( 'rest_missing', __( 'Missing endpoint URL.', 'red-headed-pro' ) );
@@ -16,7 +16,7 @@ class Pelican_Destination_REST extends Pelican_Destination_Base {
         if ( ! in_array( $method, array( 'POST', 'PUT' ), true ) ) $method = 'POST';
 
         $headers = array(
-            'User-Agent' => 'Pelican/' . PELICAN_VERSION . ' (+' . home_url( '/' ) . ')',
+            'User-Agent' => 'Red_Headed_Pro/' . RED_HEADED_VERSION . ' (+' . home_url( '/' ) . ')',
         );
         $auth_type = strtolower( $config['auth_type'] ?? '' );
         $auth_val  = (string) ( isset( $config['auth_value_enc'] ) ? self::decrypt( $config['auth_value_enc'] ) : ( $config['auth_value'] ?? '' ) );

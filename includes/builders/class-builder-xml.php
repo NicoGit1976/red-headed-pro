@@ -3,9 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * XML builder — flat <orders><order><field>…</field></order></orders>.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Builder_XML {
+class Red_Headed_Builder_XML {
     public static function build( $columns, $rows, $path ) {
         $dom = new \DOMDocument( '1.0', 'UTF-8' );
         $dom->formatOutput = true;

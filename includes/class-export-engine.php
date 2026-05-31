@@ -3,19 +3,19 @@
  * Export Engine — orchestrates a single export run.
  *
  * Pipeline: profile → fetch orders (with filters) → map columns → build file
- * (format-specific builder) → save to uploads/pelican/exports/ → ship to
+ * (format-specific builder) → save to uploads/red-headed-pro/exports/ → ship to
  * destinations (one or many) → log job row → fire webhooks.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-class Pelican_Export_Engine {
+class Red_Headed_Export_Engine {
 
     /** @return int|WP_Error  job ID on success, WP_Error on failure */
     public static function run( $profile, $trigger_source = 'manual' ) {
         global $wpdb;
-        $jobs_tbl = $wpdb->prefix . 'pl_jobs';
+        $jobs_tbl = $wpdb->prefix . 'rh_jobs';
         $started  = (int) round( microtime( true ) * 1000 );
         $profile  = is_array( $profile ) ? $profile : array();
 
@@ -28,7 +28,7 @@ class Pelican_Export_Engine {
            auto-trigger path already sets order_ids_override, so it is left
            untouched (no infinite recursion). */
         if ( ! empty( $profile['split_per_order'] )
-             && Pelican_Soft_Lock::is_available( 'split_per_order' )
+             && Red_Headed_Soft_Lock::is_available( 'split_per_order' )
              && empty( $profile['filters']['order_ids_override'] ) ) {
             $batch = self::fetch_orders( isset( $profile['filters'] ) ? (array) $profile['filters'] : array() );
             if ( count( $batch ) > 1 ) {
@@ -80,7 +80,7 @@ class Pelican_Export_Engine {
                 foreach ( $orders as $order ) {
                     $rows[] = self::map_row_object( $order, $columns, $nest, $li_key );
                 }
-            } elseif ( $mode === 'per_line_item' && Pelican_Soft_Lock::is_available( 'line_item_export' ) ) {
+            } elseif ( $mode === 'per_line_item' && Red_Headed_Soft_Lock::is_available( 'line_item_export' ) ) {
                 $hf   = isset( $profile['line_item_header_fill'] ) && $profile['line_item_header_fill'] === 'first_only' ? 'first_only' : 'every';
                 $rows = array();
                 foreach ( $orders as $order ) {
@@ -128,7 +128,7 @@ class Pelican_Export_Engine {
             if ( count( $rows ) > 0 && ! $is_dry_run ) {
                 $now = current_time( 'mysql' );
                 $post_status = isset( $profile['post_export_status'] ) ? sanitize_key( (string) $profile['post_export_status'] ) : '';
-                $can_post_status = $post_status !== '' && Pelican_Soft_Lock::is_available( 'post_export_status' );
+                $can_post_status = $post_status !== '' && Red_Headed_Soft_Lock::is_available( 'post_export_status' );
                 foreach ( $orders as $order ) {
                     if ( ! is_a( $order, 'WC_Order' ) ) continue;
                     $count = (int) $order->get_meta( '_rh_export_count' );
@@ -143,9 +143,9 @@ class Pelican_Export_Engine {
                 }
             }
 
-            do_action( 'pelican_export_generated', $job_id, $profile, $file );
+            do_action( 'red_headed_export_generated', $job_id, $profile, $file );
             if ( $delivered ) {
-                do_action( 'pelican_export_delivered', $job_id, $profile, $delivered );
+                do_action( 'red_headed_export_delivered', $job_id, $profile, $delivered );
             }
 
             return $job_id;
@@ -155,7 +155,7 @@ class Pelican_Export_Engine {
                 'error_message' => substr( $e->getMessage(), 0, 800 ),
                 'finished_at'   => current_time( 'mysql' ),
             ), array( 'id' => $job_id ) );
-            do_action( 'pelican_export_failed', $job_id, $profile, $e->getMessage() );
+            do_action( 'red_headed_export_failed', $job_id, $profile, $e->getMessage() );
             return new \WP_Error( 'export_failed', $e->getMessage() );
         }
     }
@@ -166,7 +166,7 @@ class Pelican_Export_Engine {
         $args = array( 'limit' => -1, 'orderby' => 'date', 'order' => 'DESC' );
         $args['status'] = isset( $filters['status'] ) && $filters['status'] ? (array) $filters['status'] : array_keys( wc_get_order_statuses() );
 
-        /* Auto-trigger override — single-order fetch path (used by Pelican_Auto_Trigger
+        /* Auto-trigger override — single-order fetch path (used by Red_Headed_Auto_Trigger
            and bulk action). Uses `include` (HPOS-safe) instead of legacy `post__in`. */
         if ( ! empty( $filters['order_ids_override'] ) ) {
             $args['include'] = array_map( 'intval', (array) $filters['order_ids_override'] );
@@ -198,7 +198,7 @@ class Pelican_Export_Engine {
         $has_advanced = false;
         foreach ( $advanced_keys as $k ) { if ( isset( $filters[ $k ] ) && $filters[ $k ] !== '' && $filters[ $k ] !== array() ) { $has_advanced = true; break; } }
         if ( ! $has_advanced ) return $orders;
-        if ( ! Pelican_Soft_Lock::is_available( 'filters_advanced' ) ) return $orders;
+        if ( ! Red_Headed_Soft_Lock::is_available( 'filters_advanced' ) ) return $orders;
 
         return array_values( array_filter( $orders, function ( $o ) use ( $filters ) {
             if ( ! empty( $filters['shipping_method'] ) ) {
@@ -332,7 +332,7 @@ class Pelican_Export_Engine {
      */
     public static function json_shape( $profile, $format ) {
         if ( $format !== 'json' && $format !== 'ndjson' ) return '';
-        if ( ! Pelican_Soft_Lock::is_available( 'json_structure' ) ) return '';
+        if ( ! Red_Headed_Soft_Lock::is_available( 'json_structure' ) ) return '';
         $s = isset( $profile['json_shape'] ) ? sanitize_key( (string) $profile['json_shape'] ) : '';
         return in_array( $s, array( 'labeled', 'nested' ), true ) ? $s : '';
     }
@@ -502,13 +502,13 @@ class Pelican_Export_Engine {
     /** Substitute {placeholder} tokens with order field values, then evaluate the math expression. */
     protected static function resolve_calc( $order, $expr ) {
         if ( $expr === '' ) return '';
-        if ( ! Pelican_Soft_Lock::is_available( 'computed_columns' ) ) return '';
+        if ( ! Red_Headed_Soft_Lock::is_available( 'computed_columns' ) ) return '';
         $sub = preg_replace_callback( '/\{([a-z0-9_:.-]+)\}/i', function ( $m ) use ( $order ) {
             $val = self::resolve_column( $order, $m[1] );
             return is_numeric( $val ) ? (string) $val : '0';
         }, $expr );
         try {
-            return Pelican_Expr_Evaluator::eval_expr( $sub );
+            return Red_Headed_Expr_Evaluator::eval_expr( $sub );
         } catch ( \Throwable $e ) {
             return '';
         }
@@ -588,7 +588,7 @@ class Pelican_Export_Engine {
             'line_variation'  => array( 'label' => 'Line — Variation ID', 'group' => 'line', 'hint' => 'per-line-item mode only' ),
         );
         /* Allow third-party plugins to register custom columns. */
-        return apply_filters( 'pelican_column_catalog', $cat );
+        return apply_filters( 'red_headed_column_catalog', $cat );
     }
 
     public static function column_groups() {
@@ -646,28 +646,28 @@ class Pelican_Export_Engine {
                 if ( strpos( $key, 'meta:' ) === 0 ) {
                     return $order->get_meta( substr( $key, 5 ) );
                 }
-                return apply_filters( 'pelican_resolve_column', '', $key, $order );
+                return apply_filters( 'red_headed_resolve_column', '', $key, $order );
         }
     }
 
     /* ────────── Format guard ────────── */
     protected static function guard_format( $format ) {
         $allowed = array( 'csv' );
-        if ( Pelican_Soft_Lock::is_available( 'format_xlsx' ) )   $allowed[] = 'xlsx';
-        if ( Pelican_Soft_Lock::is_available( 'format_json' ) )   $allowed[] = 'json';
-        if ( Pelican_Soft_Lock::is_available( 'format_xml' ) )    $allowed[] = 'xml';
-        if ( Pelican_Soft_Lock::is_available( 'format_ndjson' ) ) $allowed[] = 'ndjson';
-        if ( Pelican_Soft_Lock::is_available( 'format_tsv' ) )    $allowed[] = 'tsv';
+        if ( Red_Headed_Soft_Lock::is_available( 'format_xlsx' ) )   $allowed[] = 'xlsx';
+        if ( Red_Headed_Soft_Lock::is_available( 'format_json' ) )   $allowed[] = 'json';
+        if ( Red_Headed_Soft_Lock::is_available( 'format_xml' ) )    $allowed[] = 'xml';
+        if ( Red_Headed_Soft_Lock::is_available( 'format_ndjson' ) ) $allowed[] = 'ndjson';
+        if ( Red_Headed_Soft_Lock::is_available( 'format_tsv' ) )    $allowed[] = 'tsv';
         return in_array( $format, $allowed, true ) ? $format : 'csv';
     }
 
     /* ────────── Build file ────────── */
     protected static function build_file( $format, $columns, $rows, $profile ) {
         $uploads = wp_upload_dir();
-        $dir     = trailingslashit( $uploads['basedir'] ) . 'pelican/exports/' . date( 'Y/m' );
+        $dir     = trailingslashit( $uploads['basedir'] ) . 'red-headed-pro/exports/' . date( 'Y/m' );
         if ( ! file_exists( $dir ) ) {
             wp_mkdir_p( $dir );
-            $up = trailingslashit( $uploads['basedir'] ) . 'pelican';
+            $up = trailingslashit( $uploads['basedir'] ) . 'red-headed-pro';
             if ( ! file_exists( $up . '/.htaccess' ) ) {
                 @file_put_contents( $up . '/.htaccess', "Options -Indexes\nOrder Allow,Deny\nDeny from all\n" );
                 @file_put_contents( $up . '/index.php',  "<?php // Silence is golden.\n" );
@@ -680,11 +680,11 @@ class Pelican_Export_Engine {
            when the profile has no pattern of its own. Normalize legacy {{double-brace}}
            syntax to {single-brace} so the resolver understands them. */
         if ( $pattern === '' ) {
-            $pattern = trim( (string) get_option( 'pelican_default_filename_pattern', '' ) );
+            $pattern = trim( (string) get_option( 'red_headed_default_filename_pattern', '' ) );
             $pattern = preg_replace( '/\{\{([^}]+)\}\}/', '{$1}', $pattern );
         }
-        if ( $pattern !== '' && Pelican_Soft_Lock::is_available( 'filename_pattern' ) ) {
-            $name = Pelican_Filename_Resolver::resolve( $pattern, array(
+        if ( $pattern !== '' && Red_Headed_Soft_Lock::is_available( 'filename_pattern' ) ) {
+            $name = Red_Headed_Filename_Resolver::resolve( $pattern, array(
                 'profile_name' => isset( $profile['name'] ) ? (string) $profile['name'] : '',
                 'format'       => $format,
                 'records'      => isset( $profile['_records'] ) ? (int) $profile['_records'] : count( $rows ),
@@ -703,15 +703,15 @@ class Pelican_Export_Engine {
         }
         $path = $dir . '/' . $name;
 
-        $json_bare = ! empty( $profile['json_bare'] ) && Pelican_Soft_Lock::is_available( 'json_structure' );
+        $json_bare = ! empty( $profile['json_bare'] ) && Red_Headed_Soft_Lock::is_available( 'json_structure' );
         switch ( $format ) {
-            case 'csv':    Pelican_Builder_CSV::build( $columns, $rows, $path, ',' ); break;
-            case 'tsv':    Pelican_Builder_CSV::build( $columns, $rows, $path, "\t" ); break;
-            case 'json':   Pelican_Builder_JSON::build( $columns, $rows, $path, false, $json_bare ); break;
-            case 'ndjson': Pelican_Builder_JSON::build( $columns, $rows, $path, true ); break;
-            case 'xml':    Pelican_Builder_XML::build( $columns, $rows, $path ); break;
-            case 'xlsx':   Pelican_Builder_XLSX::build( $columns, $rows, $path ); break;
-            default:       Pelican_Builder_CSV::build( $columns, $rows, $path, ',' );
+            case 'csv':    Red_Headed_Builder_CSV::build( $columns, $rows, $path, ',' ); break;
+            case 'tsv':    Red_Headed_Builder_CSV::build( $columns, $rows, $path, "\t" ); break;
+            case 'json':   Red_Headed_Builder_JSON::build( $columns, $rows, $path, false, $json_bare ); break;
+            case 'ndjson': Red_Headed_Builder_JSON::build( $columns, $rows, $path, true ); break;
+            case 'xml':    Red_Headed_Builder_XML::build( $columns, $rows, $path ); break;
+            case 'xlsx':   Red_Headed_Builder_XLSX::build( $columns, $rows, $path ); break;
+            default:       Red_Headed_Builder_CSV::build( $columns, $rows, $path, ',' );
         }
         return $path;
     }
@@ -721,32 +721,32 @@ class Pelican_Export_Engine {
         $dest_list = isset( $profile['destinations'] ) ? (array) $profile['destinations'] : array();
         if ( empty( $dest_list ) ) return null; /* manual download path: file lives on disk */
         $delivered = array();
-        $multi_ok  = Pelican_Soft_Lock::is_available( 'multi_destinations' );
+        $multi_ok  = Red_Headed_Soft_Lock::is_available( 'multi_destinations' );
         $i = 0;
         foreach ( $dest_list as $dest ) {
             $i++;
             if ( $i > 1 && ! $multi_ok ) break; /* Lite caps to 1 destination per run */
-            $ok = Pelican_Destination_Dispatcher::ship( $dest, $file, $profile, $format );
+            $ok = Red_Headed_Destination_Dispatcher::ship( $dest, $file, $profile, $format );
             $delivered[] = array( 'destination' => $dest, 'ok' => $ok );
             /* v1.4.25 — log delivery result so the user can debug silent failures.
                The job stays "success" because the file IS built; but each destination
                outcome is now visible in debug.log + we surface the error in the
                job's error_message so it appears in the Exports list tooltip. */
             if ( is_wp_error( $ok ) ) {
-                $msg = '[Pelican] destination ' . ( $dest['type'] ?? '?' ) . ' failed: ' . $ok->get_error_code() . ' — ' . $ok->get_error_message();
+                $msg = '[Red_Headed_Pro] destination ' . ( $dest['type'] ?? '?' ) . ' failed: ' . $ok->get_error_code() . ' — ' . $ok->get_error_message();
                 error_log( $msg );
                 global $wpdb;
                 $jid = isset( $profile['_job_id'] ) ? (int) $profile['_job_id'] : 0;
                 if ( $jid ) {
-                    $existing = (string) $wpdb->get_var( $wpdb->prepare( "SELECT error_message FROM {$wpdb->prefix}pl_jobs WHERE id = %d", $jid ) );
+                    $existing = (string) $wpdb->get_var( $wpdb->prepare( "SELECT error_message FROM {$wpdb->prefix}rh_jobs WHERE id = %d", $jid ) );
                     $append = trim( $existing . "\n" . $msg );
-                    $wpdb->update( "{$wpdb->prefix}pl_jobs", array( 'error_message' => substr( $append, 0, 1500 ) ), array( 'id' => $jid ) );
+                    $wpdb->update( "{$wpdb->prefix}rh_jobs", array( 'error_message' => substr( $append, 0, 1500 ) ), array( 'id' => $jid ) );
                 }
                 /* Retry on failure (e.g. the SAP/SFTP receiving server is momentarily
                    unreachable): queue this destination for re-delivery on the cron
                    tick, until it succeeds or hits the max attempts. */
-                if ( ! empty( $profile['retry_on_fail'] ) && class_exists( 'Pelican_Retry' ) ) {
-                    Pelican_Retry::enqueue( array(
+                if ( ! empty( $profile['retry_on_fail'] ) && class_exists( 'Red_Headed_Retry' ) ) {
+                    Red_Headed_Retry::enqueue( array(
                         'job_id'    => $jid,
                         'dest'      => $dest,
                         'file'      => $file,
@@ -756,7 +756,7 @@ class Pelican_Export_Engine {
                     ) );
                 }
             } else {
-                error_log( '[Pelican] destination ' . ( $dest['type'] ?? '?' ) . ' OK' );
+                error_log( '[Red_Headed_Pro] destination ' . ( $dest['type'] ?? '?' ) . ' OK' );
             }
         }
         return $delivered;

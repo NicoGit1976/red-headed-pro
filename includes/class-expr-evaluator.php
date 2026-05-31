@@ -1,15 +1,15 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
- * Pelican_Expr_Evaluator — tiny safe expression evaluator for calculated columns.
+ * Red_Headed_Expr_Evaluator — tiny safe expression evaluator for calculated columns.
  *
  * Supports + - * / parentheses, integer + float literals. NOT eval().
  * Placeholders ({order_total}, {tax}, …) must be substituted by the caller
  * before passing the expression here.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Expr_Evaluator {
+class Red_Headed_Expr_Evaluator {
 
     private $tokens = array();
     private $pos    = 0;

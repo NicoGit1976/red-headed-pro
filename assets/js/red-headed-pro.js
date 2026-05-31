@@ -6,7 +6,7 @@
 ( function ( $ ) {
     'use strict';
 
-    var PD = window.PelicanData || {};
+    var PD = window.RedHeadedData || {};
     var ed = document.getElementById( 'pl-profile-editor' );
 
     function ajax( action, data ) {
@@ -332,7 +332,7 @@
             var list = document.getElementById( 'pl-meta-discovered' );
             if ( ! list ) return;
             list.innerHTML = '<li class="pl-muted">Loading...</li>';
-            ajax( 'pelican_discover_meta_keys' ).done( function ( r ) {
+            ajax( 'red_headed_discover_meta_keys' ).done( function ( r ) {
                 list.innerHTML = '';
                 if ( ! r || ! r.success || ! r.data || ! r.data.length ) {
                     list.innerHTML = '<li class="pl-muted">No order meta keys found.</li>';
@@ -639,7 +639,7 @@
             };
         }
 
-        ajax( 'pelican_save_profile', { profile: JSON.stringify( profile ) } )
+        ajax( 'red_headed_save_profile', { profile: JSON.stringify( profile ) } )
             .done( function ( r ) {
                 if ( r && r.success ) { window.location.reload(); }
                 else { alert( ( r && r.data && r.data.message ) || 'Save failed' ); }
@@ -649,11 +649,11 @@
 
     function deleteProfile( id ) {
         if ( ! window.confirm( 'Delete this profile? Past export logs will be kept.' ) ) return;
-        ajax( 'pelican_delete_profile', { id: id } ).done( function () { window.location.reload(); } );
+        ajax( 'red_headed_delete_profile', { id: id } ).done( function () { window.location.reload(); } );
     }
 
     function runProfile( id ) {
-        ajax( 'pelican_run_profile', { id: id } )
+        ajax( 'red_headed_run_profile', { id: id } )
             .done( function ( r ) {
                 if ( r && r.success ) {
                     var msg = '✓ Export complete — job #' + r.data.job_id + ' · ' + ( r.data.records || 0 ) + ' rows.';
@@ -669,7 +669,7 @@
 
     /* v1.5.0 — P2: Dry-run (build file, skip delivery). */
     function dryRunProfile( id ) {
-        ajax( 'pelican_run_dry', { id: id } )
+        ajax( 'red_headed_run_dry', { id: id } )
             .done( function ( r ) {
                 if ( r && r.success ) {
                     alert( '🧪 DRY RUN — job #' + r.data.job_id + ' · ' + ( r.data.records || 0 ) + ' rows.\nFile built but NOT delivered to destinations.' );
@@ -682,7 +682,7 @@
     /* v1.5.0 — P3: Export profile as JSON (client-side download). */
     function exportProfileJson( id ) {
         $.ajax( {
-            url: PD.restUrl + 'pelican/v1/profiles/' + id,
+            url: PD.restUrl + 'red-headed-pro/v1/profiles/' + id,
             headers: { 'X-WP-Nonce': PD.restNonce }
         } ).done( function ( p ) {
             /* Strip volatile / internal fields before export. */
@@ -706,7 +706,7 @@
             if ( ! input.files || ! input.files[0] ) return;
             var reader = new FileReader();
             reader.onload = function ( e ) {
-                ajax( 'pelican_import_profile', { profile_json: e.target.result } )
+                ajax( 'red_headed_import_profile', { profile_json: e.target.result } )
                     .done( function ( r ) {
                         if ( r && r.success ) {
                             alert( '✓ ' + ( r.data.message || 'Profile imported.' ) );
@@ -766,7 +766,7 @@
                 rawToggle.textContent = showingRaw ? '📊 Table' : '📋 Raw';
                 if ( showingRaw ) {
                     body.innerHTML = '<p class="pl-muted">Loading raw file content...</p>';
-                    ajax( 'pelican_preview_job_raw', { id: jobId } ).done( function ( r ) {
+                    ajax( 'red_headed_preview_job_raw', { id: jobId } ).done( function ( r ) {
                         if ( r && r.success ) {
                             var info = r.data.truncated ? '<p class="pl-muted">Showing first ' + ( r.data.raw || '' ).length + ' of ' + r.data.size + ' bytes.</p>' : '';
                             body.innerHTML = info +
@@ -787,14 +787,14 @@
         }
     }
     function previewProfile( id ) {
-        ajax( 'pelican_preview_profile', { id: id } )
+        ajax( 'red_headed_preview_profile', { id: id } )
             .done( function ( r ) {
                 if ( r && r.success ) showPreviewModal( '👁 Preview profile #' + id, r.data );
                 else alert( ( r && r.data && r.data.message ) || 'Preview failed' );
             } );
     }
     function previewJob( id ) {
-        ajax( 'pelican_preview_job', { id: id } )
+        ajax( 'red_headed_preview_job', { id: id } )
             .done( function ( r ) {
                 if ( r && r.success ) showPreviewModal( '👁 Preview export #' + id, r.data, id );
                 else alert( ( r && r.data && r.data.message ) || 'Preview failed' );
@@ -850,7 +850,7 @@
                 var id = parseInt( this.dataset.id, 10 );
                 /* Read profile via REST to keep payload fresh */
                 $.ajax( {
-                    url: PD.restUrl + 'pelican/v1/profiles/' + id,
+                    url: PD.restUrl + 'red-headed-pro/v1/profiles/' + id,
                     headers: { 'X-WP-Nonce': PD.restNonce }
                 } ).done( function ( p ) { openEditor( p ); } );
             } );
@@ -886,7 +886,7 @@
                 var pathInput = document.querySelector( 'input[name="local_folder_path"]' );
                 var status    = document.getElementById( 'pl-dest-folder-status' );
                 if ( status ) status.textContent = '…';
-                ajax( 'pelican_create_local_folder', { path: pathInput ? pathInput.value : '' } )
+                ajax( 'red_headed_create_local_folder', { path: pathInput ? pathInput.value : '' } )
                     .done( function ( r ) {
                         if ( status ) status.textContent = ( r && r.success ) ? '✓ ' + r.data.message : '✗ ' + ( r.data && r.data.message || 'Error' );
                     } )

@@ -3,7 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Settings — tab dispatcher (Profiles / Destinations / Cron / Webhooks / General).
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
 $tabs = array(
     'profiles'     => array( 'icon' => '📁', 'label' => __( 'Profiles',     'red-headed-pro' ), 'lock' => null ),
@@ -28,7 +28,7 @@ if ( ! isset( $tabs[ $active ] ) ) $active = 'profiles';
     }
     ?>
 
-    <?php include PELICAN_PATH . 'partials/_page-nav.php'; ?>
+    <?php include RED_HEADED_PATH . 'partials/_page-nav.php'; ?>
 
     <section class="pl-section">
         <h2 class="pl-h2"><?php esc_html_e( '⚙️ Settings', 'red-headed-pro' ); ?></h2>
@@ -37,19 +37,19 @@ if ( ! isset( $tabs[ $active ] ) ) $active = 'profiles';
             <?php foreach ( $tabs as $slug => $meta ) :
                 $url = admin_url( 'admin.php?page=red-headed-pro-settings-' . $slug );
                 $cur = $slug === $active ? 'pl-tab-active' : '';
-                $locked = $meta['lock'] && Pelican_Soft_Lock::is_locked( $meta['lock'] );
+                $locked = $meta['lock'] && Red_Headed_Soft_Lock::is_locked( $meta['lock'] );
             ?>
                 <a href="<?php echo esc_url( $url ); ?>" class="pl-tab <?php echo $cur; ?> <?php echo $locked ? 'pl-tab-locked' : ''; ?>">
                     <span class="pl-tab-icon"><?php echo $meta['icon']; ?></span>
                     <span class="pl-tab-label"><?php echo esc_html( $meta['label'] ); ?></span>
-                    <?php if ( $locked ) echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?>
+                    <?php if ( $locked ) echo wp_kses_post( Red_Headed_Soft_Lock::badge() ); ?>
                 </a>
             <?php endforeach; ?>
         </nav>
 
         <div class="pl-tab-pane">
             <?php
-            $part = PELICAN_PATH . 'partials/settings/tab-' . $active . '.php';
+            $part = RED_HEADED_PATH . 'partials/settings/tab-' . $active . '.php';
             if ( file_exists( $part ) ) include $part;
             ?>
         </div>

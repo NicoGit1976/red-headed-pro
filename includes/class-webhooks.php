@@ -3,18 +3,18 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Webhooks dispatcher — Harlequin (Pro).
  *
- * Listens to pelican_export_generated / .delivered / .failed and POSTs JSON
+ * Listens to red_headed_export_generated / .delivered / .failed and POSTs JSON
  * to every registered HTTPS endpoint.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Webhooks {
-    const OPT = 'pelican_webhooks';
+class Red_Headed_Webhooks {
+    const OPT = 'red_headed_webhooks';
     public static function init() {
-        if ( Pelican_Soft_Lock::is_locked( 'webhooks' ) ) return;
-        add_action( 'pelican_export_generated', array( __CLASS__, 'on_generated' ), 10, 3 );
-        add_action( 'pelican_export_delivered', array( __CLASS__, 'on_delivered' ), 10, 3 );
-        add_action( 'pelican_export_failed',    array( __CLASS__, 'on_failed' ),    10, 3 );
+        if ( Red_Headed_Soft_Lock::is_locked( 'webhooks' ) ) return;
+        add_action( 'red_headed_export_generated', array( __CLASS__, 'on_generated' ), 10, 3 );
+        add_action( 'red_headed_export_delivered', array( __CLASS__, 'on_delivered' ), 10, 3 );
+        add_action( 'red_headed_export_failed',    array( __CLASS__, 'on_failed' ),    10, 3 );
     }
     public static function on_generated( $job_id, $profile, $file ) {
         self::dispatch( 'export.generated', array(
@@ -71,8 +71,8 @@ class Pelican_Webhooks {
             'data'         => $data,
             'site'         => home_url(),
             'timestamp_ms' => (int) round( microtime( true ) * 1000 ),
-            'plugin'       => 'pelican',
-            'version'      => PELICAN_VERSION,
+            'plugin'       => 'red-headed-pro',
+            'version'      => RED_HEADED_VERSION,
         );
         $body = wp_json_encode( $payload );
         foreach ( $hooks as $h ) {
@@ -80,12 +80,12 @@ class Pelican_Webhooks {
             if ( ! empty( $events ) && ! in_array( $event, $events, true ) ) continue;
             $headers = array(
                 'Content-Type'  => 'application/json; charset=UTF-8',
-                'User-Agent'    => 'Pelican/' . PELICAN_VERSION,
-                'X-Pelican-Event' => $event,
-                'X-Pelican-Site'  => home_url(),
+                'User-Agent'    => 'Red_Headed_Pro/' . RED_HEADED_VERSION,
+                'X-Red_Headed_Pro-Event' => $event,
+                'X-Red_Headed_Pro-Site'  => home_url(),
             );
             if ( ! empty( $h['secret'] ) ) {
-                $headers['X-Pelican-Signature'] = 'sha256=' . hash_hmac( 'sha256', $body, $h['secret'] );
+                $headers['X-Red_Headed_Pro-Signature'] = 'sha256=' . hash_hmac( 'sha256', $body, $h['secret'] );
             }
             wp_remote_post( $h['url'], array( 'headers' => $headers, 'body' => $body, 'timeout' => 10 ) );
         }

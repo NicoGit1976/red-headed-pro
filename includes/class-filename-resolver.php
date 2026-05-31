@@ -1,7 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
- * Pelican_Filename_Resolver — single source of truth for filename pattern
+ * Red_Headed_Filename_Resolver — single source of truth for filename pattern
  * resolution across all destinations (gdrive, sftp, etc.).
  *
  * Pattern syntax: a string with curly-brace placeholders. Empty pattern → caller
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *     {profile}      Sanitized profile name (e.g. "SFTP")
  *     {format}       File format (csv, json, xlsx, …)
  *     {records}      Number of records in this export
- *     {job_id}       pl_jobs.id of the current run
+ *     {job_id}       rh_jobs.id of the current run
  *
  *   Time
  *     {date}         Y-m-d (e.g. 2026-05-03)
@@ -31,11 +31,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *   Random
  *     {random}       6-char alphanumeric (security / collision-avoidance)
  *
- * v1.4.26 (Pelican Pro+Lite).
+ * v1.4.26 (Red_Headed_Pro Pro+Lite).
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Filename_Resolver {
+class Red_Headed_Filename_Resolver {
 
     /**
      * @param string $pattern Pattern with {placeholders}.

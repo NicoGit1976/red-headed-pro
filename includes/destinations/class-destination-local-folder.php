@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *
  * Pro feature (gated by the dispatcher via 'dest_local_folder').
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Destination_Local_Folder extends Pelican_Destination_Base {
+class Red_Headed_Destination_Local_Folder extends Red_Headed_Destination_Base {
 
     public static function ship( $file, $config ) {
         if ( ! $file || ! file_exists( $file ) ) {
@@ -54,6 +54,13 @@ class Pelican_Destination_Local_Folder extends Pelican_Destination_Base {
         $path = preg_replace( '#\.\.+/#', '', $path );
 
         $is_abs  = ( isset( $path[0] ) && $path[0] === '/' ) || preg_match( '#^[A-Za-z]:/#', $path );
+        /* Tolerate a leading "wp-content/" on a RELATIVE path (common user input).
+           Relative paths resolve under wp-content already, so a value such as
+           "wp-content/ORDERS EXPORTS" would otherwise double to
+           wp-content/wp-content/ORDERS EXPORTS. Strip it for relative paths only. */
+        if ( ! $is_abs ) {
+            $path = preg_replace( '#^wp-content/#i', '', $path );
+        }
         $content = defined( 'WP_CONTENT_DIR' ) ? WP_CONTENT_DIR : ABSPATH . 'wp-content';
         $dir     = $is_abs ? $path : trailingslashit( $content ) . ltrim( $path, '/' );
         $dir     = rtrim( $dir, '/' );

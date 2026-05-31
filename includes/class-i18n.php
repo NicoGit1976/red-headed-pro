@@ -3,15 +3,15 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * i18n compatibility — PolyLang & WPML for Harlequin.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_I18n {
-    const POLYLANG_GROUP = 'Pelican';
+class Red_Headed_I18n {
+    const POLYLANG_GROUP = 'Red_Headed_Pro';
 
     public static function translatable_options() {
         return array(
-            'pelican_email_subject' => array( 'label' => 'Default email subject',  'multiline' => false ),
-            'pelican_email_body'    => array( 'label' => 'Default email body',     'multiline' => true  ),
+            'red_headed_email_subject' => array( 'label' => 'Default email subject',  'multiline' => false ),
+            'red_headed_email_body'    => array( 'label' => 'Default email body',     'multiline' => true  ),
         );
     }
     public static function init() {

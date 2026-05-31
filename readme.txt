@@ -4,7 +4,7 @@ Tags: woocommerce, export, csv, xlsx, json, xml, sftp, cron, webhooks
 Requires at least: 6.2
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: GPL-2.0-or-later
 
 Exports WooCommerce orders everywhere, anytime — multi-format, multi-destination, scheduled and event-driven, with a visual field mapper, computed columns, REST API and HMAC-signed webhooks. Part of Ultimate Woo Powertools (by The Lion Frog).
@@ -76,7 +76,7 @@ Exports WooCommerce orders everywhere, anytime — multi-format, multi-destinati
 
 **Integrations**
 
-* REST API endpoints (`/pelican/v1/profiles`, `/jobs`)
+* REST API endpoints (`/red-headed-pro/v1/profiles`, `/jobs`)
 * HMAC-signed webhooks (`export.generated`, `export.delivered`, `export.failed`, SHA-256, retry ×3 exponential)
 * PolyLang & WPML compatible (translatable email subject + body)
 
@@ -115,7 +115,7 @@ Yes — **Red-Headed Lite**: manual + bulk, CSV only, Email + SFTP + direct down
 * **Polish:** Filename placeholder hint in profile editor updated with all 20 available tokens.
 
 = 1.5.0 - 2026-05-27 =
-* **Fix (B1):** Bulk action now loads the user's profile (format, columns, destinations, casts) instead of hardcoding CSV with default columns. Precedence: explicit `pelican_profile_id` in request → first saved profile → ad-hoc CSV fallback.
+* **Fix (B1):** Bulk action now loads the user's profile (format, columns, destinations, casts) instead of hardcoding CSV with default columns. Precedence: explicit `red_headed_profile_id` in request → first saved profile → ad-hoc CSV fallback.
 * **Fix (B2):** Bulk action emoji changed from joker to frog mascot.
 * **Fix (B3):** Empty columns safeguard — if column normalization produces an empty list, falls back to default columns so exports never produce headerless files.
 * **Feature (F4):** Dynamic order meta discovery — "Scan order meta" button in the column picker queries the database (HPOS-safe) and lists all available meta keys for one-click addition.
@@ -130,7 +130,7 @@ Yes — **Red-Headed Lite**: manual + bulk, CSV only, Email + SFTP + direct down
 * **Fix:** Local folder destination defaults panel in Settings → Destinations.
 * **Fix:** Draft/auto-draft statuses filtered from order status checkboxes and post-export dropdown.
 * **Fix:** PHP_INT_MAX raw number display replaced with ∞ symbol.
-* **Fix:** Text domain changed from `pelican` to `red-headed-pro` throughout.
+* **Fix:** Text domain changed from `red-headed-pro` to `red-headed-pro` throughout.
 * **Polish:** Select chevron CSS, drawer ARIA, focus trap, default retry/auto-trigger values.
 
 = 1.4.44 - 2026-05-17 =
@@ -145,7 +145,7 @@ Yes — **Red-Headed Lite**: manual + bulk, CSV only, Email + SFTP + direct down
 
 = 1.1.0 — 2026-04-30 =
 * Verbal rebrand: ships as **Red-Headed Pro — Orders Export Manager**.
-* Slug renamed `pelican-pro` → `red-headed-pro` (final naming).
+* Slug renamed `red-headed-pro-pro` → `red-headed-pro` (final naming).
 * Mascot: Red-Headed Poison Frog.
 * Internal class names, REST routes, hooks, options, DB tables: UNCHANGED.
 * Backward-compatible with v1.0.0 data — no migration required.

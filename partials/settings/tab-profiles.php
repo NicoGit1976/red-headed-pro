@@ -3,10 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Settings → Profiles tab. Lite is capped to 1 profile (Soft Lock).
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-$profiles = Pelican_Profile_Repo::all();
-$is_pro   = Pelican_Soft_Lock::is_pro();
+$profiles = Red_Headed_Profile_Repo::all();
+$is_pro   = Red_Headed_Soft_Lock::is_pro();
 $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
 ?>
 <div class="pl-pane">
@@ -89,11 +89,11 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                         <?php
                         $fmts = array(
                             'csv'    => 'CSV',
-                            'tsv'    => 'TSV' . ( Pelican_Soft_Lock::is_locked( 'format_tsv' )    ? ' 🔒' : '' ),
-                            'json'   => 'JSON' . ( Pelican_Soft_Lock::is_locked( 'format_json' )   ? ' 🔒' : '' ),
-                            'ndjson' => 'NDJSON' . ( Pelican_Soft_Lock::is_locked( 'format_ndjson' ) ? ' 🔒' : '' ),
-                            'xml'    => 'XML' . ( Pelican_Soft_Lock::is_locked( 'format_xml' )    ? ' 🔒' : '' ),
-                            'xlsx'   => 'XLSX' . ( Pelican_Soft_Lock::is_locked( 'format_xlsx' )   ? ' 🔒' : '' ),
+                            'tsv'    => 'TSV' . ( Red_Headed_Soft_Lock::is_locked( 'format_tsv' )    ? ' 🔒' : '' ),
+                            'json'   => 'JSON' . ( Red_Headed_Soft_Lock::is_locked( 'format_json' )   ? ' 🔒' : '' ),
+                            'ndjson' => 'NDJSON' . ( Red_Headed_Soft_Lock::is_locked( 'format_ndjson' ) ? ' 🔒' : '' ),
+                            'xml'    => 'XML' . ( Red_Headed_Soft_Lock::is_locked( 'format_xml' )    ? ' 🔒' : '' ),
+                            'xlsx'   => 'XLSX' . ( Red_Headed_Soft_Lock::is_locked( 'format_xlsx' )   ? ' 🔒' : '' ),
                         );
                         foreach ( $fmts as $k => $lbl ) echo '<option value="' . esc_attr( $k ) . '">' . esc_html( $lbl ) . '</option>';
                         ?>
@@ -142,10 +142,10 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
 
                     <?php
                     /* Advanced filters — Pro feature. In Lite, the whole block is wrapped in
-                       Pelican_Soft_Lock::wrap() which dims it and shows a PRO badge overlay. */
+                       Red_Headed_Soft_Lock::wrap() which dims it and shows a PRO badge overlay. */
                     $adv_render = function () {
                     ?>
-                    <details class="pl-field-stack pl-filters-advanced" <?php echo Pelican_Soft_Lock::is_pro() ? '' : 'open'; ?>>
+                    <details class="pl-field-stack pl-filters-advanced" <?php echo Red_Headed_Soft_Lock::is_pro() ? '' : 'open'; ?>>
                         <summary class="pl-field-sublabel" style="cursor:pointer;font-weight:600;">⚙️ <?php esc_html_e( 'Advanced filters', 'red-headed-pro' ); ?></summary>
                         <div class="pl-grid pl-grid-2" style="margin-top:10px;">
                             <label class="pl-field-stack" for="pl-pf-sku-pattern">
@@ -217,10 +217,10 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                     </details>
                     <?php
                     };
-                    if ( Pelican_Soft_Lock::is_available( 'filters_advanced' ) ) {
+                    if ( Red_Headed_Soft_Lock::is_available( 'filters_advanced' ) ) {
                         $adv_render();
                     } else {
-                        Pelican_Soft_Lock::wrap( 'filters_advanced', $adv_render );
+                        Red_Headed_Soft_Lock::wrap( 'filters_advanced', $adv_render );
                     }
                     ?>
                 </fieldset>
@@ -260,8 +260,8 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                             <div class="pl-modal-body">
                                 <div class="pl-cols-catalog" id="pl-cols-catalog">
                                     <?php
-                                    $catalog = Pelican_Export_Engine::column_catalog();
-                                    $groups  = Pelican_Export_Engine::column_groups();
+                                    $catalog = Red_Headed_Export_Engine::column_catalog();
+                                    $groups  = Red_Headed_Export_Engine::column_groups();
                                     $by_group = array();
                                     foreach ( $catalog as $key => $meta ) {
                                         $g = $meta['group'] ?? 'order';
@@ -293,18 +293,18 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                                                     <ul id="pl-meta-discovered" style="max-height:200px;overflow-y:auto;margin:8px 0 0;padding:0;list-style:none;"></ul>
                                                 </div>
                                                 <div class="pl-meta-add" style="margin-top:14px;border-top:1px solid var(--pl-border);padding-top:12px;">
-                                                    <strong style="display:block;margin-bottom:6px;">📌 <?php esc_html_e( 'Static field', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></strong>
+                                                    <strong style="display:block;margin-bottom:6px;">📌 <?php esc_html_e( 'Static field', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Red_Headed_Soft_Lock::badge() ); ?></strong>
                                                     <input type="text" id="pl-static-key"   placeholder="<?php esc_attr_e( 'key (e.g. vendor)', 'red-headed-pro' ); ?>" />
                                                     <input type="text" id="pl-static-label" placeholder="<?php esc_attr_e( 'header label', 'red-headed-pro' ); ?>" />
                                                     <input type="text" id="pl-static-value" placeholder="<?php esc_attr_e( 'value (constant on every row)', 'red-headed-pro' ); ?>" />
-                                                    <button type="button" class="pl-btn pl-btn-sm" id="pl-static-add-btn" <?php disabled( ! Pelican_Soft_Lock::is_available( 'computed_columns' ) ); ?>>+ <?php esc_html_e( 'Add static field', 'red-headed-pro' ); ?></button>
+                                                    <button type="button" class="pl-btn pl-btn-sm" id="pl-static-add-btn" <?php disabled( ! Red_Headed_Soft_Lock::is_available( 'computed_columns' ) ); ?>>+ <?php esc_html_e( 'Add static field', 'red-headed-pro' ); ?></button>
                                                 </div>
                                                 <div class="pl-meta-add" style="margin-top:14px;border-top:1px solid var(--pl-border);padding-top:12px;">
-                                                    <strong style="display:block;margin-bottom:6px;">🧮 <?php esc_html_e( 'Calculated field', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></strong>
+                                                    <strong style="display:block;margin-bottom:6px;">🧮 <?php esc_html_e( 'Calculated field', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Red_Headed_Soft_Lock::badge() ); ?></strong>
                                                     <input type="text" id="pl-calc-key"   placeholder="<?php esc_attr_e( 'key (e.g. vat_amount)', 'red-headed-pro' ); ?>" />
                                                     <input type="text" id="pl-calc-label" placeholder="<?php esc_attr_e( 'header label', 'red-headed-pro' ); ?>" />
                                                     <input type="text" id="pl-calc-expr"  placeholder="{total} * 0.20" />
-                                                    <button type="button" class="pl-btn pl-btn-sm" id="pl-calc-add-btn" <?php disabled( ! Pelican_Soft_Lock::is_available( 'computed_columns' ) ); ?>>+ <?php esc_html_e( 'Add calculated field', 'red-headed-pro' ); ?></button>
+                                                    <button type="button" class="pl-btn pl-btn-sm" id="pl-calc-add-btn" <?php disabled( ! Red_Headed_Soft_Lock::is_available( 'computed_columns' ) ); ?>>+ <?php esc_html_e( 'Add calculated field', 'red-headed-pro' ); ?></button>
                                                     <p class="pl-muted" style="margin:6px 0 0;font-size:11px;line-height:1.45;">
                                                         <?php esc_html_e( 'Allowed: + - * / parentheses + numeric placeholders {total} {subtotal} {tax_total} {shipping_total} {discount_total}.', 'red-headed-pro' ); ?>
                                                     </p>
@@ -329,23 +329,23 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                 </fieldset>
 
                 <fieldset class="pl-field">
-                    <legend class="pl-field-lbl">🔁 <?php esc_html_e( 'Retry on failure', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></legend>
+                    <legend class="pl-field-lbl">🔁 <?php esc_html_e( 'Retry on failure', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Red_Headed_Soft_Lock::badge() ); ?></legend>
                     <p class="pl-muted"><?php esc_html_e( 'If a destination is unreachable (e.g. the receiving ERP/SFTP server is down), re-attempt delivery automatically on each cron tick — with backoff — until it goes through. The export file is re-sent as-is (same filename). Relies on WP-cron / a server cron running.', 'red-headed-pro' ); ?></p>
                     <label class="pl-checkbox" style="display:flex;gap:8px;align-items:center;">
-                        <input type="checkbox" id="pl-pf-retry-on-fail" <?php disabled( ! Pelican_Soft_Lock::is_available( 'cron' ) ); ?> />
+                        <input type="checkbox" id="pl-pf-retry-on-fail" <?php disabled( ! Red_Headed_Soft_Lock::is_available( 'cron' ) ); ?> />
                         <span><?php esc_html_e( 'Re-deliver failed exports until received', 'red-headed-pro' ); ?></span>
                     </label>
                     <label class="pl-field-stack">
                         <span class="pl-field-sublabel"><?php esc_html_e( 'Max attempts (0 = keep trying until success)', 'red-headed-pro' ); ?></span>
-                        <input type="number" id="pl-pf-retry-max" min="0" step="1" placeholder="0" <?php disabled( ! Pelican_Soft_Lock::is_available( 'cron' ) ); ?> />
+                        <input type="number" id="pl-pf-retry-max" min="0" step="1" placeholder="0" <?php disabled( ! Red_Headed_Soft_Lock::is_available( 'cron' ) ); ?> />
                     </label>
                 </fieldset>
 
                 <fieldset class="pl-field">
-                    <legend class="pl-field-lbl">📤 <?php esc_html_e( 'Export mode', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></legend>
+                    <legend class="pl-field-lbl">📤 <?php esc_html_e( 'Export mode', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Red_Headed_Soft_Lock::badge() ); ?></legend>
                     <label class="pl-field-stack">
                         <span class="pl-field-sublabel"><?php esc_html_e( 'Row layout', 'red-headed-pro' ); ?></span>
-                        <select id="pl-pf-export-mode" <?php disabled( ! Pelican_Soft_Lock::is_available( 'line_item_export' ) ); ?>>
+                        <select id="pl-pf-export-mode" <?php disabled( ! Red_Headed_Soft_Lock::is_available( 'line_item_export' ) ); ?>>
                             <option value="per_order"><?php esc_html_e( 'One row per order', 'red-headed-pro' ); ?></option>
                             <option value="per_line_item"><?php esc_html_e( 'One row per line item (product)', 'red-headed-pro' ); ?></option>
                         </select>
@@ -358,11 +358,11 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                 </fieldset>
 
                 <fieldset class="pl-field" id="pl-pf-json-fieldset">
-                    <legend class="pl-field-lbl">🧱 <?php esc_html_e( 'JSON structure', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></legend>
+                    <legend class="pl-field-lbl">🧱 <?php esc_html_e( 'JSON structure', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Red_Headed_Soft_Lock::badge() ); ?></legend>
                     <p class="pl-muted"><?php esc_html_e( 'Only applies to JSON / NDJSON formats. Shape the output to match a downstream schema (ERP, partner API…).', 'red-headed-pro' ); ?></p>
                     <label class="pl-field-stack">
                         <span class="pl-field-sublabel"><?php esc_html_e( 'Shape', 'red-headed-pro' ); ?></span>
-                        <select id="pl-pf-json-shape" <?php disabled( ! Pelican_Soft_Lock::is_available( 'json_structure' ) ); ?>>
+                        <select id="pl-pf-json-shape" <?php disabled( ! Red_Headed_Soft_Lock::is_available( 'json_structure' ) ); ?>>
                             <option value=""><?php esc_html_e( 'Flat rows (internal keys)', 'red-headed-pro' ); ?></option>
                             <option value="labeled"><?php esc_html_e( 'One object per order (column labels as keys)', 'red-headed-pro' ); ?></option>
                             <option value="nested"><?php esc_html_e( 'Labeled + nested line items', 'red-headed-pro' ); ?></option>
@@ -380,23 +380,23 @@ $cap_hit  = ! $is_pro && count( $profiles ) >= 1;
                 </fieldset>
 
                 <fieldset class="pl-field">
-                    <legend class="pl-field-lbl">📄 <?php esc_html_e( 'Output file', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></legend>
+                    <legend class="pl-field-lbl">📄 <?php esc_html_e( 'Output file', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Red_Headed_Soft_Lock::badge() ); ?></legend>
                     <label class="pl-field-stack">
                         <span class="pl-field-sublabel"><?php esc_html_e( 'Filename pattern', 'red-headed-pro' ); ?></span>
-                        <input type="text" id="pl-pf-filename-pattern" placeholder="export-{order_number}-{date}" <?php disabled( ! Pelican_Soft_Lock::is_available( 'filename_pattern' ) ); ?> />
+                        <input type="text" id="pl-pf-filename-pattern" placeholder="export-{order_number}-{date}" <?php disabled( ! Red_Headed_Soft_Lock::is_available( 'filename_pattern' ) ); ?> />
                         <small class="pl-muted"><?php esc_html_e( 'Placeholders: {order_id} {order_number} {order_datetime} {order_date} {date_eu} {datetime_eu} {date} {time} {date:FORMAT} {customer_id} {customer_email} {customer_name} {records} {job_id} {random} {random:N} {digits} {digits:N} {profile} {format}. Extension auto-appended. Empty = global default.', 'red-headed-pro' ); ?></small>
                     </label>
                     <label class="pl-checkbox" style="display:flex;gap:8px;align-items:center;margin-top:8px;">
-                        <input type="checkbox" id="pl-pf-split-per-order" <?php disabled( ! Pelican_Soft_Lock::is_available( 'split_per_order' ) ); ?> />
+                        <input type="checkbox" id="pl-pf-split-per-order" <?php disabled( ! Red_Headed_Soft_Lock::is_available( 'split_per_order' ) ); ?> />
                         <span><?php esc_html_e( 'One file per order (split a batch into individual files)', 'red-headed-pro' ); ?></span>
                     </label>
                 </fieldset>
 
                 <fieldset class="pl-field">
-                    <legend class="pl-field-lbl">🔄 <?php esc_html_e( 'Post-export action', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?></legend>
+                    <legend class="pl-field-lbl">🔄 <?php esc_html_e( 'Post-export action', 'red-headed-pro' ); ?> <?php echo wp_kses_post( Red_Headed_Soft_Lock::badge() ); ?></legend>
                     <label class="pl-field-stack">
                         <span class="pl-field-sublabel"><?php esc_html_e( 'After a successful export, set order status to', 'red-headed-pro' ); ?></span>
-                        <select id="pl-pf-post-export-status" <?php disabled( ! Pelican_Soft_Lock::is_available( 'post_export_status' ) ); ?>>
+                        <select id="pl-pf-post-export-status" <?php disabled( ! Red_Headed_Soft_Lock::is_available( 'post_export_status' ) ); ?>>
                             <option value=""><?php esc_html_e( '— do nothing —', 'red-headed-pro' ); ?></option>
                             <?php
                             $wc_statuses = function_exists( 'wc_get_order_statuses' ) ? wc_get_order_statuses() : array();

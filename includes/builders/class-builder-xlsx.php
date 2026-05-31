@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *   2. Else, fall back to writing a minimal Office Open XML structure as a ZIP
  *      (works in Excel, Numbers, LibreOffice for simple data).
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Builder_XLSX {
+class Red_Headed_Builder_XLSX {
     public static function build( $columns, $rows, $path ) {
         if ( class_exists( '\PhpOffice\PhpSpreadsheet\Spreadsheet' ) ) {
             return self::build_with_phpspreadsheet( $columns, $rows, $path );
@@ -56,7 +56,7 @@ class Pelican_Builder_XLSX {
     protected static function build_minimal( $columns, $rows, $path ) {
         if ( ! class_exists( 'ZipArchive' ) ) {
             /* Last-resort fallback — write CSV + .xlsx extension. Excel will warn but still open. */
-            return Pelican_Builder_CSV::build( $columns, $rows, $path, ',' );
+            return Red_Headed_Builder_CSV::build( $columns, $rows, $path, ',' );
         }
         $headers = array_map( function ( $c ) {
             return is_array( $c ) ? ( $c['label'] ?? $c['key'] ?? '' ) : (string) $c;

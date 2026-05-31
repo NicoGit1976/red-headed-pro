@@ -4,32 +4,32 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * Destination dispatcher — routes a destination config to the right channel
  * class. Returns true|WP_Error.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Destination_Dispatcher {
+class Red_Headed_Destination_Dispatcher {
     public static function ship( $destination, $file, $profile, $format ) {
         $type = isset( $destination['type'] ) ? sanitize_key( $destination['type'] ) : 'email';
         switch ( $type ) {
             case 'email':
                 self::inject_context( $destination, $profile, $format );
-                return Pelican_Destination_Email::ship( $file, $destination );
+                return Red_Headed_Destination_Email::ship( $file, $destination );
             case 'sftp':
                 self::inject_context( $destination, $profile, $format );
-                return Pelican_Destination_SFTP::ship( $file, $destination );
+                return Red_Headed_Destination_SFTP::ship( $file, $destination );
             case 'local_zip':
-                if ( Pelican_Soft_Lock::is_locked( 'dest_local_zip' ) ) return new \WP_Error( 'locked', __( 'Local ZIP requires Pro.', 'red-headed-pro' ) );
-                return Pelican_Destination_Local_Zip::ship( $file, $destination );
+                if ( Red_Headed_Soft_Lock::is_locked( 'dest_local_zip' ) ) return new \WP_Error( 'locked', __( 'Local ZIP requires Pro.', 'red-headed-pro' ) );
+                return Red_Headed_Destination_Local_Zip::ship( $file, $destination );
             case 'local_folder':
-                if ( Pelican_Soft_Lock::is_locked( 'dest_local_folder' ) ) return new \WP_Error( 'locked', __( 'Local folder destination requires Pro.', 'red-headed-pro' ) );
-                return Pelican_Destination_Local_Folder::ship( $file, $destination );
+                if ( Red_Headed_Soft_Lock::is_locked( 'dest_local_folder' ) ) return new \WP_Error( 'locked', __( 'Local folder destination requires Pro.', 'red-headed-pro' ) );
+                return Red_Headed_Destination_Local_Folder::ship( $file, $destination );
             case 'rest':
-                if ( Pelican_Soft_Lock::is_locked( 'dest_rest' ) ) return new \WP_Error( 'locked', __( 'REST destination requires Pro.', 'red-headed-pro' ) );
-                return Pelican_Destination_REST::ship( $file, $destination );
+                if ( Red_Headed_Soft_Lock::is_locked( 'dest_rest' ) ) return new \WP_Error( 'locked', __( 'REST destination requires Pro.', 'red-headed-pro' ) );
+                return Red_Headed_Destination_REST::ship( $file, $destination );
             case 'gdrive':
-                if ( Pelican_Soft_Lock::is_locked( 'dest_gdrive' ) ) return new \WP_Error( 'locked', __( 'Google Drive destination requires Pro.', 'red-headed-pro' ) );
+                if ( Red_Headed_Soft_Lock::is_locked( 'dest_gdrive' ) ) return new \WP_Error( 'locked', __( 'Google Drive destination requires Pro.', 'red-headed-pro' ) );
                 /* v1.4.26 — context for filename pattern resolution. */
                 self::inject_context( $destination, $profile, $format );
-                return Pelican_Destination_GDrive::ship( $file, $destination );
+                return Red_Headed_Destination_GDrive::ship( $file, $destination );
             case 'download':
                 /* Download is not really a "ship" — the file already lives on disk and
                    the user grabs it via the Exports list. We just return true so the
@@ -41,7 +41,7 @@ class Pelican_Destination_Dispatcher {
     }
 
     /* v1.4.26 — Inject the resolution context into $destination so each ship()
-       receives everything Pelican_Filename_Resolver needs. */
+       receives everything Red_Headed_Filename_Resolver needs. */
     private static function inject_context( &$destination, $profile, $format ) {
         $destination['_profile_name'] = isset( $profile['name'] ) ? (string) $profile['name'] : '';
         $destination['_format']       = (string) $format;

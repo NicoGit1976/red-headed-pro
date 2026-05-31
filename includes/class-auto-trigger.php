@@ -10,17 +10,17 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *     'min_total'    => 0,
  *   ]
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Auto_Trigger {
+class Red_Headed_Auto_Trigger {
     public static function init() {
-        if ( Pelican_Soft_Lock::is_locked( 'auto_trigger' ) ) return;
+        if ( Red_Headed_Soft_Lock::is_locked( 'auto_trigger' ) ) return;
         add_action( 'woocommerce_order_status_changed', array( __CLASS__, 'on_status_changed' ), 10, 4 );
     }
     public static function on_status_changed( $order_id, $from, $to, $order ) {
         if ( ! $order_id ) return;
         $fired = false;
-        foreach ( Pelican_Profile_Repo::all() as $profile ) {
+        foreach ( Red_Headed_Profile_Repo::all() as $profile ) {
             $rule = $profile['auto_trigger'] ?? array();
             if ( empty( $rule['on_status'] ) ) continue;
             $statuses = array_map( 'sanitize_key', (array) $rule['on_status'] );
@@ -30,14 +30,14 @@ class Pelican_Auto_Trigger {
                 if ( $total < (float) $rule['min_total'] ) continue;
             }
             if ( ! empty( $rule['fire_once'] ) ) {
-                $key = 'pelican_auto_fired_' . (int) $profile['id'] . '_' . (int) $order_id;
+                $key = 'red_headed_auto_fired_' . (int) $profile['id'] . '_' . (int) $order_id;
                 if ( get_transient( $key ) ) continue;
                 set_transient( $key, 1, 30 * DAY_IN_SECONDS );
             }
             /* Run profile with this single order injected as filter override */
             $injected = $profile;
             $injected['filters']['order_ids_override'] = array( (int) $order_id );
-            Pelican_Export_Engine::run( $injected, 'auto:status_changed:' . $to );
+            Red_Headed_Export_Engine::run( $injected, 'auto:status_changed:' . $to );
             $fired = true;
         }
         /* Resilience: whenever an order triggers an export, also flush any deliveries
@@ -45,8 +45,8 @@ class Pelican_Auto_Trigger {
            unreachable). This piggybacks retries on real order activity so they no
            longer depend solely on the cron tick — the exact fragility (dead WP-cron)
            that let AOE's failed deliveries pile up. */
-        if ( $fired && class_exists( 'Pelican_Retry' ) ) {
-            Pelican_Retry::process();
+        if ( $fired && class_exists( 'Red_Headed_Retry' ) ) {
+            Red_Headed_Retry::process();
         }
     }
 }

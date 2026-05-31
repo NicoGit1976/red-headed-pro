@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: The Lion Frog | Pélican Pro 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/pelican-pro\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/red-headed-pro-pro\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,30 +12,30 @@ msgstr ""
 "POT-Creation-Date: 2026-04-30T07:20:04+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: pelican\n"
+"X-Domain: red-headed-pro\n"
 
 #. Plugin Name of the plugin
-#: pelican-pro.php
+#: red-headed-pro-pro.php
 msgid "The Lion Frog | Pélican Pro"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: pelican-pro.php
-msgid "https://thelionfrog.com/products/plugins/pelican-pro"
+#: red-headed-pro-pro.php
+msgid "https://thelionfrog.com/products/plugins/red-headed-pro-pro"
 msgstr ""
 
 #. Description of the plugin
-#: pelican-pro.php
+#: red-headed-pro-pro.php
 msgid "Pélican carries your WooCommerce orders wherever you need them — bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Pro edition."
 msgstr ""
 
 #. Author of the plugin
-#: pelican-pro.php
+#: red-headed-pro-pro.php
 msgid "The Lion Frog Team"
 msgstr ""
 
 #. Author URI of the plugin
-#: pelican-pro.php
+#: red-headed-pro-pro.php
 msgid "https://thelionfrog.com"
 msgstr ""
 
@@ -394,7 +394,7 @@ msgid "Retention (days)"
 msgstr ""
 
 #: partials/settings/tab-general.php:50
-msgid "Files older than this are auto-deleted from /uploads/pelican/exports. 0 = keep forever."
+msgid "Files older than this are auto-deleted from /uploads/red-headed-pro/exports. 0 = keep forever."
 msgstr ""
 
 #: partials/settings/tab-general.php:55
@@ -402,7 +402,7 @@ msgid "Default email template"
 msgstr ""
 
 #: partials/settings/tab-general.php:57
-msgid "Translatable via PolyLang & WPML — use the “Pelican” string group in the language admin."
+msgid "Translatable via PolyLang & WPML — use the “Red_Headed_Pro” string group in the language admin."
 msgstr ""
 
 #: partials/settings/tab-general.php:60
@@ -610,7 +610,7 @@ msgid "Get notified by HTTP POST every time an export is generated, delivered, o
 msgstr ""
 
 #: partials/settings/tab-webhooks.php:35
-msgid "HMAC SHA-256 signature in X-Pelican-Signature"
+msgid "HMAC SHA-256 signature in X-Red_Headed_Pro-Signature"
 msgstr ""
 
 #: partials/settings/tab-webhooks.php:36
@@ -822,50 +822,50 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: pelican-pro.php:69
+#: red-headed-pro-pro.php:69
 msgid "Pélican Pro activated."
 msgstr ""
 
-#: pelican-pro.php:70
+#: red-headed-pro-pro.php:70
 msgid "Pélican Lite has been deactivated automatically. All your data and settings have been preserved."
 msgstr ""
 
-#: pelican-pro.php:95
+#: red-headed-pro-pro.php:95
 msgid "Bulk + manual exports of WooCommerce orders"
 msgstr ""
 
-#: pelican-pro.php:96
+#: red-headed-pro-pro.php:96
 msgid "6 formats: CSV · XLSX · JSON · NDJSON · XML · TSV"
 msgstr ""
 
-#: pelican-pro.php:97
+#: red-headed-pro-pro.php:97
 msgid "Multi-destinations: Email · SFTP · Google Drive · Download · Local ZIP · REST"
 msgstr ""
 
-#: pelican-pro.php:98
+#: red-headed-pro-pro.php:98
 msgid "Cron triggers: hourly · twice-daily · daily · weekly · custom"
 msgstr ""
 
-#: pelican-pro.php:99
+#: red-headed-pro-pro.php:99
 msgid "Auto-trigger on order status change (rules engine)"
 msgstr ""
 
-#: pelican-pro.php:100
+#: red-headed-pro-pro.php:100
 msgid "Advanced filters: dates · status · payment · shipping · category · SKU · customer role"
 msgstr ""
 
-#: pelican-pro.php:101
+#: red-headed-pro-pro.php:101
 msgid "Field mapper: pick columns, rename headers, transform values"
 msgstr ""
 
-#: pelican-pro.php:102
+#: red-headed-pro-pro.php:102
 msgid "PolyLang & WPML compatibility"
 msgstr ""
 
-#: pelican-pro.php:103
+#: red-headed-pro-pro.php:103
 msgid "REST API + Webhooks (Zapier / n8n / your CRM)"
 msgstr ""
 
-#: pelican-pro.php:104
+#: red-headed-pro-pro.php:104
 msgid "HPOS compatible · Hub auto-register · Lion Frog DNA UI"
 msgstr ""

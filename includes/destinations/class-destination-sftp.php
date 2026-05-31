@@ -5,9 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  *
  * Both Lite and Pro support SFTP (Lite is capped to 1 destination per profile).
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Destination_SFTP extends Pelican_Destination_Base {
+class Red_Headed_Destination_SFTP extends Red_Headed_Destination_Base {
     public static function ship( $file, $config ) {
         $host = isset( $config['host'] ) ? sanitize_text_field( $config['host'] ) : '';
         $port = isset( $config['port'] ) ? (int) $config['port'] : 22;
@@ -17,7 +17,7 @@ class Pelican_Destination_SFTP extends Pelican_Destination_Base {
         if ( ! $host || ! $user ) return new \WP_Error( 'sftp_missing', __( 'Missing SFTP host or user.', 'red-headed-pro' ) );
 
         /* v1.4.26 — Optional filename pattern. Falls back to basename($file). */
-        $remote_name = Pelican_Filename_Resolver::resolve(
+        $remote_name = Red_Headed_Filename_Resolver::resolve(
             isset( $config['filename_pattern'] ) ? $config['filename_pattern'] : '',
             array(
                 'file'         => $file,

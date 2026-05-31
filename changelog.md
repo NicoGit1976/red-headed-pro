@@ -4,8 +4,8 @@
 
 ### Added
 - `uninstall.php` — full data cleanup when the plugin is deleted (default ON).
-  Wipes `pelican_*` options, the `pelican_last_run_*` per-profile flags and
-  the `pelican_cron_tick` cron. Drops the `pl_profiles` and `pl_jobs`
+  Wipes `red_headed_*` options, the `red_headed_last_run_*` per-profile flags and
+  the `red_headed_cron_tick` cron. Drops the `rh_profiles` and `rh_jobs`
   tables only if the sister edition (`red-headed-lite`) is no longer
   installed (so cross-edition switches preserve history).
 - "Clean on uninstall" toggle in Settings > General > Data hygiene
@@ -48,7 +48,7 @@
 - "Use defaults" / "Clear" buttons.
 
 ### Engine
-- New `Pelican_Export_Engine::column_catalog()` + `column_groups()` (filter `pelican_column_catalog` for third-party extensions).
+- New `Red_Headed_Export_Engine::column_catalog()` + `column_groups()` (filter `red_headed_column_catalog` for third-party extensions).
 - New `normalize_columns()` ensures all builders receive the `{ key, label }` shape (legacy plain-string lists still accepted — backward compat).
 - New `default_label_for( $key )` helper.
 
@@ -57,22 +57,22 @@
 
 ## 1.1.0 — 2026-04-30
 
-🃏 **Verbal rebrand + slug rename** (Pélican → Harlequin · pelican-pro → woo-order-pro).
+🃏 **Verbal rebrand + slug rename** (Pélican → Harlequin · red-headed-pro-pro → woo-order-pro).
 
 ### Changed
 - Plugin Name header: `Harlequin Pro — WooCommerce Order Export`.
-- Slug renamed `pelican-pro` → `woo-order-pro` (function-descriptive, suite-wide consistency).
+- Slug renamed `red-headed-pro-pro` → `woo-order-pro` (function-descriptive, suite-wide consistency).
 - Plugin folder + main bootstrap file renamed.
 - Admin H1: now displays the harlequin mascot SVG + baseline.
 - New asset: `assets/img/mascot-harlequin-v1.svg`.
 
 ### Unchanged
-- Internal classes (`Pelican_*`), constants (`PELICAN_*`), REST routes (`/pelican/v1/*`), hooks (`pelican_*`), DB tables (`wp_pl_*`), text-domain (`pelican`).
+- Internal classes (`Red_Headed_*`), constants (`RED_HEADED_*`), REST routes (`/red-headed-pro/v1/*`), hooks (`red_headed_*`), DB tables (`wp_pl_*`), text-domain (`red-headed-pro`).
 - Option keys, encrypted credentials, profile data — all preserved.
 - No data migration required.
 
 ### Rollback
-- Replace plugin folder with archived `pelican-pro-v1.0.0.zip`. No DB rollback needed (all option keys/tables unchanged).
+- Replace plugin folder with archived `red-headed-pro-pro-v1.0.0.zip`. No DB rollback needed (all option keys/tables unchanged).
 
 ## 1.0.0 — 2026-04-30
 

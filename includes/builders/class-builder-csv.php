@@ -3,9 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * CSV / TSV builder.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Builder_CSV {
+class Red_Headed_Builder_CSV {
     public static function build( $columns, $rows, $path, $delim = ',' ) {
         $fp = fopen( $path, 'w' );
         if ( ! $fp ) throw new \RuntimeException( 'Cannot open ' . $path );

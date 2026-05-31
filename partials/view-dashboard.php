@@ -3,10 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Dashboard — Harlequin (Lion Frog DNA).
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
 global $wpdb;
-$jobs_tbl = $wpdb->prefix . 'pl_jobs';
+$jobs_tbl = $wpdb->prefix . 'rh_jobs';
 $stats = array(
     'total'      => (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$jobs_tbl}" ),
     'this_month' => (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$jobs_tbl} WHERE started_at >= DATE_FORMAT(NOW(), '%Y-%m-01')" ),
@@ -15,9 +15,9 @@ $stats = array(
 );
 $by_format = $wpdb->get_results( "SELECT format, COUNT(*) AS n FROM {$jobs_tbl} GROUP BY format", ARRAY_A );
 $recent    = $wpdb->get_results( "SELECT id, format, status, records_count, file_size, started_at, trigger_source FROM {$jobs_tbl} ORDER BY started_at DESC LIMIT 8", ARRAY_A ) ?: array();
-$is_pro    = Pelican_Soft_Lock::is_pro();
-$rate      = Pelican_Destination_Email::rate_status();
-$profiles_n = count( Pelican_Profile_Repo::all() );
+$is_pro    = Red_Headed_Soft_Lock::is_pro();
+$rate      = Red_Headed_Destination_Email::rate_status();
+$profiles_n = count( Red_Headed_Profile_Repo::all() );
 
 $formats = array(
     'csv'    => array( 'icon' => '📄', 'label' => 'CSV',    'lock' => null ),
@@ -45,7 +45,7 @@ $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $
     }
     ?>
 
-    <?php include PELICAN_PATH . 'partials/_page-nav.php'; ?>
+    <?php include RED_HEADED_PATH . 'partials/_page-nav.php'; ?>
 
     <section class="pl-kpis">
         <div class="pl-kpi"><div class="pl-kpi-icon">📊</div><div><div class="pl-kpi-num"><?php echo (int) $stats['total']; ?></div><div class="pl-kpi-lbl"><?php esc_html_e( 'Total exports', 'red-headed-pro' ); ?></div></div></div>
@@ -58,14 +58,14 @@ $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $
         <h2 class="pl-h2"><?php esc_html_e( '🗂️ Available formats', 'red-headed-pro' ); ?></h2>
         <div class="pl-formats">
             <?php foreach ( $formats as $slug => $meta ) :
-                $locked = $meta['lock'] && Pelican_Soft_Lock::is_locked( $meta['lock'] );
+                $locked = $meta['lock'] && Red_Headed_Soft_Lock::is_locked( $meta['lock'] );
                 $count  = $by_format_map[ $slug ] ?? 0;
             ?>
                 <div class="pl-format <?php echo $locked ? 'pl-format-locked' : ''; ?>">
                     <div class="pl-format-icon"><?php echo $meta['icon']; ?></div>
                     <div class="pl-format-label">
                         <?php echo esc_html( $meta['label'] ); ?>
-                        <?php if ( $locked ) echo wp_kses_post( Pelican_Soft_Lock::badge() ); ?>
+                        <?php if ( $locked ) echo wp_kses_post( Red_Headed_Soft_Lock::badge() ); ?>
                     </div>
                     <div class="pl-format-count"><?php echo (int) $count; ?> <?php esc_html_e( 'exports', 'red-headed-pro' ); ?></div>
                 </div>

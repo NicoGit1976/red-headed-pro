@@ -2,28 +2,28 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Admin — registers the menu under Froggy Hub (no top-level WP menu) and
- * enqueues assets on Pelican pages.
+ * enqueues assets on Red_Headed_Pro pages.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Admin {
+class Red_Headed_Admin {
     public function __construct() {
         /* v1.4.16 — admin_menu prio 110 (was: 11). Hub registers parent 'froggy-hub'
-           at prio 98. If Pelican registers BEFORE the parent exists, WP computes
+           at prio 98. If Red_Headed_Pro registers BEFORE the parent exists, WP computes
            the wrong hookname (admin_page_* instead of froggy-hub_page_*) → ?page=
            lookup fails → "no permission". Must fire AFTER prio 98. */
         add_action( 'admin_menu', array( $this, 'register_menu' ), 110 );
-        add_action( 'wp_ajax_pelican_preview_profile', array( $this, 'ajax_preview_profile' ) );
-        add_action( 'wp_ajax_pelican_preview_job',     array( $this, 'ajax_preview_job' ) );
+        add_action( 'wp_ajax_red_headed_preview_profile', array( $this, 'ajax_preview_profile' ) );
+        add_action( 'wp_ajax_red_headed_preview_job',     array( $this, 'ajax_preview_job' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
-        add_action( 'wp_ajax_pelican_save_profile', array( $this, 'ajax_save_profile' ) );
-        add_action( 'wp_ajax_pelican_delete_profile', array( $this, 'ajax_delete_profile' ) );
-        add_action( 'wp_ajax_pelican_run_profile', array( $this, 'ajax_run_profile' ) );
-        add_action( 'wp_ajax_pelican_create_local_folder', array( $this, 'ajax_create_local_folder' ) );
-        add_action( 'wp_ajax_pelican_discover_meta_keys', array( $this, 'ajax_discover_meta_keys' ) );
-        add_action( 'wp_ajax_pelican_run_dry',            array( $this, 'ajax_run_dry' ) );
-        add_action( 'wp_ajax_pelican_import_profile',     array( $this, 'ajax_import_profile' ) );
-        add_action( 'wp_ajax_pelican_preview_job_raw',    array( $this, 'ajax_preview_job_raw' ) );
+        add_action( 'wp_ajax_red_headed_save_profile', array( $this, 'ajax_save_profile' ) );
+        add_action( 'wp_ajax_red_headed_delete_profile', array( $this, 'ajax_delete_profile' ) );
+        add_action( 'wp_ajax_red_headed_run_profile', array( $this, 'ajax_run_profile' ) );
+        add_action( 'wp_ajax_red_headed_create_local_folder', array( $this, 'ajax_create_local_folder' ) );
+        add_action( 'wp_ajax_red_headed_discover_meta_keys', array( $this, 'ajax_discover_meta_keys' ) );
+        add_action( 'wp_ajax_red_headed_run_dry',            array( $this, 'ajax_run_dry' ) );
+        add_action( 'wp_ajax_red_headed_import_profile',     array( $this, 'ajax_import_profile' ) );
+        add_action( 'wp_ajax_red_headed_preview_job_raw',    array( $this, 'ajax_preview_job_raw' ) );
         /* v1.4.45 — Tell the Hub to load its shared admin chrome (fh-admin-css) on
            our pages. The Exports/Settings pages are headless (parent=null) so their
            hook is `admin_page_red-headed-pro-*` — it doesn't contain "froggy-", so
@@ -47,7 +47,7 @@ class Pelican_Admin {
         /* v1.4.14 — Dashboard registered under 'froggy-hub' parent (was: null).
            This makes the Hub placeholder dedup catch it via $submenu['froggy-hub']
            and skip creating a duplicate placeholder → no double-entry, no
-           placeholder→Pelican redirect loop. Other slugs stay headless (parent=null)
+           placeholder→Red_Headed_Pro redirect loop. Other slugs stay headless (parent=null)
            because they're routed-to via in-page nav, not the sidebar. */
         add_submenu_page( 'froggy-hub', __( 'Red Headed Dashboard', 'red-headed-pro' ), 'Red Headed', $cap, 'red-headed-pro', array( $this, 'render_dashboard' ) );
         add_submenu_page( null, __( 'Red Headed Exports',   'red-headed-pro' ), '', $cap, 'red-headed-pro-exports',  array( $this, 'render_exports' ) );
@@ -63,48 +63,48 @@ class Pelican_Admin {
     }
     public function enqueue_assets( $hook ) {
         if ( strpos( (string) $hook, 'red-headed-pro' ) === false ) return;
-        wp_enqueue_style( 'pelican', PELICAN_URL . 'assets/css/pelican.css', array(), PELICAN_VERSION );
-        wp_enqueue_script( 'pelican', PELICAN_URL . 'assets/js/pelican.js', array( 'jquery' ), PELICAN_VERSION, true );
-        wp_localize_script( 'pelican', 'PelicanData', array(
+        wp_enqueue_style( 'red-headed-pro', RED_HEADED_URL . 'assets/css/red-headed-pro.css', array(), RED_HEADED_VERSION );
+        wp_enqueue_script( 'red-headed-pro', RED_HEADED_URL . 'assets/js/red-headed-pro.js', array( 'jquery' ), RED_HEADED_VERSION, true );
+        wp_localize_script( 'red-headed-pro', 'RedHeadedData', array(
             'ajaxurl'   => admin_url( 'admin-ajax.php' ),
-            'nonce'     => wp_create_nonce( 'pelican' ),
+            'nonce'     => wp_create_nonce( 'red-headed-pro' ),
             'restUrl'   => rest_url(),
             'restNonce' => wp_create_nonce( 'wp_rest' ),
-            'edition'   => Pelican_Soft_Lock::edition(),
+            'edition'   => Red_Headed_Soft_Lock::edition(),
         ) );
     }
-    public function render_dashboard() { include PELICAN_PATH . 'partials/view-dashboard.php'; }
-    public function render_exports()   { include PELICAN_PATH . 'partials/view-exports.php'; }
-    public function render_settings()  { include PELICAN_PATH . 'partials/view-settings.php'; }
+    public function render_dashboard() { include RED_HEADED_PATH . 'partials/view-dashboard.php'; }
+    public function render_exports()   { include RED_HEADED_PATH . 'partials/view-exports.php'; }
+    public function render_settings()  { include RED_HEADED_PATH . 'partials/view-settings.php'; }
 
     /* ────────── AJAX ────────── */
     public function ajax_save_profile() {
-        check_ajax_referer( 'pelican', 'nonce' );
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
         if ( ! current_user_can( 'manage_woocommerce' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
         $data = isset( $_POST['profile'] ) ? json_decode( wp_unslash( $_POST['profile'] ), true ) : null;
         if ( ! is_array( $data ) ) wp_send_json_error( array( 'message' => 'Invalid profile JSON.' ) );
-        $id = Pelican_Profile_Repo::save( $data );
+        $id = Red_Headed_Profile_Repo::save( $data );
         if ( is_wp_error( $id ) ) wp_send_json_error( array( 'message' => $id->get_error_message() ) );
-        wp_send_json_success( Pelican_Profile_Repo::get( $id ) );
+        wp_send_json_success( Red_Headed_Profile_Repo::get( $id ) );
     }
     public function ajax_delete_profile() {
-        check_ajax_referer( 'pelican', 'nonce' );
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
         if ( ! current_user_can( 'manage_woocommerce' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
         $id = (int) ( $_POST['id'] ?? 0 );
-        $ok = Pelican_Profile_Repo::delete( $id );
+        $ok = Red_Headed_Profile_Repo::delete( $id );
         wp_send_json_success( array( 'deleted' => $ok ) );
     }
     public function ajax_run_profile() {
-        check_ajax_referer( 'pelican', 'nonce' );
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
         if ( ! current_user_can( 'manage_woocommerce' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
         $id = (int) ( $_POST['id'] ?? 0 );
-        $p  = Pelican_Profile_Repo::get( $id );
+        $p  = Red_Headed_Profile_Repo::get( $id );
         if ( ! $p ) wp_send_json_error( array( 'message' => 'Profile not found.' ) );
-        $job = Pelican_Export_Engine::run( $p, 'manual' );
+        $job = Red_Headed_Export_Engine::run( $p, 'manual' );
         if ( is_wp_error( $job ) ) wp_send_json_error( array( 'message' => $job->get_error_message() ) );
         /* v1.4.20 — surface a warning when the export ran but matched 0 orders. */
         global $wpdb;
-        $row = $wpdb->get_row( $wpdb->prepare( "SELECT records_count FROM {$wpdb->prefix}pl_jobs WHERE id = %d", $job ), ARRAY_A );
+        $row = $wpdb->get_row( $wpdb->prepare( "SELECT records_count FROM {$wpdb->prefix}rh_jobs WHERE id = %d", $job ), ARRAY_A );
         $payload = array( 'job_id' => $job, 'records' => isset( $row['records_count'] ) ? (int) $row['records_count'] : 0 );
         if ( $payload['records'] === 0 ) {
             $payload['warning'] = __( 'Export ran but no orders matched your filters. Check the profile settings (statuses, date range).', 'red-headed-pro' );
@@ -113,10 +113,10 @@ class Pelican_Admin {
     }
 
     public function ajax_create_local_folder() {
-        check_ajax_referer( 'pelican', 'nonce' );
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
         if ( ! current_user_can( 'manage_woocommerce' ) ) wp_send_json_error( array( 'message' => __( 'Insufficient permissions.', 'red-headed-pro' ) ), 403 );
         $path = sanitize_text_field( wp_unslash( $_POST['path'] ?? '' ) );
-        $dir  = Pelican_Destination_Local_Folder::resolve_dir( $path );
+        $dir  = Red_Headed_Destination_Local_Folder::resolve_dir( $path );
         if ( is_wp_error( $dir ) ) wp_send_json_error( array( 'message' => $dir->get_error_message() ) );
         if ( ! wp_mkdir_p( $dir ) ) wp_send_json_error( array( 'message' => __( 'Could not create the folder. Check server permissions.', 'red-headed-pro' ) ) );
         if ( ! is_writable( $dir ) ) wp_send_json_error( array( 'message' => __( 'Folder exists but is not writable.', 'red-headed-pro' ) ) );
@@ -126,19 +126,19 @@ class Pelican_Admin {
     /* v1.4.20 — Preview profile: dry-run the filters and return the first 5 mapped rows
        (no job created, no file saved). Lets the user check their filters before running. */
     public function ajax_preview_profile() {
-        check_ajax_referer( 'pelican', 'nonce' );
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
         $id = (int) ( $_POST['id'] ?? 0 );
-        $p  = Pelican_Profile_Repo::get( $id );
+        $p  = Red_Headed_Profile_Repo::get( $id );
         if ( ! $p ) wp_send_json_error( array( 'message' => 'Profile not found.' ) );
-        $orders  = Pelican_Export_Engine::fetch_orders( isset( $p['filters'] ) ? (array) $p['filters'] : array() );
-        $columns = Pelican_Export_Engine::normalize_columns( ! empty( $p['columns'] ) ? (array) $p['columns'] : Pelican_Export_Engine::default_columns() );
+        $orders  = Red_Headed_Export_Engine::fetch_orders( isset( $p['filters'] ) ? (array) $p['filters'] : array() );
+        $columns = Red_Headed_Export_Engine::normalize_columns( ! empty( $p['columns'] ) ? (array) $p['columns'] : Red_Headed_Export_Engine::default_columns() );
         $sample  = array_slice( $orders, 0, 5 );
         /* map_row returns an assoc array keyed by column slug. Normalize to
            indexed values (in column order) so the JS preview can render rows
            with .map() — same shape as the CSV preview path (fgetcsv). */
         $rows = array_map( function ( $o ) use ( $columns ) {
-            $assoc = Pelican_Export_Engine::map_row( $o, $columns );
+            $assoc = Red_Headed_Export_Engine::map_row( $o, $columns );
             $vals = array();
             foreach ( $columns as $c ) {
                 $k = is_array( $c ) ? ( $c['key'] ?? '' ) : (string) $c;
@@ -156,11 +156,11 @@ class Pelican_Admin {
     /* v1.4.20 — Preview job: read the first ~10 lines of the export file (CSV/JSON only;
        binary formats fall back to "open file directly"). */
     public function ajax_preview_job() {
-        check_ajax_referer( 'pelican', 'nonce' );
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
         $jid = (int) ( $_POST['id'] ?? 0 );
         global $wpdb;
-        $j = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}pl_jobs WHERE id = %d", $jid ), ARRAY_A );
+        $j = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}rh_jobs WHERE id = %d", $jid ), ARRAY_A );
         if ( ! $j || empty( $j['file_path'] ) ) wp_send_json_error( array( 'message' => 'Job or file not found.' ) );
         $u   = wp_upload_dir();
         $abs = trailingslashit( $u['basedir'] ) . ltrim( $j['file_path'], '/\\' );
@@ -208,9 +208,9 @@ class Pelican_Admin {
 
     /* ────────── v1.5.0 — F4: discover order meta keys (HPOS-safe) ────────── */
     public function ajax_discover_meta_keys() {
-        check_ajax_referer( 'pelican', 'nonce' );
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
         if ( ! current_user_can( 'manage_woocommerce' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
-        $cached = get_transient( 'pelican_meta_keys_cache' );
+        $cached = get_transient( 'red_headed_meta_keys_cache' );
         if ( is_array( $cached ) ) { wp_send_json_success( $cached ); return; }
         global $wpdb;
         $keys = array();
@@ -232,29 +232,29 @@ class Pelican_Admin {
             );
         }
         /* Exclude keys already resolved by the engine catalog. */
-        $catalog_keys = array_keys( Pelican_Export_Engine::column_catalog() );
+        $catalog_keys = array_keys( Red_Headed_Export_Engine::column_catalog() );
         $wc_internal  = array( '_edit_lock', '_edit_last', '_wp_trash_meta_status', '_wp_trash_meta_time', '_wp_desired_post_slug' );
         $filtered     = array();
         foreach ( (array) $keys as $k ) {
             if ( in_array( $k, $wc_internal, true ) ) continue;
             $filtered[] = $k;
         }
-        set_transient( 'pelican_meta_keys_cache', $filtered, 10 * MINUTE_IN_SECONDS );
+        set_transient( 'red_headed_meta_keys_cache', $filtered, 10 * MINUTE_IN_SECONDS );
         wp_send_json_success( $filtered );
     }
 
     /* ────────── v1.5.0 — P2: dry-run (build file, skip delivery) ────────── */
     public function ajax_run_dry() {
-        check_ajax_referer( 'pelican', 'nonce' );
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
         if ( ! current_user_can( 'manage_woocommerce' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
         $id = (int) ( $_POST['id'] ?? 0 );
-        $p  = Pelican_Profile_Repo::get( $id );
+        $p  = Red_Headed_Profile_Repo::get( $id );
         if ( ! $p ) wp_send_json_error( array( 'message' => 'Profile not found.' ) );
         $p['_dry_run'] = true;
-        $job = Pelican_Export_Engine::run( $p, 'dry_run' );
+        $job = Red_Headed_Export_Engine::run( $p, 'dry_run' );
         if ( is_wp_error( $job ) ) wp_send_json_error( array( 'message' => $job->get_error_message() ) );
         global $wpdb;
-        $row = $wpdb->get_row( $wpdb->prepare( "SELECT records_count FROM {$wpdb->prefix}pl_jobs WHERE id = %d", $job ), ARRAY_A );
+        $row = $wpdb->get_row( $wpdb->prepare( "SELECT records_count FROM {$wpdb->prefix}rh_jobs WHERE id = %d", $job ), ARRAY_A );
         wp_send_json_success( array(
             'job_id'  => $job,
             'records' => isset( $row['records_count'] ) ? (int) $row['records_count'] : 0,
@@ -264,7 +264,7 @@ class Pelican_Admin {
 
     /* ────────── v1.5.0 — P3: import profile from JSON ────────── */
     public function ajax_import_profile() {
-        check_ajax_referer( 'pelican', 'nonce' );
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
         if ( ! current_user_can( 'manage_woocommerce' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
         $raw = isset( $_POST['profile_json'] ) ? wp_unslash( $_POST['profile_json'] ) : '';
         $data = json_decode( $raw, true );
@@ -272,18 +272,18 @@ class Pelican_Admin {
         /* Strip the id so a new profile is created (never overwrite an existing one). */
         unset( $data['id'] );
         $data['name'] = ( $data['name'] ?? 'Imported' ) . ' (' . __( 'imported', 'red-headed-pro' ) . ')';
-        $id = Pelican_Profile_Repo::save( $data );
+        $id = Red_Headed_Profile_Repo::save( $data );
         if ( is_wp_error( $id ) ) wp_send_json_error( array( 'message' => $id->get_error_message() ) );
         wp_send_json_success( array( 'id' => $id, 'message' => __( 'Profile imported.', 'red-headed-pro' ) ) );
     }
 
     /* ────────── v1.5.0 — P1: raw preview (first N bytes of the file as text) ────────── */
     public function ajax_preview_job_raw() {
-        check_ajax_referer( 'pelican', 'nonce' );
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
         if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
         $jid = (int) ( $_POST['id'] ?? 0 );
         global $wpdb;
-        $j = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}pl_jobs WHERE id = %d", $jid ), ARRAY_A );
+        $j = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}rh_jobs WHERE id = %d", $jid ), ARRAY_A );
         if ( ! $j || empty( $j['file_path'] ) ) wp_send_json_error( array( 'message' => 'Job or file not found.' ) );
         $u   = wp_upload_dir();
         $abs = trailingslashit( $u['basedir'] ) . ltrim( $j['file_path'], '/\\' );

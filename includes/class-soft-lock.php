@@ -3,13 +3,13 @@
  * Soft Lock — Harlequin.
  * Pro features visible but locked when running Lite. Same pattern as the rest of the suite.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-class Pelican_Soft_Lock {
+class Red_Headed_Soft_Lock {
     public static function edition() {
-        return defined( 'PELICAN_EDITION' ) ? PELICAN_EDITION : 'lite';
+        return defined( 'RED_HEADED_EDITION' ) ? RED_HEADED_EDITION : 'lite';
     }
     public static function is_pro() {
         return self::edition() === 'pro';

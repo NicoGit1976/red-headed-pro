@@ -3,9 +3,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * JSON / NDJSON builder.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Builder_JSON {
+class Red_Headed_Builder_JSON {
     /**
      * @param bool $ndjson Line-delimited JSON (one record per line, always envelope-free).
      * @param bool $bare   When true (and not NDJSON), emit a plain JSON array of records —
@@ -33,8 +33,8 @@ class Pelican_Builder_JSON {
                     'generated_at' => gmdate( 'c' ),
                     'count'        => count( $rows ),
                     'site'         => home_url(),
-                    'plugin'       => 'pelican',
-                    'version'      => defined( 'PELICAN_VERSION' ) ? PELICAN_VERSION : '1.0.0',
+                    'plugin'       => 'red-headed-pro',
+                    'version'      => defined( 'RED_HEADED_VERSION' ) ? RED_HEADED_VERSION : '1.0.0',
                 ),
                 'orders' => array_values( $rows ),
             );

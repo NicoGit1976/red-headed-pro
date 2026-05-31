@@ -4,21 +4,21 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * REST API — Harlequin (Pro).
  *
  * Routes:
- *   GET    /pelican/v1/profiles
- *   GET    /pelican/v1/profiles/{id}
- *   POST   /pelican/v1/profiles
- *   DELETE /pelican/v1/profiles/{id}
- *   POST   /pelican/v1/profiles/{id}/run     → fires an export, returns job
- *   GET    /pelican/v1/jobs                  → list with pagination
- *   GET    /pelican/v1/jobs/{id}
- *   GET    /pelican/v1/jobs/{id}/download    → signed PDF/CSV/etc.
+ *   GET    /red-headed-pro/v1/profiles
+ *   GET    /red-headed-pro/v1/profiles/{id}
+ *   POST   /red-headed-pro/v1/profiles
+ *   DELETE /red-headed-pro/v1/profiles/{id}
+ *   POST   /red-headed-pro/v1/profiles/{id}/run     → fires an export, returns job
+ *   GET    /red-headed-pro/v1/jobs                  → list with pagination
+ *   GET    /red-headed-pro/v1/jobs/{id}
+ *   GET    /red-headed-pro/v1/jobs/{id}/download    → signed PDF/CSV/etc.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_REST_API {
-    const NS = 'pelican/v1';
+class Red_Headed_REST_API {
+    const NS = 'red-headed-pro/v1';
     public static function init() {
-        if ( Pelican_Soft_Lock::is_locked( 'rest_api' ) ) return;
+        if ( Red_Headed_Soft_Lock::is_locked( 'rest_api' ) ) return;
         add_action( 'rest_api_init', array( __CLASS__, 'routes' ) );
     }
     public static function routes() {
@@ -46,43 +46,43 @@ class Pelican_REST_API {
     public static function cap_read()  { return current_user_can( 'edit_shop_orders' ) || current_user_can( 'manage_woocommerce' ); }
     public static function cap_write() { return current_user_can( 'manage_woocommerce' ); }
 
-    public static function list_profiles() { return rest_ensure_response( Pelican_Profile_Repo::all() ); }
+    public static function list_profiles() { return rest_ensure_response( Red_Headed_Profile_Repo::all() ); }
     public static function get_profile( $req ) {
-        $p = Pelican_Profile_Repo::get( (int) $req->get_param( 'id' ) );
+        $p = Red_Headed_Profile_Repo::get( (int) $req->get_param( 'id' ) );
         return $p ? rest_ensure_response( $p ) : new \WP_Error( 'not_found', __( 'Profile not found.', 'red-headed-pro' ), array( 'status' => 404 ) );
     }
     public static function save_profile( $req ) {
         $data = $req->get_json_params();
-        $id   = Pelican_Profile_Repo::save( is_array( $data ) ? $data : array() );
+        $id   = Red_Headed_Profile_Repo::save( is_array( $data ) ? $data : array() );
         if ( is_wp_error( $id ) ) return $id;
-        return rest_ensure_response( Pelican_Profile_Repo::get( $id ) );
+        return rest_ensure_response( Red_Headed_Profile_Repo::get( $id ) );
     }
     public static function delete_profile( $req ) {
-        Pelican_Profile_Repo::delete( (int) $req->get_param( 'id' ) );
+        Red_Headed_Profile_Repo::delete( (int) $req->get_param( 'id' ) );
         return rest_ensure_response( array( 'deleted' => true ) );
     }
     public static function run_profile( $req ) {
-        $p = Pelican_Profile_Repo::get( (int) $req->get_param( 'id' ) );
+        $p = Red_Headed_Profile_Repo::get( (int) $req->get_param( 'id' ) );
         if ( ! $p ) return new \WP_Error( 'not_found', __( 'Profile not found.', 'red-headed-pro' ), array( 'status' => 404 ) );
-        $job = Pelican_Export_Engine::run( $p, 'rest' );
+        $job = Red_Headed_Export_Engine::run( $p, 'rest' );
         if ( is_wp_error( $job ) ) return $job;
         return rest_ensure_response( array( 'job_id' => $job ) );
     }
     public static function list_jobs( $req ) {
         global $wpdb;
-        $tbl = $wpdb->prefix . 'pl_jobs';
+        $tbl = $wpdb->prefix . 'rh_jobs';
         $rows = $wpdb->get_results( 'SELECT * FROM ' . $tbl . ' ORDER BY started_at DESC LIMIT 100', ARRAY_A );
         return rest_ensure_response( $rows ?: array() );
     }
     public static function get_job( $req ) {
         global $wpdb;
-        $tbl = $wpdb->prefix . 'pl_jobs';
+        $tbl = $wpdb->prefix . 'rh_jobs';
         $row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $tbl . ' WHERE id = %d', (int) $req->get_param( 'id' ) ), ARRAY_A );
         return $row ? rest_ensure_response( $row ) : new \WP_Error( 'not_found', __( 'Job not found.', 'red-headed-pro' ), array( 'status' => 404 ) );
     }
     public static function download_job( $req ) {
         global $wpdb;
-        $tbl = $wpdb->prefix . 'pl_jobs';
+        $tbl = $wpdb->prefix . 'rh_jobs';
         $row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $tbl . ' WHERE id = %d', (int) $req->get_param( 'id' ) ), ARRAY_A );
         if ( ! $row ) return new \WP_Error( 'not_found', __( 'Job not found.', 'red-headed-pro' ), array( 'status' => 404 ) );
         $uploads = wp_upload_dir();

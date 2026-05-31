@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * JSON. The actual upload is a curl POST to the Drive REST API
  * (multipart/related) once a valid access token is configured.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Destination_GDrive extends Pelican_Destination_Base {
+class Red_Headed_Destination_GDrive extends Red_Headed_Destination_Base {
     public static function ship( $file, $config ) {
         /* v1.4.23 — accept either pre-encrypted token (access_token_enc) or plain
            token pasted by the user (access_token). Mirrors the SFTP pattern. */
@@ -51,9 +51,9 @@ class Pelican_Destination_GDrive extends Pelican_Destination_Base {
         }
         return true;
     }
-    /* v1.4.26 — delegated to the shared Pelican_Filename_Resolver. */
+    /* v1.4.26 — delegated to the shared Red_Headed_Filename_Resolver. */
     protected static function resolve_filename( $file, $config ) {
-        return Pelican_Filename_Resolver::resolve(
+        return Red_Headed_Filename_Resolver::resolve(
             isset( $config['filename_pattern'] ) ? $config['filename_pattern'] : '',
             array(
                 'file'         => $file,

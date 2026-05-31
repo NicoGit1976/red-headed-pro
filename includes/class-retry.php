@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * The built export file stays on disk and is re-shipped as-is (same filename),
  * so retries are exact — no rebuild, no duplicate numbering.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Retry {
+class Red_Headed_Retry {
 
-    const OPTION    = 'pelican_retry_queue';
+    const OPTION    = 'red_headed_retry_queue';
     const MAX_QUEUE = 1000; /* safety cap on pending records */
 
     /** Queue one failed delivery for re-attempt. */
@@ -42,7 +42,7 @@ class Pelican_Retry {
 
     /** Process all due retries — called from the cron tick (Pro). */
     public static function process() {
-        if ( Pelican_Soft_Lock::is_locked( 'cron' ) ) return;
+        if ( Red_Headed_Soft_Lock::is_locked( 'cron' ) ) return;
         $q = self::queue();
         if ( empty( $q ) ) return;
         $now  = time();
@@ -60,17 +60,17 @@ class Pelican_Retry {
             unset( $dest['filename_pattern'] );
 
             $rec['attempts'] = (int) ( $rec['attempts'] ?? 0 ) + 1;
-            $ok = Pelican_Destination_Dispatcher::ship( $dest, $file, array(), (string) ( $rec['format'] ?? '' ) );
+            $ok = Red_Headed_Destination_Dispatcher::ship( $dest, $file, array(), (string) ( $rec['format'] ?? '' ) );
 
             if ( ! is_wp_error( $ok ) ) {
-                self::note_job( (int) ( $rec['job_id'] ?? 0 ), sprintf( '[Pelican] retry OK after %d attempt(s) — %s', $rec['attempts'], $dest['type'] ?? '?' ) );
+                self::note_job( (int) ( $rec['job_id'] ?? 0 ), sprintf( '[Red_Headed_Pro] retry OK after %d attempt(s) — %s', $rec['attempts'], $dest['type'] ?? '?' ) );
                 continue; /* delivered → drop from queue */
             }
 
             $rec['last_error'] = substr( $ok->get_error_message(), 0, 300 );
             $max = (int) ( $rec['retry_max'] ?? 0 );
             if ( $max > 0 && $rec['attempts'] >= $max ) {
-                self::note_job( (int) ( $rec['job_id'] ?? 0 ), sprintf( '[Pelican] retry GAVE UP after %d attempts — %s: %s', $rec['attempts'], $dest['type'] ?? '?', $rec['last_error'] ) );
+                self::note_job( (int) ( $rec['job_id'] ?? 0 ), sprintf( '[Red_Headed_Pro] retry GAVE UP after %d attempts — %s: %s', $rec['attempts'], $dest['type'] ?? '?', $rec['last_error'] ) );
                 continue; /* exhausted → drop */
             }
             $rec['next_at'] = $now + self::backoff( $rec['attempts'] );
@@ -99,7 +99,7 @@ class Pelican_Retry {
         error_log( $msg );
         if ( ! $job_id ) return;
         global $wpdb;
-        $tbl      = $wpdb->prefix . 'pl_jobs';
+        $tbl      = $wpdb->prefix . 'rh_jobs';
         $existing = (string) $wpdb->get_var( $wpdb->prepare( "SELECT error_message FROM {$tbl} WHERE id = %d", (int) $job_id ) );
         $wpdb->update( $tbl, array( 'error_message' => substr( trim( $existing . "\n" . $msg ), 0, 1500 ) ), array( 'id' => (int) $job_id ) );
     }

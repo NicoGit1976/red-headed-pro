@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wpml-config>
     <admin-texts>
-        <key name="pelican_email_subject" />
-        <key name="pelican_email_body" />
-        <key name="pelican_default_filename_pattern" />
+        <key name="red_headed_email_subject" />
+        <key name="red_headed_email_body" />
+        <key name="red_headed_default_filename_pattern" />
     </admin-texts>
     <custom-fields>
-        <custom-field action="ignore">_pelican_export_marker</custom-field>
+        <custom-field action="ignore">_red_headed_export_marker</custom-field>
     </custom-fields>
 </wpml-config>

@@ -3,12 +3,12 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 /**
  * Profile repository — CRUD on wp_pl_profiles. Lite limit: 1 profile.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-class Pelican_Profile_Repo {
+class Red_Headed_Profile_Repo {
     public static function table() {
         global $wpdb;
-        return $wpdb->prefix . 'pl_profiles';
+        return $wpdb->prefix . 'rh_profiles';
     }
     public static function all() {
         global $wpdb;
@@ -23,7 +23,7 @@ class Pelican_Profile_Repo {
     public static function save( $data ) {
         global $wpdb;
         if ( ! isset( $data['id'] ) || ! $data['id'] ) {
-            if ( Pelican_Soft_Lock::is_locked( 'profile_unlimited' ) ) {
+            if ( Red_Headed_Soft_Lock::is_locked( 'profile_unlimited' ) ) {
                 $count = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::table() );
                 if ( $count >= 1 ) {
                     return new \WP_Error( 'lite_limit', __( 'Lite is capped to 1 export profile. Upgrade to Pro for unlimited profiles.', 'red-headed-pro' ) );
@@ -61,7 +61,7 @@ class Pelican_Profile_Repo {
             'name'           => sanitize_text_field( $data['name']     ?? 'Untitled profile' ),
             'format'         => sanitize_key(        $data['format']   ?? 'csv' ),
             'filters'        => wp_json_encode(      $data['filters']  ?? array() ),
-            'columns'        => wp_json_encode(      $data['columns']  ?? Pelican_Export_Engine::default_columns() ),
+            'columns'        => wp_json_encode(      $data['columns']  ?? Red_Headed_Export_Engine::default_columns() ),
             'destinations'   => wp_json_encode(      $data['destinations'] ?? array() ),
             'schedule'       => sanitize_key(        $data['schedule'] ?? 'manual' ),
             'schedule_meta'  => wp_json_encode(      $meta ),

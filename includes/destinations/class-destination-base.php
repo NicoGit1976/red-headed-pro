@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * Each destination class implements ::ship( $file_path, $config ) returning
  * true on success / WP_Error on failure.
  *
- * @package Pelican
+ * @package Red_Headed_Pro
  */
-abstract class Pelican_Destination_Base {
+abstract class Red_Headed_Destination_Base {
     abstract public static function ship( $file, $config );
 
     protected static function decrypt( $val ) {
@@ -17,14 +17,14 @@ abstract class Pelican_Destination_Base {
         $iv_b64 = substr( $val, 4, 24 );
         $cipher = substr( $val, 28 );
         $iv     = base64_decode( $iv_b64 );
-        $key    = hash( 'sha256', wp_salt( 'auth' ) . 'pelican', true );
+        $key    = hash( 'sha256', wp_salt( 'auth' ) . 'red-headed-pro', true );
         $plain  = openssl_decrypt( $cipher, 'aes-256-cbc', $key, 0, $iv );
         return $plain === false ? '' : $plain;
     }
     public static function encrypt( $plain ) {
         if ( ! is_string( $plain ) || $plain === '' ) return '';
         $iv  = openssl_random_pseudo_bytes( 16 );
-        $key = hash( 'sha256', wp_salt( 'auth' ) . 'pelican', true );
+        $key = hash( 'sha256', wp_salt( 'auth' ) . 'red-headed-pro', true );
         $c   = openssl_encrypt( $plain, 'aes-256-cbc', $key, 0, $iv );
         return 'pl1:' . base64_encode( $iv ) . $c;
     }

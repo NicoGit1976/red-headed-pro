@@ -1065,12 +1065,12 @@
 </ul>
 
 <h3>HMAC signature verification</h3>
-<p>If a secret is set, every webhook POST includes an <code>X-Pelican-Signature</code> header:</p>
-<pre><code><span class="key">X-Pelican-Signature</span>: sha256=&lt;HMAC-SHA256 of body with your secret&gt;</code></pre>
+<p>If a secret is set, every webhook POST includes an <code>X-Red_Headed_Pro-Signature</code> header:</p>
+<pre><code><span class="key">X-Red_Headed_Pro-Signature</span>: sha256=&lt;HMAC-SHA256 of body with your secret&gt;</code></pre>
 <p>To verify on your server (PHP example):</p>
 <pre><code><span class="comment">// Read raw body and header</span>
 <span class="key">$body</span>      = file_get_contents( <span class="val">'php://input'</span> );
-<span class="key">$header</span>    = $_SERVER[<span class="val">'HTTP_X_PELICAN_SIGNATURE'</span>];
+<span class="key">$header</span>    = $_SERVER[<span class="val">'HTTP_X_RED_HEADED_SIGNATURE'</span>];
 <span class="key">$expected</span>  = <span class="val">'sha256='</span> . hash_hmac( <span class="val">'sha256'</span>, $body, $your_secret );
 <span class="key">$is_valid</span>  = hash_equals( $expected, $header );</code></pre>
 
@@ -1080,7 +1080,7 @@
   <span class="key">"data"</span>:         { <span class="key">"job_id"</span>: 42, <span class="key">"profile_id"</span>: 7, <span class="key">"file"</span>: <span class="val">"orders-2026-05-29.csv"</span> },
   <span class="key">"site"</span>:         <span class="val">"https://example.com"</span>,
   <span class="key">"timestamp_ms"</span>: 1780308600000,
-  <span class="key">"plugin"</span>:       <span class="val">"pelican"</span>,
+  <span class="key">"plugin"</span>:       <span class="val">"red-headed-pro"</span>,
   <span class="key">"version"</span>:      <span class="val">"1.5.1"</span>
 }</code></pre>
 
@@ -1089,10 +1089,10 @@
   <thead><tr><th>Header</th><th>Value</th></tr></thead>
   <tbody>
     <tr><td><code>Content-Type</code></td><td><code>application/json; charset=UTF-8</code></td></tr>
-    <tr><td><code>User-Agent</code></td><td><code>Pelican/{version}</code></td></tr>
-    <tr><td><code>X-Pelican-Event</code></td><td>Event name (e.g. <code>export.delivered</code>)</td></tr>
-    <tr><td><code>X-Pelican-Site</code></td><td>Your site URL</td></tr>
-    <tr><td><code>X-Pelican-Signature</code></td><td><code>sha256=...</code> (if secret is set)</td></tr>
+    <tr><td><code>User-Agent</code></td><td><code>Red_Headed_Pro/{version}</code></td></tr>
+    <tr><td><code>X-Red_Headed_Pro-Event</code></td><td>Event name (e.g. <code>export.delivered</code>)</td></tr>
+    <tr><td><code>X-Red_Headed_Pro-Site</code></td><td>Your site URL</td></tr>
+    <tr><td><code>X-Red_Headed_Pro-Signature</code></td><td><code>sha256=...</code> (if secret is set)</td></tr>
   </tbody>
 </table>
 
@@ -1104,16 +1104,16 @@
 <table>
   <thead><tr><th>Hook</th><th>When it fires</th><th>Use it to</th></tr></thead>
   <tbody>
-    <tr><td><code>pelican_export_generated</code></td><td>After the file is built.</td><td>React to a fresh export (e.g. notify a monitoring system).</td></tr>
-    <tr><td><code>pelican_export_delivered</code></td><td>After all destinations are attempted.</td><td>Audit which destinations succeeded / failed.</td></tr>
-    <tr><td><code>pelican_export_failed</code></td><td>When an exception occurs.</td><td>Send an alert (Slack, email, PagerDuty&hellip;).</td></tr>
-    <tr><td><code>pelican_column_catalog</code></td><td>When the column picker is built.</td><td>Inject custom columns from your own plugin.</td></tr>
-    <tr><td><code>pelican_resolve_column</code></td><td>During row mapping, for unrecognized keys.</td><td>Resolve custom column values.</td></tr>
+    <tr><td><code>red_headed_export_generated</code></td><td>After the file is built.</td><td>React to a fresh export (e.g. notify a monitoring system).</td></tr>
+    <tr><td><code>red_headed_export_delivered</code></td><td>After all destinations are attempted.</td><td>Audit which destinations succeeded / failed.</td></tr>
+    <tr><td><code>red_headed_export_failed</code></td><td>When an exception occurs.</td><td>Send an alert (Slack, email, PagerDuty&hellip;).</td></tr>
+    <tr><td><code>red_headed_column_catalog</code></td><td>When the column picker is built.</td><td>Inject custom columns from your own plugin.</td></tr>
+    <tr><td><code>red_headed_resolve_column</code></td><td>During row mapping, for unrecognized keys.</td><td>Resolve custom column values.</td></tr>
   </tbody>
 </table>
 
 <h3>REST API</h3>
-<p>Endpoints under <code>/wp-json/pelican/v1/</code> (requires authentication):</p>
+<p>Endpoints under <code>/wp-json/red-headed-pro/v1/</code> (requires authentication):</p>
 <table>
   <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
   <tbody>
@@ -1133,8 +1133,8 @@
 <table>
   <thead><tr><th>Table</th><th>Purpose</th></tr></thead>
   <tbody>
-    <tr><td><code>pl_profiles</code></td><td>Profile configurations (JSON blob per profile).</td></tr>
-    <tr><td><code>pl_jobs</code></td><td>Export job history (status, timestamps, file path, error log).</td></tr>
+    <tr><td><code>rh_profiles</code></td><td>Profile configurations (JSON blob per profile).</td></tr>
+    <tr><td><code>rh_jobs</code></td><td>Export job history (status, timestamps, file path, error log).</td></tr>
   </tbody>
 </table>
 
