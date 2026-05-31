@@ -57,13 +57,21 @@ class Pelican_Filename_Resolver {
             '{date}'      => current_time( 'Y-m-d' ),
             '{time}'      => current_time( 'H-i-s' ),
             '{datetime}'  => current_time( 'Y-m-d_H-i-s' ),
+            /* EU-style export-time tokens (day-month-year). */
+            '{date_eu}'     => current_time( 'd-m-Y' ),
+            '{datetime_eu}' => current_time( 'd-m-Y-H-i-s' ),
             '{timestamp}' => (string) current_time( 'timestamp' ),
             '{random}'    => wp_generate_password( 6, false ),
-            '{order_id}'       => '',
-            '{order_number}'   => '',
-            '{customer_id}'    => '',
-            '{customer_email}' => '',
-            '{customer_name}'  => '',
+            '{digits}'    => str_pad( (string) wp_rand( 0, 999999 ), 6, '0', STR_PAD_LEFT ),
+            '{order_id}'        => '',
+            '{order_number}'    => '',
+            '{customer_id}'     => '',
+            '{customer_email}'  => '',
+            '{customer_name}'   => '',
+            /* First-order creation date (EU style) — for one-file-per-order naming. */
+            '{order_date}'      => '',
+            '{order_time}'      => '',
+            '{order_datetime}'  => '',
         );
 
         $first = isset( $context['first_order'] ) ? $context['first_order'] : null;
@@ -74,9 +82,41 @@ class Pelican_Filename_Resolver {
             $repl['{customer_email}'] = sanitize_file_name( (string) $first->get_billing_email() );
             $name = trim( $first->get_billing_first_name() . ' ' . $first->get_billing_last_name() );
             $repl['{customer_name}']  = $name ? sanitize_file_name( $name ) : '';
+            $created = $first->get_date_created();
+            if ( $created ) {
+                $repl['{order_date}']     = $created->date( 'd-m-Y' );
+                $repl['{order_time}']     = $created->date( 'H-i-s' );
+                $repl['{order_datetime}'] = $created->date( 'd-m-Y-H-i-s' );
+            }
         }
 
         $resolved = strtr( $pattern, $repl );
+
+        /* v1.5.1 — Dynamic {date:FORMAT} placeholder. Lets users write any PHP
+           date() format, e.g. {date:d-m-Y-H-i-s} or {date:Y_m_d}. Filesystem-
+           unsafe characters (: / \) are replaced with dashes. */
+        $resolved = preg_replace_callback( '/\{date:([^}]+)\}/', function ( $m ) {
+            $formatted = current_time( $m[1] );
+            return str_replace( array( ':', '/', '\\', ' ' ), '-', $formatted );
+        }, $resolved );
+
+        /* v1.5.1 — Dynamic {random:N} and {digits:N} placeholders.
+           {random:N} → N alphanumeric chars (1-20, default 6).
+           {digits:N} → N numeric digits only (1-20, default 6).
+           AOE-compatible: use {digits:9} for a 9-digit numeric suffix. */
+        $resolved = preg_replace_callback( '/\{random:(\d+)\}/', function ( $m ) {
+            $len = max( 1, min( 20, (int) $m[1] ) );
+            return wp_generate_password( $len, false );
+        }, $resolved );
+        $resolved = preg_replace_callback( '/\{digits:(\d+)\}/', function ( $m ) {
+            $len = max( 1, min( 20, (int) $m[1] ) );
+            $out = '';
+            while ( strlen( $out ) < $len ) {
+                $out .= str_pad( (string) wp_rand( 0, 999999999 ), 9, '0', STR_PAD_LEFT );
+            }
+            return substr( $out, 0, $len );
+        }, $resolved );
+
         if ( $ext && stripos( $resolved, '.' . $ext ) === false ) {
             $resolved .= '.' . $ext;
         }
@@ -86,20 +126,29 @@ class Pelican_Filename_Resolver {
     /** List of placeholders for the helper text / tooltip. */
     public static function placeholders() {
         return array(
-            '{profile}'         => __( 'Profile name', 'pelican' ),
-            '{format}'          => __( 'csv | json | xlsx | xml | …', 'pelican' ),
-            '{records}'         => __( 'Row count', 'pelican' ),
-            '{job_id}'          => __( 'Job ID', 'pelican' ),
+            '{profile}'         => __( 'Profile name', 'red-headed-pro' ),
+            '{format}'          => __( 'csv | json | xlsx | xml | …', 'red-headed-pro' ),
+            '{records}'         => __( 'Row count', 'red-headed-pro' ),
+            '{job_id}'          => __( 'Job ID', 'red-headed-pro' ),
             '{date}'            => 'Y-m-d',
             '{time}'            => 'H-i-s',
             '{datetime}'        => 'Y-m-d_H-i-s',
-            '{timestamp}'       => __( 'Unix epoch', 'pelican' ),
-            '{order_id}'        => __( 'First order WP ID', 'pelican' ),
-            '{order_number}'    => __( 'First order number (e.g. e-4123)', 'pelican' ),
-            '{customer_id}'     => __( 'First order customer ID', 'pelican' ),
-            '{customer_email}'  => __( 'First order billing email', 'pelican' ),
-            '{customer_name}'   => __( 'First order billing first + last name', 'pelican' ),
-            '{random}'          => __( '6-char alphanumeric (uniqueness)', 'pelican' ),
+            '{date_eu}'         => 'd-m-Y',
+            '{datetime_eu}'     => 'd-m-Y-H-i-s',
+            '{date:FORMAT}'     => __( 'Custom date (PHP date format, e.g. {date:d-m-Y-H-i-s})', 'red-headed-pro' ),
+            '{timestamp}'       => __( 'Unix epoch', 'red-headed-pro' ),
+            '{order_id}'        => __( 'First order WP ID (numeric)', 'red-headed-pro' ),
+            '{order_number}'    => __( 'First order number (e.g. e-4123)', 'red-headed-pro' ),
+            '{order_date}'      => __( 'First order date (d-m-Y)', 'red-headed-pro' ),
+            '{order_time}'      => __( 'First order time (H-i-s)', 'red-headed-pro' ),
+            '{order_datetime}'  => __( 'First order date+time (d-m-Y-H-i-s)', 'red-headed-pro' ),
+            '{customer_id}'     => __( 'First order customer ID', 'red-headed-pro' ),
+            '{customer_email}'  => __( 'First order billing email', 'red-headed-pro' ),
+            '{customer_name}'   => __( 'First order billing first + last name', 'red-headed-pro' ),
+            '{random}'          => __( '6-char alphanumeric (uniqueness)', 'red-headed-pro' ),
+            '{random:N}'        => __( 'N alphanumeric chars (e.g. {random:10})', 'red-headed-pro' ),
+            '{digits}'          => __( '6-digit numeric (e.g. 048291)', 'red-headed-pro' ),
+            '{digits:N}'        => __( 'N numeric digits (e.g. {digits:9} for AOE compat)', 'red-headed-pro' ),
         );
     }
 }

@@ -69,11 +69,34 @@
         document.querySelectorAll( 'input[name="pl-pf-line-item-fill"]' ).forEach( function ( r ) { r.checked = ( r.value === liFill ); } );
         var pes = document.getElementById( 'pl-pf-post-export-status' );
         if ( pes ) pes.value = p.post_export_status || '';
+
+        /* Structured-output suite (Pro): JSON shape + nesting key + bare flag +
+           build-time filename pattern + one-file-per-order toggle. */
+        var truthy = function ( v ) { return v === '1' || v === 1 || v === true; };
+        var jShape = document.getElementById( 'pl-pf-json-shape' );
+        if ( jShape ) { jShape.value = p.json_shape || ''; jShape.addEventListener( 'change', toggleJsonShape ); }
+        var liKey = document.getElementById( 'pl-pf-line-items-key' );
+        if ( liKey ) liKey.value = p.line_items_key || '';
+        var jBare = document.getElementById( 'pl-pf-json-bare' );
+        if ( jBare ) jBare.checked = truthy( p.json_bare );
+        var fnPat = document.getElementById( 'pl-pf-filename-pattern' );
+        if ( fnPat ) fnPat.value = p.filename_pattern || '';
+        var splitPO = document.getElementById( 'pl-pf-split-per-order' );
+        if ( splitPO ) splitPO.checked = truthy( p.split_per_order );
+        var retryEl = document.getElementById( 'pl-pf-retry-on-fail' );
+        if ( retryEl ) retryEl.checked = p.id ? truthy( p.retry_on_fail ) : true;
+        var retryMaxEl = document.getElementById( 'pl-pf-retry-max' );
+        if ( retryMaxEl ) retryMaxEl.value = ( p.retry_max != null && p.retry_max !== '' ) ? p.retry_max : '';
+        var fmtSel = document.getElementById( 'pl-pf-format' );
+        if ( fmtSel ) fmtSel.addEventListener( 'change', toggleJsonShape );
+        toggleJsonShape();
+
         if ( document.getElementById( 'pl-pf-auto-status' ) ) {
             var at = p.auto_trigger || {};
-            document.getElementById( 'pl-pf-auto-status' ).value   = Array.isArray( at.on_status ) ? at.on_status.join( ', ' ) : ( at.on_status || '' );
+            var defaultStatus = p.id ? '' : 'processing, completed';
+            document.getElementById( 'pl-pf-auto-status' ).value   = Array.isArray( at.on_status ) ? at.on_status.join( ', ' ) : ( at.on_status || defaultStatus );
             document.getElementById( 'pl-pf-auto-mintotal' ).value = at.min_total || '';
-            document.getElementById( 'pl-pf-auto-fireonce' ).checked = !! at.fire_once;
+            document.getElementById( 'pl-pf-auto-fireonce' ).checked = p.id ? !! at.fire_once : true;
         }
 
         renderDestinations( p.destinations || [] );
@@ -91,7 +114,7 @@
             if ( typeof c === 'string' ) {
                 return { key: c, label: lookupLabel( c ) };
             }
-            return { key: c.key || '', label: c.label || lookupLabel( c.key ) };
+            return { key: c.key || '', label: c.label || lookupLabel( c.key ), value: c.value, expr: c.expr, cast: c.cast };
         } );
 
         if ( ! cols.length ) {
@@ -102,7 +125,7 @@
         }
 
         cols.forEach( function ( c ) {
-            ol.appendChild( buildActiveRow( c.key, c.label, { value: c.value, expr: c.expr } ) );
+            ol.appendChild( buildActiveRow( c.key, c.label, { value: c.value, expr: c.expr, cast: c.cast } ) );
         } );
         updateActiveCount();
         syncCatalogChecks();
@@ -119,15 +142,41 @@
         return ( s || '' ).replace( /["\\]/g, '\\$&' );
     }
 
+    /* Per-column output type / format. Lets JSON/CSV values match a fixed
+       downstream schema exactly (e.g. qty as text "300", total as "1440.00",
+       date as "18-05-2026 11:32"). */
+    function castSelectHtml( cast ) {
+        var opts = [
+            [ '', '— type —' ],
+            [ 'string', 'Text' ],
+            [ 'number', 'Number' ],
+            [ 'money2', 'Number · 2 dec (text)' ],
+            [ 'int', 'Whole number' ],
+            [ 'date:Y-m-d H:i:s', 'Date YYYY-MM-DD HH:MM:SS' ],
+            [ 'date:Y-m-d', 'Date YYYY-MM-DD' ],
+            [ 'date:d-m-Y H:i', 'Date DD-MM-YYYY HH:MM' ],
+            [ 'date:d-m-Y', 'Date DD-MM-YYYY' ],
+            [ 'date:d-m-Y H:i:s', 'Date DD-MM-YYYY HH:MM:SS' ]
+        ];
+        var cur = cast || '';
+        var html = '<select class="pl-col-cast" title="Output type / format" style="font-size:11px;max-width:170px;flex:0 0 auto;">';
+        opts.forEach( function ( o ) {
+            html += '<option value="' + o[0].replace( /"/g, '&quot;' ) + '"' + ( o[0] === cur ? ' selected' : '' ) + '>' + o[1] + '</option>';
+        } );
+        return html + '</select>';
+    }
+
     function buildActiveRow( key, label, extra ) {
         var li = document.createElement( 'li' );
         li.className = 'pl-cols-active-row';
         li.draggable = true;
         li.dataset.key = key;
         var meta = '';
+        var cast = '';
         if ( extra && typeof extra === 'object' ) {
             if ( extra.value != null ) li.dataset.value = extra.value;
             if ( extra.expr  != null ) li.dataset.expr  = extra.expr;
+            if ( extra.cast  != null ) cast = extra.cast;
             if ( key.indexOf( 'static:' ) === 0 ) meta = ' <span class="pl-col-meta" style="font-size:11px;color:#94a3b8;">= ' + escHtml( extra.value || '' ) + '</span>';
             if ( key.indexOf( 'calc:' )   === 0 ) meta = ' <span class="pl-col-meta" style="font-size:11px;color:#94a3b8;">= ' + escHtml( extra.expr  || '' ) + '</span>';
         }
@@ -135,6 +184,7 @@
             '<span class="pl-drag-handle" aria-hidden="true">⋮⋮</span>' +
             '<input type="text" class="pl-col-active-label" value="' + ( label || key ).replace( /"/g, '&quot;' ) + '" />' +
             '<code class="pl-col-active-key">' + key + '</code>' + meta +
+            castSelectHtml( cast ) +
             '<button type="button" class="pl-btn pl-btn-sm pl-btn-danger pl-col-rm" aria-label="Remove">×</button>';
         li.querySelector( '.pl-col-rm' ).addEventListener( 'click', function () {
             li.remove();
@@ -275,6 +325,39 @@
             document.getElementById( 'pl-calc-expr' ).value = '';
             updateActiveCount();
         } );
+
+        /* v1.5.0 — F4: Discover meta keys button (AJAX). */
+        var btnDiscover = document.getElementById( 'pl-meta-discover-btn' );
+        if ( btnDiscover ) btnDiscover.addEventListener( 'click', function () {
+            var list = document.getElementById( 'pl-meta-discovered' );
+            if ( ! list ) return;
+            list.innerHTML = '<li class="pl-muted">Loading...</li>';
+            ajax( 'pelican_discover_meta_keys' ).done( function ( r ) {
+                list.innerHTML = '';
+                if ( ! r || ! r.success || ! r.data || ! r.data.length ) {
+                    list.innerHTML = '<li class="pl-muted">No order meta keys found.</li>';
+                    return;
+                }
+                r.data.forEach( function ( mk ) {
+                    var li = document.createElement( 'li' );
+                    li.className = 'pl-meta-discovered-row';
+                    li.style.cssText = 'display:flex;align-items:center;gap:6px;padding:2px 0;font-size:12px;cursor:pointer;';
+                    li.innerHTML = '<code style="flex:1;word-break:break-all;">' + escHtml( mk ) + '</code>' +
+                        '<button type="button" class="pl-btn pl-btn-sm" style="flex:0 0 auto;font-size:11px;">+ Add</button>';
+                    li.querySelector( 'button' ).addEventListener( 'click', function () {
+                        var key = 'meta:' + mk;
+                        var ol  = document.getElementById( 'pl-cols-active' );
+                        var emp = ol.querySelector( '.pl-cols-empty' );
+                        if ( emp ) emp.remove();
+                        if ( ! ol.querySelector( '[data-key="' + cssEscape( key ) + '"]' ) ) {
+                            ol.appendChild( buildActiveRow( key, mk ) );
+                            updateActiveCount();
+                        }
+                    } );
+                    list.appendChild( li );
+                } );
+            } );
+        } );
     }
 
     /* HTML5 drag-drop reorder */
@@ -308,16 +391,42 @@
             };
             if ( key.indexOf( 'static:' ) === 0 && row.dataset.value != null ) entry.value = row.dataset.value;
             if ( key.indexOf( 'calc:' )   === 0 && row.dataset.expr  != null ) entry.expr  = row.dataset.expr;
+            var castEl = row.querySelector( '.pl-col-cast' );
+            if ( castEl && castEl.value ) entry.cast = castEl.value;
             return entry;
         } );
     }
 
     function closeEditor() { if ( ed ) ed.hidden = true; }
 
+    /* Focus trap: keep Tab cycling inside the drawer while it's open. */
+    if ( ed ) {
+        ed.addEventListener( 'keydown', function ( e ) {
+            if ( e.key !== 'Tab' || ed.hidden ) return;
+            var focusable = ed.querySelectorAll( 'input:not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),[tabindex]:not([tabindex="-1"])' );
+            if ( ! focusable.length ) return;
+            var first = focusable[0], last = focusable[ focusable.length - 1 ];
+            if ( e.shiftKey && document.activeElement === first ) { e.preventDefault(); last.focus(); }
+            else if ( ! e.shiftKey && document.activeElement === last ) { e.preventDefault(); first.focus(); }
+        } );
+    }
+
     function toggleLineItemFill() {
         var em = document.getElementById( 'pl-pf-export-mode' );
         var wrap = document.getElementById( 'pl-pf-line-item-fill-wrap' );
         if ( em && wrap ) wrap.style.display = ( em.value === 'per_line_item' ) ? '' : 'none';
+    }
+
+    /* Structured-output suite: show the JSON fieldset only for json/ndjson,
+       and the line-items key only for the nested shape. */
+    function toggleJsonShape() {
+        var fmt    = document.getElementById( 'pl-pf-format' );
+        var fs     = document.getElementById( 'pl-pf-json-fieldset' );
+        var isJson = fmt && ( fmt.value === 'json' || fmt.value === 'ndjson' );
+        if ( fs ) fs.style.display = isJson ? '' : 'none';
+        var shape = document.getElementById( 'pl-pf-json-shape' );
+        var wrap  = document.getElementById( 'pl-pf-line-items-key-wrap' );
+        if ( wrap ) wrap.style.display = ( shape && shape.value === 'nested' ) ? '' : 'none';
     }
 
     /* ────────── Destinations rows ────────── */
@@ -341,6 +450,7 @@
                     '<option value="gdrive">📁 Google Drive 🔒Pro</option>' +
                     '<option value="rest">🔗 REST 🔒Pro</option>' +
                     '<option value="local_zip">🗜 Local ZIP 🔒Pro</option>' +
+                    '<option value="local_folder">📂 Local folder 🔒Pro</option>' +
                     '<option value="download">⬇ Download 🔒Pro</option>' +
                 '</select>' +
                 '<button type="button" class="pl-btn pl-btn-sm pl-btn-danger pl-dest-rm">×</button>' +
@@ -357,8 +467,27 @@
         var box = wrap.querySelector( '.pl-dest-fields' );
         d = d || {};
         if ( type === 'email' ) {
+            var esc = function ( s ) { return ( s || '' ).replace( /"/g, '&quot;' ); };
+            var attachChecked = ( d.attach_file === undefined || d.attach_file ) ? ' checked' : '';
             box.innerHTML =
-                '<input type="email" class="pl-dest-to" placeholder="recipient@example.com" value="' + ( d.to || '' ) + '" />';
+                '<label class="pl-field-stack" style="margin-bottom:6px;"><span class="pl-field-sublabel" style="font-weight:600;">To</span>' +
+                '<input type="text" class="pl-dest-to" placeholder="recipient@example.com (comma-separated)" value="' + esc( d.to ) + '" /></label>' +
+                '<label class="pl-field-stack" style="margin-bottom:6px;"><span class="pl-field-sublabel" style="font-weight:600;">Subject</span>' +
+                '<input type="text" class="pl-dest-subject" placeholder="New order received" value="' + esc( d.subject ) + '" />' +
+                '<small class="pl-muted">Placeholders: {filename} {records} {order_number} {order_id} {customer_email} {site_name} {date}</small></label>' +
+                '<div class="pl-grid pl-grid-2" style="margin-bottom:6px;">' +
+                '<label class="pl-field-stack"><span class="pl-field-sublabel">From email</span>' +
+                '<input type="email" class="pl-dest-from-email" placeholder="WordPress default" value="' + esc( d.from_email ) + '" /></label>' +
+                '<label class="pl-field-stack"><span class="pl-field-sublabel">From name</span>' +
+                '<input type="text" class="pl-dest-from-name" placeholder="Site name" value="' + esc( d.from_name ) + '" /></label></div>' +
+                '<div class="pl-grid pl-grid-2" style="margin-bottom:6px;">' +
+                '<label class="pl-field-stack"><span class="pl-field-sublabel">CC</span>' +
+                '<input type="text" class="pl-dest-cc" placeholder="Comma-separated" value="' + esc( d.cc ) + '" /></label>' +
+                '<label class="pl-field-stack"><span class="pl-field-sublabel">BCC</span>' +
+                '<input type="text" class="pl-dest-bcc" placeholder="Comma-separated" value="' + esc( d.bcc ) + '" /></label></div>' +
+                '<label class="pl-checkbox" style="display:flex;gap:8px;align-items:center;margin-top:4px;">' +
+                '<input type="checkbox" class="pl-dest-attach"' + attachChecked + ' />' +
+                '<span>Attach export file(s) to email</span></label>';
         } else if ( type === 'sftp' ) {
             box.innerHTML =
                 '<input type="text" class="pl-dest-host" placeholder="host" value="' + ( d.host || '' ) + '" />' +
@@ -394,6 +523,10 @@
                 '</p>';
         } else if ( type === 'local_zip' ) {
             box.innerHTML = '<p class="pl-muted" style="margin:0;font-size:12px;">📦 <strong>No configuration needed.</strong> The export file is also saved as a <code>.zip</code> archive in <code>wp-content/uploads/lion-frog/exports/</code>.</p>';
+        } else if ( type === 'local_folder' ) {
+            box.innerHTML =
+                '<input type="text" class="pl-dest-folder-path" placeholder="order-exports (relative to wp-content) or an absolute path" value="' + ( d.path || '' ).replace( /"/g, '&quot;' ) + '" />' +
+                '<p class="pl-muted" style="margin:6px 0 0;font-size:11px;line-height:1.45;">📂 The raw export file is copied here (no zip). Empty = <code>wp-content/order-exports</code>. The filename matches the profile “Filename pattern”, so this copy and the emailed copy are identical.</p>';
         } else if ( type === 'download' ) {
             box.innerHTML = '<p class="pl-muted" style="margin:0;font-size:12px;">⬇ <strong>No configuration needed.</strong> A one-click download link appears on the Exports page after the run completes.</p>';
         } else {
@@ -407,7 +540,15 @@
         rows.forEach( function ( wrap ) {
             var type = wrap.querySelector( '.pl-dest-type' ).value;
             var d = { type: type };
-            if ( type === 'email' )   d.to = wrap.querySelector( '.pl-dest-to' ).value;
+            if ( type === 'email' ) {
+                d.to         = wrap.querySelector( '.pl-dest-to' ).value;
+                d.subject    = wrap.querySelector( '.pl-dest-subject' ).value;
+                d.from_email = wrap.querySelector( '.pl-dest-from-email' ).value;
+                d.from_name  = wrap.querySelector( '.pl-dest-from-name' ).value;
+                d.cc         = wrap.querySelector( '.pl-dest-cc' ).value;
+                d.bcc        = wrap.querySelector( '.pl-dest-bcc' ).value;
+                d.attach_file = wrap.querySelector( '.pl-dest-attach' ).checked;
+            }
             if ( type === 'sftp' ) {
                 d.host = wrap.querySelector( '.pl-dest-host' ).value;
                 d.port = parseInt( wrap.querySelector( '.pl-dest-port' ).value, 10 ) || 22;
@@ -428,6 +569,10 @@
                 if ( tok ) d.access_token = tok;
                 d.folder_id = wrap.querySelector( '.pl-dest-gdrive-folder' ).value;
                 d.filename_pattern = wrap.querySelector( '.pl-dest-gdrive-filename' ).value;
+            }
+            if ( type === 'local_folder' ) {
+                var fp = wrap.querySelector( '.pl-dest-folder-path' );
+                if ( fp ) d.path = fp.value;
             }
             /* local_zip + download: no config needed, type alone is enough. */
             out.push( d );
@@ -470,6 +615,22 @@
         if ( document.getElementById( 'pl-pf-post-export-status' ) ) {
             profile.post_export_status = document.getElementById( 'pl-pf-post-export-status' ).value;
         }
+        var jShapeEl = document.getElementById( 'pl-pf-json-shape' );
+        if ( jShapeEl ) {
+            profile.json_shape     = jShapeEl.value;
+            var liEl = document.getElementById( 'pl-pf-line-items-key' );
+            profile.line_items_key = liEl ? liEl.value : '';
+            var bareEl = document.getElementById( 'pl-pf-json-bare' );
+            profile.json_bare = ( bareEl && bareEl.checked ) ? '1' : '';
+        }
+        var fnEl = document.getElementById( 'pl-pf-filename-pattern' );
+        if ( fnEl ) profile.filename_pattern = fnEl.value;
+        var spoEl = document.getElementById( 'pl-pf-split-per-order' );
+        if ( spoEl ) profile.split_per_order = spoEl.checked ? '1' : '';
+        var rEl = document.getElementById( 'pl-pf-retry-on-fail' );
+        if ( rEl ) profile.retry_on_fail = rEl.checked ? '1' : '';
+        var rmEl = document.getElementById( 'pl-pf-retry-max' );
+        if ( rmEl ) profile.retry_max = String( parseInt( rmEl.value, 10 ) || 0 );
         if ( document.getElementById( 'pl-pf-auto-status' ) ) {
             profile.auto_trigger = {
                 on_status: commaList( document.getElementById( 'pl-pf-auto-status' ).value ),
@@ -506,10 +667,64 @@
             .fail( function () { alert( 'Network error' ); } );
     }
 
-    /* v1.4.20 — Preview modal helpers */
-    function showPreviewModal( title, data ) {
+    /* v1.5.0 — P2: Dry-run (build file, skip delivery). */
+    function dryRunProfile( id ) {
+        ajax( 'pelican_run_dry', { id: id } )
+            .done( function ( r ) {
+                if ( r && r.success ) {
+                    alert( '🧪 DRY RUN — job #' + r.data.job_id + ' · ' + ( r.data.records || 0 ) + ' rows.\nFile built but NOT delivered to destinations.' );
+                    window.location.href = '?page=red-headed-pro-exports';
+                } else { alert( ( r && r.data && r.data.message ) || 'Dry-run failed' ); }
+            } )
+            .fail( function () { alert( 'Network error' ); } );
+    }
+
+    /* v1.5.0 — P3: Export profile as JSON (client-side download). */
+    function exportProfileJson( id ) {
+        $.ajax( {
+            url: PD.restUrl + 'pelican/v1/profiles/' + id,
+            headers: { 'X-WP-Nonce': PD.restNonce }
+        } ).done( function ( p ) {
+            /* Strip volatile / internal fields before export. */
+            var clean = JSON.parse( JSON.stringify( p ) );
+            delete clean.schedule_meta;
+            var blob = new Blob( [ JSON.stringify( clean, null, 2 ) ], { type: 'application/json' } );
+            var a    = document.createElement( 'a' );
+            a.href     = URL.createObjectURL( blob );
+            a.download = 'rh-profile-' + ( clean.name || 'export' ).replace( /[^a-z0-9_-]/gi, '-' ).substring( 0, 40 ) + '.json';
+            a.click();
+            URL.revokeObjectURL( a.href );
+        } );
+    }
+
+    /* v1.5.0 — P3: Import profile from JSON (file picker + AJAX). */
+    function importProfileJson() {
+        var input = document.createElement( 'input' );
+        input.type = 'file';
+        input.accept = '.json,application/json';
+        input.addEventListener( 'change', function () {
+            if ( ! input.files || ! input.files[0] ) return;
+            var reader = new FileReader();
+            reader.onload = function ( e ) {
+                ajax( 'pelican_import_profile', { profile_json: e.target.result } )
+                    .done( function ( r ) {
+                        if ( r && r.success ) {
+                            alert( '✓ ' + ( r.data.message || 'Profile imported.' ) );
+                            window.location.reload();
+                        } else { alert( ( r && r.data && r.data.message ) || 'Import failed' ); }
+                    } )
+                    .fail( function () { alert( 'Network error' ); } );
+            };
+            reader.readAsText( input.files[0] );
+        } );
+        input.click();
+    }
+
+    /* v1.4.20 — Preview modal helpers. v1.5.0 — P1: raw/table toggle + copy. */
+    function showPreviewModal( title, data, jobId ) {
         var existing = document.getElementById( 'pl-preview-modal' );
         if ( existing ) existing.remove();
+        var rawBtn = jobId ? '<button type="button" class="pl-btn pl-btn-sm" id="pl-preview-raw" style="margin-right:auto;">📋 Raw</button>' : '';
         var html = '<div id="pl-preview-modal" class="pl-modal-overlay" aria-hidden="false" style="display:flex;">' +
             '<div class="pl-modal" role="dialog" aria-modal="true">' +
                 '<div class="pl-modal-head">' +
@@ -517,18 +732,18 @@
                     '<button type="button" class="pl-modal-close" id="pl-preview-close" aria-label="Close">×</button>' +
                 '</div>' +
                 '<div class="pl-modal-body" id="pl-preview-body"></div>' +
-                '<div class="pl-modal-foot"><button type="button" class="pl-btn pl-btn-primary" id="pl-preview-done">Close</button></div>' +
+                '<div class="pl-modal-foot">' + rawBtn + '<button type="button" class="pl-btn pl-btn-primary" id="pl-preview-done">Close</button></div>' +
             '</div></div>';
         document.body.insertAdjacentHTML( 'beforeend', html );
         var body = document.getElementById( 'pl-preview-body' );
-        var content = '';
+        var tableContent = '';
         if ( data.unsupported ) {
-            content = '<p class="pl-muted">Format <code>' + data.format + '</code> can\'t be previewed inline. Click Download to inspect.</p>';
+            tableContent = '<p class="pl-muted">Format <code>' + data.format + '</code> can\'t be previewed inline. Click Download to inspect.</p>';
         } else if ( ! data.rows || data.rows.length === 0 ) {
-            content = '<div class="pl-empty"><div class="pl-empty-icon">⚠</div><p><strong>No matching orders.</strong></p>' +
+            tableContent = '<div class="pl-empty"><div class="pl-empty-icon">⚠</div><p><strong>No matching orders.</strong></p>' +
                 '<p class="pl-muted">Check the profile filters: status list, date range, payment method, etc. Make sure your orders fall within the date_from / date_to window and match the selected statuses.</p></div>';
         } else {
-            content = '<p class="pl-muted">Showing ' + data.rows.length + ' of ' + ( data.count || data.total || data.rows.length ) + ' matching rows.</p>' +
+            tableContent = '<p class="pl-muted">Showing ' + data.rows.length + ' of ' + ( data.count || data.total || data.rows.length ) + ' matching rows.</p>' +
                 '<div style="overflow-x:auto;"><table class="pl-table pl-table-zebra" style="font-size:12px;">' +
                 '<thead><tr>' + ( data.columns || [] ).map( function ( c ) { return '<th>' + escHtml( c ) + '</th>'; } ).join( '' ) + '</tr></thead>' +
                 '<tbody>' + data.rows.map( function ( row ) {
@@ -536,11 +751,40 @@
                     return '<tr>' + arr.map( function ( v ) { return '<td>' + escHtml( v == null ? '' : String( v ) ) + '</td>'; } ).join( '' ) + '</tr>';
                 } ).join( '' ) + '</tbody></table></div>';
         }
-        body.innerHTML = content;
+        body.innerHTML = tableContent;
         var close = function () { var m = document.getElementById( 'pl-preview-modal' ); if ( m ) m.remove(); };
         document.getElementById( 'pl-preview-close' ).addEventListener( 'click', close );
         document.getElementById( 'pl-preview-done' ).addEventListener( 'click', close );
         document.getElementById( 'pl-preview-modal' ).addEventListener( 'click', function ( e ) { if ( e.target.id === 'pl-preview-modal' ) close(); } );
+
+        /* P1: Raw / Table toggle for job previews. */
+        var rawToggle = document.getElementById( 'pl-preview-raw' );
+        if ( rawToggle && jobId ) {
+            var showingRaw = false;
+            rawToggle.addEventListener( 'click', function () {
+                showingRaw = ! showingRaw;
+                rawToggle.textContent = showingRaw ? '📊 Table' : '📋 Raw';
+                if ( showingRaw ) {
+                    body.innerHTML = '<p class="pl-muted">Loading raw file content...</p>';
+                    ajax( 'pelican_preview_job_raw', { id: jobId } ).done( function ( r ) {
+                        if ( r && r.success ) {
+                            var info = r.data.truncated ? '<p class="pl-muted">Showing first ' + ( r.data.raw || '' ).length + ' of ' + r.data.size + ' bytes.</p>' : '';
+                            body.innerHTML = info +
+                                '<div style="position:relative;">' +
+                                    '<button type="button" class="pl-btn pl-btn-sm" id="pl-preview-copy" style="position:absolute;top:4px;right:4px;z-index:1;">Copy</button>' +
+                                    '<pre style="max-height:400px;overflow:auto;background:#1e293b;color:#e2e8f0;padding:12px;border-radius:6px;font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-all;">' + escHtml( r.data.raw || '' ) + '</pre>' +
+                                '</div>';
+                            var copyBtn = document.getElementById( 'pl-preview-copy' );
+                            if ( copyBtn ) copyBtn.addEventListener( 'click', function () {
+                                navigator.clipboard.writeText( r.data.raw || '' ).then( function () { copyBtn.textContent = '✓ Copied'; } );
+                            } );
+                        }
+                    } );
+                } else {
+                    body.innerHTML = tableContent;
+                }
+            } );
+        }
     }
     function previewProfile( id ) {
         ajax( 'pelican_preview_profile', { id: id } )
@@ -552,7 +796,7 @@
     function previewJob( id ) {
         ajax( 'pelican_preview_job', { id: id } )
             .done( function ( r ) {
-                if ( r && r.success ) showPreviewModal( '👁 Preview export #' + id, r.data );
+                if ( r && r.success ) showPreviewModal( '👁 Preview export #' + id, r.data, id );
                 else alert( ( r && r.data && r.data.message ) || 'Preview failed' );
             } );
     }
@@ -617,6 +861,16 @@
         document.querySelectorAll( '.pl-btn-run, .pl-btn-rerun' ).forEach( function ( b ) {
             b.addEventListener( 'click', function () { runProfile( parseInt( this.dataset.id || this.dataset.profile, 10 ) ); } );
         } );
+        /* v1.5.0 — P2: Dry-run buttons. */
+        document.querySelectorAll( '.pl-btn-dry-run' ).forEach( function ( b ) {
+            b.addEventListener( 'click', function () { dryRunProfile( parseInt( this.dataset.id, 10 ) ); } );
+        } );
+        /* v1.5.0 — P3: Export / Import profile JSON. */
+        document.querySelectorAll( '.pl-btn-export-json' ).forEach( function ( b ) {
+            b.addEventListener( 'click', function () { exportProfileJson( parseInt( this.dataset.id, 10 ) ); } );
+        } );
+        var importBtn = document.getElementById( 'pl-import-profile' );
+        if ( importBtn ) importBtn.addEventListener( 'click', importProfileJson );
         /* v1.4.20 — Preview profile (dry-run) + Preview job (read first 10 rows of file). */
         document.querySelectorAll( '.pl-btn-preview-profile' ).forEach( function ( b ) {
             b.addEventListener( 'click', function () { previewProfile( parseInt( this.dataset.id, 10 ) ); } );
@@ -624,6 +878,21 @@
         document.querySelectorAll( '.pl-btn-preview' ).forEach( function ( b ) {
             b.addEventListener( 'click', function () { previewJob( parseInt( this.dataset.job, 10 ) ); } );
         } );
+
+        /* Local folder — "Create folder if missing" button on Destinations defaults. */
+        var cfBtn = document.getElementById( 'pl-dest-create-folder' );
+        if ( cfBtn ) {
+            cfBtn.addEventListener( 'click', function () {
+                var pathInput = document.querySelector( 'input[name="local_folder_path"]' );
+                var status    = document.getElementById( 'pl-dest-folder-status' );
+                if ( status ) status.textContent = '…';
+                ajax( 'pelican_create_local_folder', { path: pathInput ? pathInput.value : '' } )
+                    .done( function ( r ) {
+                        if ( status ) status.textContent = ( r && r.success ) ? '✓ ' + r.data.message : '✗ ' + ( r.data && r.data.message || 'Error' );
+                    } )
+                    .fail( function () { if ( status ) status.textContent = '✗ Network error'; } );
+            } );
+        }
     }
     if ( document.readyState === 'loading' ) {
         document.addEventListener( 'DOMContentLoaded', boot );

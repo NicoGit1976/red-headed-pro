@@ -4,7 +4,7 @@ Tags: woocommerce, export, csv, xlsx, json, xml, sftp, cron, webhooks
 Requires at least: 6.2
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.4.44
+Stable tag: 1.5.1
 License: GPL-2.0-or-later
 
 Exports WooCommerce orders everywhere, anytime — multi-format, multi-destination, scheduled and event-driven, with a visual field mapper, computed columns, REST API and HMAC-signed webhooks. Part of Ultimate Woo Powertools (by The Lion Frog).
@@ -105,6 +105,33 @@ AES-256-CBC encrypted at rest with `wp_salt('auth')`.
 Yes — **Red-Headed Lite**: manual + bulk, CSV only, Email + SFTP + direct download, 1 profile. Pro features are visible & soft-locked inside Lite.
 
 == Changelog ==
+
+= 1.5.1 - 2026-05-29 =
+* **Feature (G1):** Filename pattern now supports `{date:FORMAT}` dynamic placeholder — any PHP date format (e.g. `{date:d-m-Y-H-i-s}`). Filesystem-unsafe characters are auto-replaced with dashes.
+* **Feature (G2):** Email attachment toggle — per-destination checkbox to send notification-only emails without the export file attached.
+* **Feature (G3):** Full email configurability per destination — subject line with `{placeholders}`, from email, from name, CC, BCC. Global defaults in Settings → Destinations, per-destination overrides in profile.
+* **Fix:** Dispatcher now injects profile context (name, format, job_id, records, first_order) into email destinations for placeholder resolution in subject lines.
+* **Fix:** Settings → Destinations email defaults form now saves/restores from_email, from_name, CC, BCC correctly.
+* **Polish:** Filename placeholder hint in profile editor updated with all 20 available tokens.
+
+= 1.5.0 - 2026-05-27 =
+* **Fix (B1):** Bulk action now loads the user's profile (format, columns, destinations, casts) instead of hardcoding CSV with default columns. Precedence: explicit `pelican_profile_id` in request → first saved profile → ad-hoc CSV fallback.
+* **Fix (B2):** Bulk action emoji changed from joker to frog mascot.
+* **Fix (B3):** Empty columns safeguard — if column normalization produces an empty list, falls back to default columns so exports never produce headerless files.
+* **Feature (F4):** Dynamic order meta discovery — "Scan order meta" button in the column picker queries the database (HPOS-safe) and lists all available meta keys for one-click addition.
+* **Feature (P1):** Raw preview toggle — job preview modal now has a Raw/Table toggle with copy-to-clipboard, showing actual file content (JSON, CSV, XML, etc.).
+* **Feature (P2):** Dry-run mode — build the export file without delivering to destinations. Available from the profile actions (🧪 button) and bulk action. Job status logged as `dry_run`.
+* **Feature (P3):** Import / Export profile as JSON — export a profile configuration as a `.json` file, import it on another site or share with a colleague.
+* **Feature (P4):** Webhook payload reference — Settings → Webhooks now shows sample payloads for all three events with header documentation and HMAC verification example.
+* **HPOS (P5):** Audit and fixes — `post__in` → `include` in `wc_get_orders()`, dashboard "WC Orders" link uses HPOS-safe admin URL (`admin.php?page=wc-orders`). The single `get_post_meta()` call (SKU fallback on trashed products) is on the products table and is HPOS-compatible.
+* **Already implemented (verified):** Field aliasing (F1) via column labels, format coercion (F2) via cast system, nested line items (F3) via `json_shape=nested`, bare JSON object (F5) via `json_bare` flag — all confirmed functional, no code changes needed.
+
+= 1.4.50 - 2026-05-27 =
+* **Fix:** Local folder destination defaults panel in Settings → Destinations.
+* **Fix:** Draft/auto-draft statuses filtered from order status checkboxes and post-export dropdown.
+* **Fix:** PHP_INT_MAX raw number display replaced with ∞ symbol.
+* **Fix:** Text domain changed from `pelican` to `red-headed-pro` throughout.
+* **Polish:** Select chevron CSS, drawer ARIA, focus trap, default retry/auto-trigger values.
 
 = 1.4.44 - 2026-05-17 =
 * **Docs homogenization** — readme.txt rewritten to reflect actual Lite/Pro feature parity verified against the Soft_Lock matrix.

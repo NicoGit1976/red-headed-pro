@@ -11,18 +11,22 @@ class Pelican_Destination_Dispatcher {
         $type = isset( $destination['type'] ) ? sanitize_key( $destination['type'] ) : 'email';
         switch ( $type ) {
             case 'email':
+                self::inject_context( $destination, $profile, $format );
                 return Pelican_Destination_Email::ship( $file, $destination );
             case 'sftp':
                 self::inject_context( $destination, $profile, $format );
                 return Pelican_Destination_SFTP::ship( $file, $destination );
             case 'local_zip':
-                if ( Pelican_Soft_Lock::is_locked( 'dest_local_zip' ) ) return new \WP_Error( 'locked', __( 'Local ZIP requires Pro.', 'pelican' ) );
+                if ( Pelican_Soft_Lock::is_locked( 'dest_local_zip' ) ) return new \WP_Error( 'locked', __( 'Local ZIP requires Pro.', 'red-headed-pro' ) );
                 return Pelican_Destination_Local_Zip::ship( $file, $destination );
+            case 'local_folder':
+                if ( Pelican_Soft_Lock::is_locked( 'dest_local_folder' ) ) return new \WP_Error( 'locked', __( 'Local folder destination requires Pro.', 'red-headed-pro' ) );
+                return Pelican_Destination_Local_Folder::ship( $file, $destination );
             case 'rest':
-                if ( Pelican_Soft_Lock::is_locked( 'dest_rest' ) ) return new \WP_Error( 'locked', __( 'REST destination requires Pro.', 'pelican' ) );
+                if ( Pelican_Soft_Lock::is_locked( 'dest_rest' ) ) return new \WP_Error( 'locked', __( 'REST destination requires Pro.', 'red-headed-pro' ) );
                 return Pelican_Destination_REST::ship( $file, $destination );
             case 'gdrive':
-                if ( Pelican_Soft_Lock::is_locked( 'dest_gdrive' ) ) return new \WP_Error( 'locked', __( 'Google Drive destination requires Pro.', 'pelican' ) );
+                if ( Pelican_Soft_Lock::is_locked( 'dest_gdrive' ) ) return new \WP_Error( 'locked', __( 'Google Drive destination requires Pro.', 'red-headed-pro' ) );
                 /* v1.4.26 — context for filename pattern resolution. */
                 self::inject_context( $destination, $profile, $format );
                 return Pelican_Destination_GDrive::ship( $file, $destination );
@@ -32,7 +36,7 @@ class Pelican_Destination_Dispatcher {
                    job logs as success. */
                 return true;
             default:
-                return new \WP_Error( 'unknown_destination', __( 'Unknown destination type.', 'pelican' ) );
+                return new \WP_Error( 'unknown_destination', __( 'Unknown destination type.', 'red-headed-pro' ) );
         }
     }
 

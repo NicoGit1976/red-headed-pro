@@ -27,11 +27,11 @@ class Pelican_Order_Tracker {
         foreach ( $columns as $key => $label ) {
             $new[ $key ] = $label;
             if ( $key === 'order_status' ) {
-                $new['rh_exported'] = '📦 ' . __( 'Exported', 'pelican' );
+                $new['rh_exported'] = '📦 ' . __( 'Exported', 'red-headed-pro' );
             }
         }
         if ( ! isset( $new['rh_exported'] ) ) {
-            $new['rh_exported'] = '📦 ' . __( 'Exported', 'pelican' );
+            $new['rh_exported'] = '📦 ' . __( 'Exported', 'red-headed-pro' );
         }
         return $new;
     }
@@ -57,7 +57,7 @@ class Pelican_Order_Tracker {
         $last = $order->get_meta( '_rh_last_export_at' );
         $tooltip = sprintf(
             /* translators: 1: count, 2: datetime */
-            esc_attr__( 'Exported %1$d time(s), last on %2$s', 'pelican' ),
+            esc_attr__( 'Exported %1$d time(s), last on %2$s', 'red-headed-pro' ),
             $count,
             $last ?: '—'
         );

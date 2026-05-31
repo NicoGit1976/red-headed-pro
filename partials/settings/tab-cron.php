@@ -7,20 +7,20 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  */
 ?>
 <div class="pl-pane">
-    <h3 class="pl-h3">⏰ <?php esc_html_e( 'Cron schedules', 'pelican' ); ?></h3>
+    <h3 class="pl-h3">⏰ <?php esc_html_e( 'Cron schedules', 'red-headed-pro' ); ?></h3>
 
     <?php if ( ! Pelican_Soft_Lock::is_pro() ) : ?>
         <div class="pl-locked-pane">
             <div class="pl-locked-icon">🔒</div>
-            <h4><?php esc_html_e( 'Cron schedules — Pro feature', 'pelican' ); ?></h4>
-            <p class="pl-muted"><?php esc_html_e( 'Schedule any export profile to run hourly, twice daily, daily, weekly, or with a custom WP-Cron interval. Combine with auto-trigger to fire on order status changes.', 'pelican' ); ?></p>
+            <h4><?php esc_html_e( 'Cron schedules — Pro feature', 'red-headed-pro' ); ?></h4>
+            <p class="pl-muted"><?php esc_html_e( 'Schedule any export profile to run hourly, twice daily, daily, weekly, or with a custom WP-Cron interval. Combine with auto-trigger to fire on order status changes.', 'red-headed-pro' ); ?></p>
             <ul class="pl-list-check">
-                <li>✓ <?php esc_html_e( 'Hourly / twice-daily / daily / weekly presets', 'pelican' ); ?></li>
-                <li>✓ <?php esc_html_e( 'Custom interval (n minutes)', 'pelican' ); ?></li>
-                <li>✓ <?php esc_html_e( 'Order status auto-trigger (processing → SFTP, completed → email…)', 'pelican' ); ?></li>
-                <li>✓ <?php esc_html_e( 'Per-profile fire-once dedupe', 'pelican' ); ?></li>
+                <li>✓ <?php esc_html_e( 'Hourly / twice-daily / daily / weekly presets', 'red-headed-pro' ); ?></li>
+                <li>✓ <?php esc_html_e( 'Custom interval (n minutes)', 'red-headed-pro' ); ?></li>
+                <li>✓ <?php esc_html_e( 'Order status auto-trigger (processing → SFTP, completed → email…)', 'red-headed-pro' ); ?></li>
+                <li>✓ <?php esc_html_e( 'Per-profile fire-once dedupe', 'red-headed-pro' ); ?></li>
             </ul>
-            <a href="https://thelionfrog.com/products/plugins/woo-order-pro" target="_blank" rel="noopener" class="pl-btn pl-btn-upgrade">⚡ <?php esc_html_e( 'Upgrade to Pro', 'pelican' ); ?></a>
+            <a href="https://thelionfrog.com/products/plugins/woo-order-pro" target="_blank" rel="noopener" class="pl-btn pl-btn-upgrade">⚡ <?php esc_html_e( 'Upgrade to Pro', 'red-headed-pro' ); ?></a>
         </div>
     <?php else :
         $profiles = Pelican_Profile_Repo::all();
@@ -30,18 +30,18 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
             <?php
             printf(
                 /* translators: %s = next tick datetime */
-                esc_html__( 'Master tick: every hour — next run at %s.', 'pelican' ),
-                $next_tick ? esc_html( wp_date( 'Y-m-d H:i', $next_tick ) ) : esc_html__( 'not scheduled', 'pelican' )
+                esc_html__( 'Master tick: every hour — next run at %s.', 'red-headed-pro' ),
+                $next_tick ? esc_html( wp_date( 'Y-m-d H:i', $next_tick ) ) : esc_html__( 'not scheduled', 'red-headed-pro' )
             );
             ?>
         </p>
 
         <table class="pl-table pl-table-zebra">
             <thead><tr>
-                <th><?php esc_html_e( 'Profile', 'pelican' ); ?></th>
-                <th><?php esc_html_e( 'Schedule', 'pelican' ); ?></th>
-                <th><?php esc_html_e( 'Last run', 'pelican' ); ?></th>
-                <th><?php esc_html_e( 'Status', 'pelican' ); ?></th>
+                <th><?php esc_html_e( 'Profile', 'red-headed-pro' ); ?></th>
+                <th><?php esc_html_e( 'Schedule', 'red-headed-pro' ); ?></th>
+                <th><?php esc_html_e( 'Last run', 'red-headed-pro' ); ?></th>
+                <th><?php esc_html_e( 'Status', 'red-headed-pro' ); ?></th>
             </tr></thead>
             <tbody>
                 <?php
@@ -60,6 +60,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
             </tbody>
         </table>
 
-        <p class="pl-muted">💡 <?php esc_html_e( 'Edit a profile to change its schedule or auto-trigger.', 'pelican' ); ?></p>
+        <p class="pl-muted">💡 <?php esc_html_e( 'Edit a profile to change its schedule or auto-trigger.', 'red-headed-pro' ); ?></p>
     <?php endif; ?>
 </div>

@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 class Pelican_Destination_REST extends Pelican_Destination_Base {
     public static function ship( $file, $config ) {
         $url = isset( $config['endpoint'] ) ? esc_url_raw( $config['endpoint'] ) : '';
-        if ( ! $url ) return new \WP_Error( 'rest_missing', __( 'Missing endpoint URL.', 'pelican' ) );
+        if ( ! $url ) return new \WP_Error( 'rest_missing', __( 'Missing endpoint URL.', 'red-headed-pro' ) );
 
         $method = strtoupper( $config['method'] ?? 'POST' );
         if ( ! in_array( $method, array( 'POST', 'PUT' ), true ) ) $method = 'POST';

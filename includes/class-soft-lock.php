@@ -42,6 +42,11 @@ class Pelican_Soft_Lock {
             'webhooks'           => true,
             'multilingual'       => true,
             'profile_unlimited'  => true,  /* Lite: 1 profile only */
+            /* Structured-output suite (Pro) */
+            'json_structure'     => true,  /* labeled / nested / bare JSON shapes */
+            'filename_pattern'   => true,  /* custom output filename pattern at build time */
+            'split_per_order'    => true,  /* one file per order on a batch run */
+            'dest_local_folder'  => true,  /* copy raw export into a watched folder */
         );
     }
     public static function is_locked( $feature ) {
@@ -56,7 +61,7 @@ class Pelican_Soft_Lock {
     }
     public static function wrap( $feature, $callback ) {
         if ( self::is_available( $feature ) ) { call_user_func( $callback ); return; }
-        echo '<div class="pl-locked" data-feature="' . esc_attr( $feature ) . '" tabindex="0" role="button" aria-label="' . esc_attr__( 'Pro feature locked', 'pelican' ) . '">';
+        echo '<div class="pl-locked" data-feature="' . esc_attr( $feature ) . '" tabindex="0" role="button" aria-label="' . esc_attr__( 'Pro feature locked', 'red-headed-pro' ) . '">';
         echo '<div class="pl-locked-overlay">' . self::badge() . '</div>';
         echo '<div class="pl-locked-content" aria-hidden="true">';
         call_user_func( $callback );
@@ -68,7 +73,7 @@ class Pelican_Soft_Lock {
                 'code'    => 'feature_locked',
                 'message' => sprintf(
                     /* translators: %s = feature slug */
-                    __( 'This feature (%s) requires Red-Headed Pro.', 'pelican' ),
+                    __( 'This feature (%s) requires Red-Headed Pro.', 'red-headed-pro' ),
                     $feature
                 ),
             ), 403 );

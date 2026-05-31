@@ -19,6 +19,31 @@ class Pelican_Export_Engine {
         $started  = (int) round( microtime( true ) * 1000 );
         $profile  = is_array( $profile ) ? $profile : array();
 
+        /* ── Split-per-order fan-out (Pro) ──────────────────────────────────
+           When enabled, a batch run is expanded into one export per order so
+           each order gets its own file, its own filename context (e.g. the
+           order's own date) and its own post-export status change. We reuse
+           the entire pipeline by re-entering run() with a single-order
+           override, so there is zero logic duplication. The single-order
+           auto-trigger path already sets order_ids_override, so it is left
+           untouched (no infinite recursion). */
+        if ( ! empty( $profile['split_per_order'] )
+             && Pelican_Soft_Lock::is_available( 'split_per_order' )
+             && empty( $profile['filters']['order_ids_override'] ) ) {
+            $batch = self::fetch_orders( isset( $profile['filters'] ) ? (array) $profile['filters'] : array() );
+            if ( count( $batch ) > 1 ) {
+                $last = 0;
+                foreach ( $batch as $o ) {
+                    if ( ! is_a( $o, 'WC_Order' ) ) continue;
+                    $sub = $profile;
+                    $sub['filters']['order_ids_override'] = array( (int) $o->get_id() );
+                    $r = self::run( $sub, $trigger_source . ':split' );
+                    if ( ! is_wp_error( $r ) ) $last = (int) $r;
+                }
+                return $last ? $last : new \WP_Error( 'split_empty', __( 'Split export produced no files.', 'red-headed-pro' ) );
+            }
+        }
+
         $job_id = (int) $wpdb->insert( $jobs_tbl, array(
             'profile_id'     => isset( $profile['id'] ) ? (int) $profile['id'] : null,
             'trigger_source' => $trigger_source,
@@ -32,8 +57,30 @@ class Pelican_Export_Engine {
             $columns = self::normalize_columns(
                 ! empty( $profile['columns'] ) ? (array) $profile['columns'] : self::default_columns()
             );
+            /* v1.5.0 — B3: safeguard against empty columns (e.g. all entries stripped
+               by normalize_columns). Fall back to defaults so the export never produces
+               a headerless / empty file. */
+            if ( empty( $columns ) ) {
+                $columns = self::normalize_columns( self::default_columns() );
+            }
+            $format = isset( $profile['format'] ) ? sanitize_key( $profile['format'] ) : 'csv';
+            $format = self::guard_format( $format );
+
+            /* Structured JSON shapes (Pro): "labeled" = one object per order keyed by
+               column labels; "nested" = same + line-item columns grouped into a sub-array
+               under line_items_key. Falls back to the flat row/CSV pipeline otherwise. */
+            $json_shape = self::json_shape( $profile, $format );
             $mode = isset( $profile['export_mode'] ) ? sanitize_key( $profile['export_mode'] ) : 'per_order';
-            if ( $mode === 'per_line_item' && Pelican_Soft_Lock::is_available( 'line_item_export' ) ) {
+
+            if ( $json_shape !== '' ) {
+                $li_key = ( isset( $profile['line_items_key'] ) && $profile['line_items_key'] !== '' )
+                    ? (string) $profile['line_items_key'] : 'items';
+                $nest = ( $json_shape === 'nested' );
+                $rows = array();
+                foreach ( $orders as $order ) {
+                    $rows[] = self::map_row_object( $order, $columns, $nest, $li_key );
+                }
+            } elseif ( $mode === 'per_line_item' && Pelican_Soft_Lock::is_available( 'line_item_export' ) ) {
                 $hf   = isset( $profile['line_item_header_fill'] ) && $profile['line_item_header_fill'] === 'first_only' ? 'first_only' : 'every';
                 $rows = array();
                 foreach ( $orders as $order ) {
@@ -45,20 +92,23 @@ class Pelican_Export_Engine {
                 }, $orders );
             }
 
-            $format = isset( $profile['format'] ) ? sanitize_key( $profile['format'] ) : 'csv';
-            $format = self::guard_format( $format );
-            $file   = self::build_file( $format, $columns, $rows, $profile );
+            /* Inject runtime context BEFORE build so the filename resolver can use
+               {records}, {job_id} and {order_*} for the on-disk name (which Local +
+               Email then inherit verbatim — one filename, consistent everywhere). */
+            $profile['_job_id']      = $job_id;
+            $profile['_records']     = count( $rows );
+            $profile['_first_order'] = ! empty( $orders ) ? $orders[0] : null;
+
+            $file = self::build_file( $format, $columns, $rows, $profile );
 
             if ( ! $file || ! file_exists( $file ) ) {
                 throw new \RuntimeException( 'File build failed.' );
             }
 
-            /* v1.4.26 — Inject runtime context into $profile so destinations
-               can resolve filename placeholders ({records}, {job_id}, {order_*}…). */
-            $profile['_job_id']      = $job_id;
-            $profile['_records']     = count( $rows );
-            $profile['_first_order'] = ! empty( $orders ) ? $orders[0] : null;
-            $delivered = self::deliver( $file, $profile, $format );
+            /* v1.5.0 — P2 dry-run: build the file but skip delivery entirely.
+               The file is saved and the job logged, but nothing is shipped. */
+            $is_dry_run = ! empty( $profile['_dry_run'] );
+            $delivered   = $is_dry_run ? null : self::deliver( $file, $profile, $format );
 
             $duration = (int) round( microtime( true ) * 1000 ) - $started;
             $uploads  = wp_upload_dir();
@@ -67,14 +117,15 @@ class Pelican_Export_Engine {
                 'file_path'     => $rel,
                 'file_size'     => @filesize( $file ),
                 'records_count' => count( $rows ),
-                'status'        => 'success',
+                'status'        => $is_dry_run ? 'dry_run' : 'success',
                 'duration_ms'   => $duration,
                 'finished_at'   => current_time( 'mysql' ),
             ), array( 'id' => $job_id ) );
 
             /* v1.4.22 — Mark each exported order so the WC orders list can show
-               an "Exported" column. Skipped when 0 rows (no orders processed). */
-            if ( count( $rows ) > 0 ) {
+               an "Exported" column. Skipped when 0 rows (no orders processed).
+               v1.5.0 — Also skipped during dry-run (file built, but nothing changes on orders). */
+            if ( count( $rows ) > 0 && ! $is_dry_run ) {
                 $now = current_time( 'mysql' );
                 $post_status = isset( $profile['post_export_status'] ) ? sanitize_key( (string) $profile['post_export_status'] ) : '';
                 $can_post_status = $post_status !== '' && Pelican_Soft_Lock::is_available( 'post_export_status' );
@@ -87,7 +138,7 @@ class Pelican_Export_Engine {
                     $order->save_meta_data();
                     if ( $can_post_status ) {
                         /* Convert "completed" → "wc-completed" if needed; WC update_status accepts both. */
-                        $order->update_status( $post_status, __( 'Set by Red-Headed export', 'pelican' ) );
+                        $order->update_status( $post_status, __( 'Set by Red-Headed export', 'red-headed-pro' ) );
                     }
                 }
             }
@@ -115,10 +166,11 @@ class Pelican_Export_Engine {
         $args = array( 'limit' => -1, 'orderby' => 'date', 'order' => 'DESC' );
         $args['status'] = isset( $filters['status'] ) && $filters['status'] ? (array) $filters['status'] : array_keys( wc_get_order_statuses() );
 
-        /* Auto-trigger override — single-order fetch path (used by Pelican_Auto_Trigger). */
+        /* Auto-trigger override — single-order fetch path (used by Pelican_Auto_Trigger
+           and bulk action). Uses `include` (HPOS-safe) instead of legacy `post__in`. */
         if ( ! empty( $filters['order_ids_override'] ) ) {
-            $args['post__in'] = array_map( 'intval', (array) $filters['order_ids_override'] );
-            $args['status']   = array_keys( wc_get_order_statuses() ); /* don't re-filter by status */
+            $args['include'] = array_map( 'intval', (array) $filters['order_ids_override'] );
+            $args['status']  = array_keys( wc_get_order_statuses() ); /* don't re-filter by status */
         }
 
         if ( ! empty( $filters['date_from'] ) || ! empty( $filters['date_to'] ) ) {
@@ -232,6 +284,10 @@ class Pelican_Export_Engine {
                 /* Preserve metadata for computed columns (static + calc). */
                 if ( strpos( $key, 'static:' ) === 0 && isset( $col['value'] ) ) $entry['value'] = (string) $col['value'];
                 if ( strpos( $key, 'calc:' )   === 0 && isset( $col['expr'] ) )  $entry['expr']  = (string) $col['expr'];
+                /* Per-column type / format cast (Pro). e.g. string, number, money2, int,
+                   or a date preset "date:d-m-Y H:i". Lets the output match a fixed
+                   downstream schema (ERP, partner API…) exactly. */
+                if ( isset( $col['cast'] ) && $col['cast'] !== '' ) $entry['cast'] = sanitize_text_field( (string) $col['cast'] );
                 $out[] = $entry;
             } else {
                 $key = (string) $col;
@@ -255,16 +311,86 @@ class Pelican_Export_Engine {
             $key = is_array( $col ) ? ( $col['key'] ?? '' ) : (string) $col;
             /* Computed columns (Pro): static + calc resolve from the column entry itself. */
             if ( is_array( $col ) && strpos( $key, 'static:' ) === 0 ) {
-                $row[ $key ] = isset( $col['value'] ) ? (string) $col['value'] : '';
+                $row[ $key ] = self::transform_value( $order, $col, $key, isset( $col['value'] ) ? (string) $col['value'] : '' );
                 continue;
             }
             if ( is_array( $col ) && strpos( $key, 'calc:' ) === 0 ) {
-                $row[ $key ] = self::resolve_calc( $order, isset( $col['expr'] ) ? (string) $col['expr'] : '' );
+                $row[ $key ] = self::transform_value( $order, $col, $key, self::resolve_calc( $order, isset( $col['expr'] ) ? (string) $col['expr'] : '' ) );
                 continue;
             }
-            $row[ $key ] = self::resolve_column( $order, $key );
+            $row[ $key ] = self::transform_value( $order, $col, $key, self::resolve_column( $order, $key ) );
         }
         return $row;
+    }
+
+    /**
+     * Resolve the structured-JSON shape for this run, or '' if not applicable.
+     * Only meaningful for json / ndjson formats and only when the Pro
+     * "json_structure" capability is available.
+     *
+     * @return string '' | 'labeled' | 'nested'
+     */
+    public static function json_shape( $profile, $format ) {
+        if ( $format !== 'json' && $format !== 'ndjson' ) return '';
+        if ( ! Pelican_Soft_Lock::is_available( 'json_structure' ) ) return '';
+        $s = isset( $profile['json_shape'] ) ? sanitize_key( (string) $profile['json_shape'] ) : '';
+        return in_array( $s, array( 'labeled', 'nested' ), true ) ? $s : '';
+    }
+
+    /**
+     * Map one order to a single associative object keyed by column LABELS — the
+     * structured shape used by the "labeled" / "nested" JSON exports.
+     *
+     * Order-level columns (and static/calc) become top-level keys. When $nest is
+     * true, every line-item column (line_*) is grouped into a sub-array under
+     * $line_items_key, one sub-object per order line (each keyed by that line
+     * column's label). When $nest is false, line columns are skipped at the
+     * order level (use per_line_item mode for a flat per-line layout instead).
+     *
+     * Universal: labels, keys and the line-items key are all user-configurable,
+     * so any downstream schema (ERP, partner API, custom importer…) can be matched
+     * without touching code.
+     */
+    public static function map_row_object( $order, $columns, $nest = false, $line_items_key = 'items' ) {
+        $obj       = array();
+        $line_cols = array();
+        $slot_set  = false;
+        foreach ( $columns as $col ) {
+            $key = is_array( $col ) ? ( $col['key'] ?? '' ) : (string) $col;
+            if ( $key === '' ) continue;
+            $label = ( is_array( $col ) && isset( $col['label'] ) && $col['label'] !== '' )
+                ? (string) $col['label'] : self::default_label_for( $key );
+            if ( strpos( $key, 'line_' ) === 0 ) {
+                $line_cols[] = array( 'key' => $key, 'label' => $label, 'col' => $col );
+                /* Reserve the nested array's slot at the FIRST line column so the
+                   output key order mirrors the column layout (e.g. the line-items
+                   key sits where the product columns are, not appended at the end). */
+                if ( $nest && ! $slot_set ) { $obj[ $line_items_key ] = array(); $slot_set = true; }
+                continue;
+            }
+            if ( is_array( $col ) && strpos( $key, 'static:' ) === 0 ) {
+                $obj[ $label ] = self::transform_value( $order, $col, $key, isset( $col['value'] ) ? (string) $col['value'] : '' );
+                continue;
+            }
+            if ( is_array( $col ) && strpos( $key, 'calc:' ) === 0 ) {
+                $obj[ $label ] = self::transform_value( $order, $col, $key, self::resolve_calc( $order, isset( $col['expr'] ) ? (string) $col['expr'] : '' ) );
+                continue;
+            }
+            $obj[ $label ] = self::transform_value( $order, $col, $key, self::resolve_column( $order, $key ) );
+        }
+        if ( $nest && ! empty( $line_cols ) ) {
+            $items = method_exists( $order, 'get_items' ) ? $order->get_items() : array();
+            $list  = array();
+            foreach ( $items as $item ) {
+                $line = array();
+                foreach ( $line_cols as $lc ) {
+                    $line[ $lc['label'] ] = self::transform_value( $order, $lc['col'], $lc['key'], self::resolve_line_column( $order, $item, $lc['key'] ) );
+                }
+                $list[] = $line;
+            }
+            $obj[ $line_items_key ] = $list;
+        }
+        return $obj;
     }
 
     /**
@@ -281,19 +407,19 @@ class Pelican_Export_Engine {
             foreach ( $columns as $col ) {
                 $key = is_array( $col ) ? ( $col['key'] ?? '' ) : (string) $col;
                 if ( strpos( $key, 'line_' ) === 0 ) {
-                    $row[ $key ] = self::resolve_line_column( $order, $item, $key );
+                    $row[ $key ] = self::transform_value( $order, $col, $key, self::resolve_line_column( $order, $item, $key ) );
                     continue;
                 }
                 if ( is_array( $col ) && strpos( $key, 'static:' ) === 0 ) {
-                    $row[ $key ] = isset( $col['value'] ) ? (string) $col['value'] : '';
+                    $row[ $key ] = self::transform_value( $order, $col, $key, isset( $col['value'] ) ? (string) $col['value'] : '' );
                     continue;
                 }
                 if ( is_array( $col ) && strpos( $key, 'calc:' ) === 0 ) {
-                    $row[ $key ] = self::resolve_calc( $order, isset( $col['expr'] ) ? (string) $col['expr'] : '' );
+                    $row[ $key ] = self::transform_value( $order, $col, $key, self::resolve_calc( $order, isset( $col['expr'] ) ? (string) $col['expr'] : '' ) );
                     continue;
                 }
                 if ( $idx > 0 && $header_fill === 'first_only' ) { $row[ $key ] = ''; continue; }
-                $row[ $key ] = self::resolve_column( $order, $key );
+                $row[ $key ] = self::transform_value( $order, $col, $key, self::resolve_column( $order, $key ) );
             }
             $rows[] = $row;
             $idx++;
@@ -301,14 +427,69 @@ class Pelican_Export_Engine {
         return $rows;
     }
 
+    /**
+     * Apply a per-column type / format cast to a resolved value.
+     *
+     *   ''        raw (no change)
+     *   string    (string) value  — e.g. 300 → "300", 1440.0 → "1440"
+     *   int       (int) value
+     *   number    (float) value    — kept as a JSON number
+     *   money2    number_format(value, 2) as string — e.g. 1440 → "1440.00"
+     *   date:FMT  re-format a date column with the PHP date() format FMT
+     *             (handled in transform_value(), which has the order context)
+     */
+    public static function apply_cast( $value, $cast ) {
+        switch ( $cast ) {
+            case 'string': return is_bool( $value ) ? ( $value ? '1' : '' ) : (string) $value;
+            case 'int':    return (int) $value;
+            case 'number': return is_numeric( $value ) ? (float) $value : $value;
+            case 'money2': return number_format( (float) $value, 2, '.', '' );
+            default:       return $value;
+        }
+    }
+
+    /**
+     * Resolve a column's cast then return the transformed value. Date columns
+     * with a "date:FMT" cast are re-resolved from the order's WC_DateTime so the
+     * exact format (e.g. d-m-Y H:i) is honoured.
+     */
+    protected static function transform_value( $order, $col, $key, $value ) {
+        $cast = ( is_array( $col ) && isset( $col['cast'] ) ) ? (string) $col['cast'] : '';
+        if ( $cast === '' ) return $value;
+        if ( strpos( $cast, 'date:' ) === 0 && in_array( $key, array( 'date_created', 'date_paid' ), true ) ) {
+            $fmt = substr( $cast, 5 );
+            $dt  = ( $key === 'date_paid' ) ? $order->get_date_paid() : $order->get_date_created();
+            return $dt ? $dt->date( $fmt ) : '';
+        }
+        return self::apply_cast( $value, $cast );
+    }
+
     protected static function resolve_line_column( $order, $item, $key ) {
         if ( ! is_a( $item, 'WC_Order_Item_Product' ) ) return '';
         $product = $item->get_product();
         switch ( $key ) {
-            case 'line_sku':       return $product ? (string) $product->get_sku() : '';
+            case 'line_sku':
+                /* Robust SKU resolution (SKU = the eternal key, never the WP ID):
+                   1. frozen-at-order-time SKU (survives even a hard catalog purge),
+                   2. live product SKU,
+                   3. _sku postmeta direct (mirrors AOE — survives a trashed/unloadable
+                      product). Returns '' only when no SKU exists anywhere. */
+                $frozen = $item->get_meta( '_rh_sku' );
+                if ( $frozen !== '' && $frozen !== null ) return (string) $frozen;
+                if ( $product && (string) $product->get_sku() !== '' ) return (string) $product->get_sku();
+                $pid = $item->get_variation_id() ? (int) $item->get_variation_id() : (int) $item->get_product_id();
+                if ( $pid ) { $sku = get_post_meta( $pid, '_sku', true ); if ( $sku !== '' && $sku !== false ) return (string) $sku; }
+                return '';
             case 'line_name':      return (string) $item->get_name();
             case 'line_qty':       return (int)    $item->get_quantity();
             case 'line_price':     return $product ? (float) $product->get_price() : ( $item->get_quantity() ? (float) $item->get_subtotal() / max( 1, (int) $item->get_quantity() ) : 0 );
+            case 'line_unit_price':
+                if ( ! (int) $item->get_quantity() ) return 0;
+                /* Net unit price paid (subtotal ÷ qty), rounded to the store's money
+                   precision so the division never leaks binary float artifacts
+                   (e.g. 149.76/48 → 3.12, not 3.1199999999999997). */
+                $dp = function_exists( 'wc_get_price_decimals' ) ? max( 2, (int) wc_get_price_decimals() ) : 2;
+                return round( (float) $item->get_subtotal() / max( 1, (int) $item->get_quantity() ), $dp );
             case 'line_total':     return (float) $item->get_total();
             case 'line_subtotal':  return (float) $item->get_subtotal();
             case 'line_tax':       return (float) $item->get_total_tax();
@@ -360,6 +541,7 @@ class Pelican_Export_Engine {
             'currency'           => array( 'label' => 'Currency',           'group' => 'order' ),
             'item_count'         => array( 'label' => 'Item count',         'group' => 'order' ),
             'customer_id'        => array( 'label' => 'Customer ID',        'group' => 'order' ),
+            'customer_login'     => array( 'label' => 'Customer login / code', 'group' => 'order', 'hint' => 'WP user_login (B2B account code)' ),
             'customer_note'      => array( 'label' => 'Customer note',      'group' => 'order' ),
 
             /* Totals */
@@ -392,11 +574,13 @@ class Pelican_Export_Engine {
             'shipping_postcode'   => array( 'label' => 'Shipping postcode',   'group' => 'shipping' ),
             'shipping_country'    => array( 'label' => 'Shipping country',    'group' => 'shipping' ),
 
-            /* Line item — only emit values when export mode = "one row per line item". */
-            'line_sku'        => array( 'label' => 'Line — SKU',          'group' => 'line', 'hint' => 'per-line-item mode only' ),
-            'line_name'       => array( 'label' => 'Line — Product name', 'group' => 'line', 'hint' => 'per-line-item mode only' ),
-            'line_qty'        => array( 'label' => 'Line — Quantity',     'group' => 'line', 'hint' => 'per-line-item mode only' ),
-            'line_price'      => array( 'label' => 'Line — Unit price',   'group' => 'line', 'hint' => 'per-line-item mode only' ),
+            /* Line item — emitted in "one row per line item" mode OR nested under the
+               line-items key in the "nested" JSON shape. */
+            'line_sku'        => array( 'label' => 'Line — SKU',          'group' => 'line', 'hint' => 'per-line-item or nested JSON' ),
+            'line_name'       => array( 'label' => 'Line — Product name', 'group' => 'line', 'hint' => 'per-line-item or nested JSON' ),
+            'line_qty'        => array( 'label' => 'Line — Quantity',     'group' => 'line', 'hint' => 'per-line-item or nested JSON' ),
+            'line_price'      => array( 'label' => 'Line — Unit price (catalog)', 'group' => 'line', 'hint' => 'product catalog price' ),
+            'line_unit_price' => array( 'label' => 'Line — Unit price (paid net)', 'group' => 'line', 'hint' => 'subtotal ÷ qty — actually paid' ),
             'line_subtotal'   => array( 'label' => 'Line — Subtotal',     'group' => 'line', 'hint' => 'per-line-item mode only' ),
             'line_total'      => array( 'label' => 'Line — Total',        'group' => 'line', 'hint' => 'per-line-item mode only' ),
             'line_tax'        => array( 'label' => 'Line — Tax',          'group' => 'line', 'hint' => 'per-line-item mode only' ),
@@ -409,13 +593,13 @@ class Pelican_Export_Engine {
 
     public static function column_groups() {
         return array(
-            'order'    => __( 'Order',         'pelican' ),
-            'totals'   => __( 'Totals',        'pelican' ),
-            'payment'  => __( 'Payment & Shipping', 'pelican' ),
-            'billing'  => __( 'Billing address',    'pelican' ),
-            'shipping' => __( 'Shipping address',   'pelican' ),
-            'line'     => __( 'Line item',          'pelican' ),
-            'meta'     => __( 'Custom meta',        'pelican' ),
+            'order'    => __( 'Order',         'red-headed-pro' ),
+            'totals'   => __( 'Totals',        'red-headed-pro' ),
+            'payment'  => __( 'Payment & Shipping', 'red-headed-pro' ),
+            'billing'  => __( 'Billing address',    'red-headed-pro' ),
+            'shipping' => __( 'Shipping address',   'red-headed-pro' ),
+            'line'     => __( 'Line item',          'red-headed-pro' ),
+            'meta'     => __( 'Custom meta',        'red-headed-pro' ),
         );
     }
 
@@ -452,6 +636,11 @@ class Pelican_Export_Engine {
             case 'shipping_postcode':   return $order->get_shipping_postcode();
             case 'shipping_country':    return $order->get_shipping_country();
             case 'customer_id':         return (int) $order->get_customer_id();
+            case 'customer_login':
+                $uid = (int) $order->get_customer_id();
+                if ( ! $uid || ! function_exists( 'get_userdata' ) ) return '';
+                $u = get_userdata( $uid );
+                return $u ? (string) $u->user_login : '';
             case 'customer_note':       return $order->get_customer_note();
             default:
                 if ( strpos( $key, 'meta:' ) === 0 ) {
@@ -484,14 +673,41 @@ class Pelican_Export_Engine {
                 @file_put_contents( $up . '/index.php',  "<?php // Silence is golden.\n" );
             }
         }
-        $base = isset( $profile['name'] ) ? sanitize_file_name( $profile['name'] ) : 'export';
-        $name = $base . '-' . date( 'Ymd-His' ) . '-' . wp_generate_password( 6, false ) . '.' . $format;
+        $base    = isset( $profile['name'] ) ? sanitize_file_name( $profile['name'] ) : 'export';
+        $default = $base . '-' . date( 'Ymd-His' ) . '-' . wp_generate_password( 6, false ) . '.' . $format;
+        $pattern = isset( $profile['filename_pattern'] ) ? trim( (string) $profile['filename_pattern'] ) : '';
+        /* v1.5.1 — Fall back to the global default pattern (Settings → General)
+           when the profile has no pattern of its own. Normalize legacy {{double-brace}}
+           syntax to {single-brace} so the resolver understands them. */
+        if ( $pattern === '' ) {
+            $pattern = trim( (string) get_option( 'pelican_default_filename_pattern', '' ) );
+            $pattern = preg_replace( '/\{\{([^}]+)\}\}/', '{$1}', $pattern );
+        }
+        if ( $pattern !== '' && Pelican_Soft_Lock::is_available( 'filename_pattern' ) ) {
+            $name = Pelican_Filename_Resolver::resolve( $pattern, array(
+                'profile_name' => isset( $profile['name'] ) ? (string) $profile['name'] : '',
+                'format'       => $format,
+                'records'      => isset( $profile['_records'] ) ? (int) $profile['_records'] : count( $rows ),
+                'job_id'       => isset( $profile['_job_id'] ) ? (int) $profile['_job_id'] : 0,
+                'first_order'  => isset( $profile['_first_order'] ) ? $profile['_first_order'] : null,
+                'file'         => 'x.' . $format,
+            ) );
+            if ( $name === '' ) $name = $default;
+            /* Never clobber a same-named file already on disk (e.g. two orders sharing
+               a timestamp): append a short token before the extension. */
+            if ( file_exists( $dir . '/' . $name ) ) {
+                $name = preg_replace( '/(\.[a-z0-9]+)$/i', '-' . wp_generate_password( 4, false ) . '$1', $name );
+            }
+        } else {
+            $name = $default;
+        }
         $path = $dir . '/' . $name;
 
+        $json_bare = ! empty( $profile['json_bare'] ) && Pelican_Soft_Lock::is_available( 'json_structure' );
         switch ( $format ) {
             case 'csv':    Pelican_Builder_CSV::build( $columns, $rows, $path, ',' ); break;
             case 'tsv':    Pelican_Builder_CSV::build( $columns, $rows, $path, "\t" ); break;
-            case 'json':   Pelican_Builder_JSON::build( $columns, $rows, $path, false ); break;
+            case 'json':   Pelican_Builder_JSON::build( $columns, $rows, $path, false, $json_bare ); break;
             case 'ndjson': Pelican_Builder_JSON::build( $columns, $rows, $path, true ); break;
             case 'xml':    Pelican_Builder_XML::build( $columns, $rows, $path ); break;
             case 'xlsx':   Pelican_Builder_XLSX::build( $columns, $rows, $path ); break;
@@ -525,6 +741,19 @@ class Pelican_Export_Engine {
                     $existing = (string) $wpdb->get_var( $wpdb->prepare( "SELECT error_message FROM {$wpdb->prefix}pl_jobs WHERE id = %d", $jid ) );
                     $append = trim( $existing . "\n" . $msg );
                     $wpdb->update( "{$wpdb->prefix}pl_jobs", array( 'error_message' => substr( $append, 0, 1500 ) ), array( 'id' => $jid ) );
+                }
+                /* Retry on failure (e.g. the SAP/SFTP receiving server is momentarily
+                   unreachable): queue this destination for re-delivery on the cron
+                   tick, until it succeeds or hits the max attempts. */
+                if ( ! empty( $profile['retry_on_fail'] ) && class_exists( 'Pelican_Retry' ) ) {
+                    Pelican_Retry::enqueue( array(
+                        'job_id'    => $jid,
+                        'dest'      => $dest,
+                        'file'      => $file,
+                        'format'    => (string) $format,
+                        'retry_max' => isset( $profile['retry_max'] ) ? (int) $profile['retry_max'] : 0,
+                        'error'     => $ok->get_error_message(),
+                    ) );
                 }
             } else {
                 error_log( '[Pelican] destination ' . ( $dest['type'] ?? '?' ) . ' OK' );

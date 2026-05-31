@@ -32,7 +32,7 @@
 .pl-page-nav-item {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 8px 14px; border-radius: 8px; text-decoration: none;
-    color: var(--pl-text); font-weight: 500; transition: all .15s;
+    color: var(--pl-text); font-weight: 500; transition: opacity .15s, transform .15s;
 }
 .pl-page-nav-item:hover { background: var(--pl-bg); color: var(--pl-turquoise); }
 .pl-page-nav-active {
@@ -112,7 +112,7 @@
 .pl-format {
     background: var(--pl-bg); border: 1px solid var(--pl-border);
     border-radius: 10px; padding: 14px; text-align: center;
-    transition: all .15s; position: relative;
+    transition: opacity .15s, transform .15s; position: relative;
 }
 .pl-format:hover { border-color: var(--pl-turquoise); transform: translateY(-1px); }
 .pl-format-icon { font-size: 26px; margin-bottom: 6px; }
@@ -154,7 +154,7 @@
     display: inline-flex; align-items: center; gap: 6px;
     padding: 8px 14px; border-radius: 8px; border: 1px solid var(--pl-border);
     background: var(--pl-card); color: var(--pl-text); font-size: 13px;
-    font-weight: 500; cursor: pointer; text-decoration: none; transition: all .15s;
+    font-weight: 500; cursor: pointer; text-decoration: none; transition: opacity .15s, transform .15s;
 }
 .pl-btn:hover { border-color: var(--pl-turquoise); color: var(--pl-turquoise); }
 .pl-btn-primary {
@@ -183,7 +183,7 @@
     background: var(--pl-bg); border: 1px solid var(--pl-border);
     border-radius: 10px; padding: 14px; text-decoration: none;
     color: var(--pl-text); display: flex; flex-direction: column; align-items: center;
-    gap: 6px; text-align: center; transition: all .15s;
+    gap: 6px; text-align: center; transition: opacity .15s, transform .15s;
 }
 .pl-action:hover {
     border-color: var(--pl-turquoise); transform: translateY(-1px);
@@ -202,7 +202,7 @@
     display: inline-flex; align-items: center; gap: 8px;
     padding: 10px 16px; text-decoration: none; color: var(--pl-muted);
     border-bottom: 2px solid transparent; margin-bottom: -2px;
-    font-weight: 500; transition: all .15s; white-space: nowrap;
+    font-weight: 500; transition: opacity .15s, transform .15s; white-space: nowrap;
 }
 .pl-tab:hover { color: var(--pl-turquoise); }
 .pl-tab-active { color: var(--pl-turquoise); border-bottom-color: var(--pl-turquoise); }
@@ -232,6 +232,15 @@
     border: 1px solid var(--pl-border); border-radius: 8px;
     font-size: 13px; background: #fff; transition: border .15s;
 }
+.pl-form select,
+.pl-pane select {
+    appearance: none; -webkit-appearance: none;
+    padding-right: 34px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23475569' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+}
 .pl-form input:focus,
 .pl-form select:focus,
 .pl-form textarea:focus { outline: none; border-color: var(--pl-turquoise); box-shadow: 0 0 0 3px rgba(29,109,127,.12); }
@@ -253,7 +262,7 @@
 .pl-locked-overlay {
     position: absolute; inset: 0; z-index: 2; display: flex;
     align-items: center; justify-content: center;
-    background: rgba(255,255,255,.55); backdrop-filter: blur(2px);
+    background: rgba(255,255,255,.7); 
     border-radius: var(--pl-radius); cursor: not-allowed;
 }
 .pl-locked-content { filter: grayscale(.5); opacity: .65; pointer-events: none; }
@@ -317,7 +326,7 @@
    centered overlay, not a cramped sidebar. */
 .pl-drawer {
     position: fixed; inset: 0; z-index: 100050;
-    background: rgba(15,23,42,.55); backdrop-filter: blur(2px);
+    background: rgba(15,23,42,.7); 
     display: flex; align-items: center; justify-content: center;
     padding: 24px;
 }
@@ -396,7 +405,7 @@
     display: none;
     align-items: center; justify-content: center;
     padding: 24px;
-    backdrop-filter: blur(2px);
+    
 }
 .pl-modal-overlay[aria-hidden="false"] { display: flex; }
 .pl-modal {
@@ -515,7 +524,7 @@
     align-items: center;
     padding: 8px 10px; margin-bottom: 6px;
     background: #fff; border: 1px solid var(--pl-border); border-radius: 6px;
-    cursor: grab; transition: all .12s;
+    cursor: grab; transition: opacity .12s, transform .12s;
     counter-increment: pl-col-counter;
     position: relative;
 }
@@ -548,7 +557,7 @@
 .pl-status-chip {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 6px 10px; border: 1px solid var(--pl-border); border-radius: 18px;
-    font-size: 12px; cursor: pointer; transition: all .12s;
+    font-size: 12px; cursor: pointer; transition: opacity .12s, transform .12s;
     background: var(--pl-bg);
 }
 .pl-status-chip:hover { border-color: var(--pl-turquoise); }
@@ -560,4 +569,21 @@
 .pl-field-sublabel {
     display: block; font-size: 11px; color: var(--pl-muted);
     text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; font-weight: 600;
+}
+
+/* v1.4.45 — Fallback header-logo sizing. The shared Hub header (render_header)
+   is shown on our headless Exports/Settings pages too; if the Hub chrome CSS
+   isn't loaded the logo would render at natural (giant) size. Mirror the Hub's
+   canonical .fh-logo-img sizing so the header is correct with OR without the
+   Hub chrome (identical value = no conflict when both are present). */
+.fh-logo-img { width: auto; height: 100px; object-fit: contain; }
+
+/* === ACCESSIBILITY — prefers-reduced-motion === */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

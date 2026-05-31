@@ -46,7 +46,7 @@ class Pelican_Failure_Notifier {
         $to  = array_filter( array_map( 'trim', explode( ',', $raw ) ), 'is_email' );
         if ( ! $to ) return;
 
-        $profile_name = is_array( $profile ) && ! empty( $profile['name'] ) ? $profile['name'] : sprintf( __( 'Profile #%d', 'pelican' ), is_array( $profile ) ? (int) ( $profile['id'] ?? 0 ) : 0 );
+        $profile_name = is_array( $profile ) && ! empty( $profile['name'] ) ? $profile['name'] : sprintf( __( 'Profile #%d', 'red-headed-pro' ), is_array( $profile ) ? (int) ( $profile['id'] ?? 0 ) : 0 );
         $site         = wp_parse_url( home_url(), PHP_URL_HOST ) ?: get_bloginfo( 'name' );
         $subject_tpl  = (string) get_option( 'pelican_notify_subject', '⚠ Red-Headed export failed — job #{{job_id}}' );
         $subject      = strtr( $subject_tpl, array(
@@ -58,12 +58,12 @@ class Pelican_Failure_Notifier {
         $job_url = admin_url( 'admin.php?page=' . ( defined( 'PELICAN_SLUG' ) ? PELICAN_SLUG : 'red-headed-pro' ) . '-exports' );
         $body    = sprintf(
             "%s\n\n%s: %s\n%s: %s\n%s: %d\n\n%s\n%s\n\n%s\n%s\n",
-            __( 'A Red-Headed export job has failed.', 'pelican' ),
-            __( 'Profile', 'pelican' ),    $profile_name,
-            __( 'Site',    'pelican' ),    $site,
-            __( 'Job ID',  'pelican' ),    $job_id,
-            __( 'Error message:', 'pelican' ), $error_message,
-            __( 'Open the Exports list:', 'pelican' ), $job_url
+            __( 'A Red-Headed export job has failed.', 'red-headed-pro' ),
+            __( 'Profile', 'red-headed-pro' ),    $profile_name,
+            __( 'Site',    'red-headed-pro' ),    $site,
+            __( 'Job ID',  'red-headed-pro' ),    $job_id,
+            __( 'Error message:', 'red-headed-pro' ), $error_message,
+            __( 'Open the Exports list:', 'red-headed-pro' ), $job_url
         );
 
         wp_mail( $to, $subject, $body );

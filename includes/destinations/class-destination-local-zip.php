@@ -9,12 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 class Pelican_Destination_Local_Zip extends Pelican_Destination_Base {
     public static function ship( $file, $config ) {
         if ( ! class_exists( 'ZipArchive' ) ) {
-            return new \WP_Error( 'no_zip', __( 'PHP ZipArchive extension missing.', 'pelican' ) );
+            return new \WP_Error( 'no_zip', __( 'PHP ZipArchive extension missing.', 'red-headed-pro' ) );
         }
         $zip_path = preg_replace( '/\.[a-z0-9]+$/i', '.zip', $file );
         $zip = new \ZipArchive();
         if ( true !== $zip->open( $zip_path, \ZipArchive::CREATE | \ZipArchive::OVERWRITE ) ) {
-            return new \WP_Error( 'zip_open', __( 'Cannot open zip for writing.', 'pelican' ) );
+            return new \WP_Error( 'zip_open', __( 'Cannot open zip for writing.', 'red-headed-pro' ) );
         }
         $zip->addFile( $file, basename( $file ) );
         $zip->close();

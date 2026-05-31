@@ -62,9 +62,12 @@ class Pelican_Installer {
         dbDelta( $sql_jobs );
         update_option( self::DB_VERSION_KEY, self::DB_VERSION );
 
-        /* Schedule the cron tick (Pro). Lite no-op. */
+        /* Schedule the master cron tick on a 5-minute cadence (Pro) so sub-hourly
+           profile schedules can fire. Falls back gracefully if the custom interval
+           isn't registered yet — Pelican_Cron::maybe_reschedule_tick() corrects it
+           on the next request. Lite no-op (tick returns early when cron is locked). */
         if ( ! wp_next_scheduled( 'pelican_cron_tick' ) ) {
-            wp_schedule_event( time() + 300, 'hourly', 'pelican_cron_tick' );
+            wp_schedule_event( time() + 300, 'pelican_5min', 'pelican_cron_tick' );
         }
 
         set_transient( 'pelican_just_activated', 1, 30 );

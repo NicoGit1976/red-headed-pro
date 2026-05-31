@@ -26,30 +26,30 @@ class Pelican_WC_Status {
 
     public static function register_post_status() {
         register_post_status( self::SLUG, array(
-            'label'                     => _x( 'Exported', 'Order status', 'pelican' ),
+            'label'                     => _x( 'Exported', 'Order status', 'red-headed-pro' ),
             'public'                    => false,
             'exclude_from_search'       => false,
             'show_in_admin_all_list'    => true,
             'show_in_admin_status_list' => true,
             /* translators: %s: number of orders. */
-            'label_count'               => _n_noop( 'Exported <span class="count">(%s)</span>', 'Exported <span class="count">(%s)</span>', 'pelican' ),
+            'label_count'               => _n_noop( 'Exported <span class="count">(%s)</span>', 'Exported <span class="count">(%s)</span>', 'red-headed-pro' ),
         ) );
     }
 
     public static function add_to_wc_statuses( $statuses ) {
-        $statuses[ self::SLUG ] = _x( '📦 Exported', 'Order status', 'pelican' );
+        $statuses[ self::SLUG ] = _x( '📦 Exported', 'Order status', 'red-headed-pro' );
         return $statuses;
     }
 
     public static function add_to_post_statuses( $statuses ) {
         $statuses[ self::SLUG ] = array(
-            'label'                     => _x( 'Exported', 'Order status', 'pelican' ),
+            'label'                     => _x( 'Exported', 'Order status', 'red-headed-pro' ),
             'public'                    => false,
             'exclude_from_search'       => false,
             'show_in_admin_all_list'    => true,
             'show_in_admin_status_list' => true,
             /* translators: %s: number of orders. */
-            'label_count'               => _n_noop( 'Exported <span class="count">(%s)</span>', 'Exported <span class="count">(%s)</span>', 'pelican' ),
+            'label_count'               => _n_noop( 'Exported <span class="count">(%s)</span>', 'Exported <span class="count">(%s)</span>', 'red-headed-pro' ),
         );
         return $statuses;
     }

@@ -6,11 +6,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @package Pelican
  */
 $tabs = array(
-    'profiles'     => array( 'icon' => '📁', 'label' => __( 'Profiles',     'pelican' ), 'lock' => null ),
-    'destinations' => array( 'icon' => '📡', 'label' => __( 'Destinations', 'pelican' ), 'lock' => null ),
-    'cron'         => array( 'icon' => '⏰', 'label' => __( 'Cron',         'pelican' ), 'lock' => 'cron' ),
-    'webhooks'     => array( 'icon' => '🔔', 'label' => __( 'Webhooks',     'pelican' ), 'lock' => 'webhooks' ),
-    'general'      => array( 'icon' => '⚙️', 'label' => __( 'General',      'pelican' ), 'lock' => null ),
+    'profiles'     => array( 'icon' => '📁', 'label' => __( 'Profiles',     'red-headed-pro' ), 'lock' => null ),
+    'destinations' => array( 'icon' => '📡', 'label' => __( 'Destinations', 'red-headed-pro' ), 'lock' => null ),
+    'cron'         => array( 'icon' => '⏰', 'label' => __( 'Cron',         'red-headed-pro' ), 'lock' => 'cron' ),
+    'webhooks'     => array( 'icon' => '🔔', 'label' => __( 'Webhooks',     'red-headed-pro' ), 'lock' => 'webhooks' ),
+    'general'      => array( 'icon' => '⚙️', 'label' => __( 'General',      'red-headed-pro' ), 'lock' => null ),
 );
 $active = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : 'profiles';
 if ( ! isset( $tabs[ $active ] ) ) $active = 'profiles';
@@ -20,7 +20,7 @@ if ( ! isset( $tabs[ $active ] ) ) $active = 'profiles';
     if ( class_exists( 'FH_UI_Helper' ) ) {
         FH_UI_Helper::render_header(
             'Red Headed Pro',
-            __( 'Exports Orders Everywhere, Anytime', 'pelican' ),
+            __( 'Exports Orders Everywhere, Anytime', 'red-headed-pro' ),
             'red-headed-pro.webp',
             array(),
             'red-headed-pro'
@@ -31,7 +31,7 @@ if ( ! isset( $tabs[ $active ] ) ) $active = 'profiles';
     <?php include PELICAN_PATH . 'partials/_page-nav.php'; ?>
 
     <section class="pl-section">
-        <h2 class="pl-h2"><?php esc_html_e( '⚙️ Settings', 'pelican' ); ?></h2>
+        <h2 class="pl-h2"><?php esc_html_e( '⚙️ Settings', 'red-headed-pro' ); ?></h2>
 
         <nav class="pl-tabs" role="tablist">
             <?php foreach ( $tabs as $slug => $meta ) :

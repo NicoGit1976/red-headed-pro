@@ -19,6 +19,7 @@ class Pelican_Auto_Trigger {
     }
     public static function on_status_changed( $order_id, $from, $to, $order ) {
         if ( ! $order_id ) return;
+        $fired = false;
         foreach ( Pelican_Profile_Repo::all() as $profile ) {
             $rule = $profile['auto_trigger'] ?? array();
             if ( empty( $rule['on_status'] ) ) continue;
@@ -37,6 +38,15 @@ class Pelican_Auto_Trigger {
             $injected = $profile;
             $injected['filters']['order_ids_override'] = array( (int) $order_id );
             Pelican_Export_Engine::run( $injected, 'auto:status_changed:' . $to );
+            $fired = true;
+        }
+        /* Resilience: whenever an order triggers an export, also flush any deliveries
+           that previously FAILED (e.g. the receiving SFTP server was momentarily
+           unreachable). This piggybacks retries on real order activity so they no
+           longer depend solely on the cron tick — the exact fragility (dead WP-cron)
+           that let AOE's failed deliveries pile up. */
+        if ( $fired && class_exists( 'Pelican_Retry' ) ) {
+            Pelican_Retry::process();
         }
     }
 }

@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  * @package Pelican
  */
 $_pl_pages = array(
-    'red-headed-pro'          => array( 'icon' => '📊', 'label' => __( 'Dashboard', 'pelican' ) ),
-    'red-headed-pro-exports'  => array( 'icon' => '📦', 'label' => __( 'Exports',   'pelican' ) ),
-    'red-headed-pro-settings' => array( 'icon' => '⚙️', 'label' => __( 'Settings',  'pelican' ) ),
+    'red-headed-pro'          => array( 'icon' => '📊', 'label' => __( 'Dashboard', 'red-headed-pro' ) ),
+    'red-headed-pro-exports'  => array( 'icon' => '📦', 'label' => __( 'Exports',   'red-headed-pro' ) ),
+    'red-headed-pro-settings' => array( 'icon' => '⚙️', 'label' => __( 'Settings',  'red-headed-pro' ) ),
 );
 $_pl_current = isset( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : 'red-headed-pro';
 if ( strpos( $_pl_current, 'red-headed-pro-settings' ) === 0 ) $_pl_current = 'red-headed-pro-settings';

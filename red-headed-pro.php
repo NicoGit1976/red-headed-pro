@@ -2,15 +2,15 @@
 /**
  * Plugin Name:       Red Headed (Pro) — Orders Export Manager
  * Plugin URI:        https://thelionfrog.com
- * Description:       Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP), cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog).
- * Version:           1.4.44
+ * Description:       Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV) with structured JSON shapes (labeled, nested line items, bare array), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP / Local folder), custom filename patterns, one-file-per-order split, cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog).
+ * Version:           1.5.2
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            The Lion Frog Team
  * Author URI:        https://thelionfrog.com
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       pelican
+ * Text Domain:       red-headed-pro
  * Domain Path:       /languages
  *
  * WC requires at least: 8.0
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'PELICAN_VERSION', '1.4.44' );
+define( 'PELICAN_VERSION', '1.5.2' );
 define( 'PELICAN_EDITION',  'pro' );
 define( 'PELICAN_FILE',     __FILE__ );
 define( 'PELICAN_PATH',     plugin_dir_path( __FILE__ ) );
@@ -41,32 +41,32 @@ add_action( 'plugins_loaded', function () {
     }
     add_filter( 'the_froggy_hub_quick_actions', function ( $actions ) {
         $actions[] = [
-            'label'       => __( 'Export orders', 'pelican' ),
+            'label'       => __( 'Export orders', 'red-headed-pro' ),
             'icon'        => '📦',
             'url'         => admin_url( 'admin.php?page=red-headed-pro-exports&action=new' ),
-            'tooltip'     => __( 'Run a manual order export', 'pelican' ),
+            'tooltip'     => __( 'Run a manual order export', 'red-headed-pro' ),
             'plugin_slug' => 'red-headed-pro',
             'is_primary'  => true,
         ];
         $actions[] = [
-            'label'       => __( 'Export history', 'pelican' ),
+            'label'       => __( 'Export history', 'red-headed-pro' ),
             'icon'        => '📋',
             'url'         => admin_url( 'admin.php?page=red-headed-pro-exports&tab=history' ),
-            'tooltip'     => __( 'View past export jobs and downloads', 'pelican' ),
+            'tooltip'     => __( 'View past export jobs and downloads', 'red-headed-pro' ),
             'plugin_slug' => 'red-headed-pro',
         ];
         $actions[] = [
-            'label'       => __( 'Schedules', 'pelican' ),
+            'label'       => __( 'Schedules', 'red-headed-pro' ),
             'icon'        => '⏰',
             'url'         => admin_url( 'admin.php?page=red-headed-pro-settings-cron' ),
-            'tooltip'     => __( 'Configure automatic export schedules', 'pelican' ),
+            'tooltip'     => __( 'Configure automatic export schedules', 'red-headed-pro' ),
             'plugin_slug' => 'red-headed-pro',
         ];
         $actions[] = [
-            'label'       => __( 'Settings', 'pelican' ),
+            'label'       => __( 'Settings', 'red-headed-pro' ),
             'icon'        => '⚙️',
             'url'         => admin_url( 'admin.php?page=red-headed-pro-settings' ),
-            'tooltip'     => __( 'Open Red-Headed settings', 'pelican' ),
+            'tooltip'     => __( 'Open Red-Headed settings', 'red-headed-pro' ),
             'plugin_slug' => 'red-headed-pro',
         ];
         return $actions;
@@ -82,8 +82,8 @@ add_action( 'plugins_loaded', function () {
         $week       = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $jobs_t WHERE started_at >= %s", $week_ago ) );
         $profiles   = (int) $wpdb->get_var( "SELECT COUNT(*) FROM $profiles_t" );
         $kpis = [
-            [ 'icon' => '📦', 'value' => (string) $week,     'label' => __( 'last 7 days', 'pelican' ), 'tone' => 'success' ],
-            [ 'icon' => '⚙️', 'value' => (string) $profiles, 'label' => __( 'profiles', 'pelican' ),    'tone' => 'info' ],
+            [ 'icon' => '📦', 'value' => (string) $week,     'label' => __( 'last 7 days', 'red-headed-pro' ), 'tone' => 'success' ],
+            [ 'icon' => '⚙️', 'value' => (string) $profiles, 'label' => __( 'profiles', 'red-headed-pro' ),    'tone' => 'info' ],
         ];
         set_transient( 'fh_qa_stats_red_headed_pro', $kpis, 5 * MINUTE_IN_SECONDS );
         $stats['red-headed-pro'] = $kpis;
@@ -174,8 +174,8 @@ add_action( 'admin_notices', function () {
     if ( ! get_transient( 'pelican_lite_was_deactivated' ) ) return;
     delete_transient( 'pelican_lite_was_deactivated' );
     echo '<div class="notice notice-success is-dismissible" style="border-left-color:#10B981;">';
-    echo '<p><strong>🃏 ' . esc_html__( 'Red Headed Pro activated.', 'pelican' ) . '</strong></p>';
-    echo '<p>' . esc_html__( 'Red Headed Lite has been deactivated automatically. All your data and settings have been preserved.', 'pelican' ) . '</p>';
+    echo '<p><strong>🐸 ' . esc_html__( 'Red Headed Pro activated.', 'red-headed-pro' ) . '</strong></p>';
+    echo '<p>' . esc_html__( 'Red Headed Lite has been deactivated automatically. All your data and settings have been preserved.', 'red-headed-pro' ) . '</p>';
     echo '</div>';
 } );
 
@@ -200,22 +200,22 @@ add_action( 'plugins_loaded', function () {
                 'plugin_icon'    => PELICAN_URL . 'assets/img/icon.png',
                 'license_status' => $status,
                 'features'       => array(
-                    __( '6 formats: CSV · TSV · JSON · NDJSON · XML · XLSX', 'pelican' ),
-                    __( 'Unlimited email delivery (no 30/24h cap)', 'pelican' ),
-                    __( '6 destinations: Email · SFTP · Google Drive · REST · Local ZIP · Direct download', 'pelican' ),
-                    __( 'Unlimited export profiles', 'pelican' ),
-                    __( 'Multi-destinations per profile (simultaneous fan-out)', 'pelican' ),
-                    __( 'Cron schedules: hourly · daily · weekly · custom interval', 'pelican' ),
-                    __( 'Auto-trigger on WC order status change (dedupe + min-total threshold)', 'pelican' ),
-                    __( 'Advanced filters: date range · payment · category · SKU · min/max amount', 'pelican' ),
-                    __( 'Visual field mapper (drag-and-drop column picker)', 'pelican' ),
-                    __( 'Computed columns (formulas across order fields)', 'pelican' ),
-                    __( 'Line-item export mode (one row per product)', 'pelican' ),
-                    __( 'Post-export status change (auto-set order status after export)', 'pelican' ),
-                    __( 'Custom WC statuses support (non-native order statuses)', 'pelican' ),
-                    __( 'REST API endpoints (/pelican/v1/profiles, /jobs)', 'pelican' ),
-                    __( 'HMAC SHA-256 signed webhooks with retry x3 exponential', 'pelican' ),
-                    __( 'PolyLang & WPML compatibility', 'pelican' ),
+                    __( '6 formats: CSV · TSV · JSON · NDJSON · XML · XLSX', 'red-headed-pro' ),
+                    __( 'Unlimited email delivery (no 30/24h cap)', 'red-headed-pro' ),
+                    __( '6 destinations: Email · SFTP · Google Drive · REST · Local ZIP · Direct download', 'red-headed-pro' ),
+                    __( 'Unlimited export profiles', 'red-headed-pro' ),
+                    __( 'Multi-destinations per profile (simultaneous fan-out)', 'red-headed-pro' ),
+                    __( 'Cron schedules: hourly · daily · weekly · custom interval', 'red-headed-pro' ),
+                    __( 'Auto-trigger on WC order status change (dedupe + min-total threshold)', 'red-headed-pro' ),
+                    __( 'Advanced filters: date range · payment · category · SKU · min/max amount', 'red-headed-pro' ),
+                    __( 'Visual field mapper (drag-and-drop column picker)', 'red-headed-pro' ),
+                    __( 'Computed columns (formulas across order fields)', 'red-headed-pro' ),
+                    __( 'Line-item export mode (one row per product)', 'red-headed-pro' ),
+                    __( 'Post-export status change (auto-set order status after export)', 'red-headed-pro' ),
+                    __( 'Custom WC statuses support (non-native order statuses)', 'red-headed-pro' ),
+                    __( 'REST API endpoints (/pelican/v1/profiles, /jobs)', 'red-headed-pro' ),
+                    __( 'HMAC SHA-256 signed webhooks with retry x3 exponential', 'red-headed-pro' ),
+                    __( 'PolyLang & WPML compatibility', 'red-headed-pro' ),
                 ),
                 'parent_slug' => 'froggy-hub',
                 'shop_url'    => 'https://thelionfrog.com/products/plugins/woo-order-pro',

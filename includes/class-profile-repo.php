@@ -26,7 +26,7 @@ class Pelican_Profile_Repo {
             if ( Pelican_Soft_Lock::is_locked( 'profile_unlimited' ) ) {
                 $count = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::table() );
                 if ( $count >= 1 ) {
-                    return new \WP_Error( 'lite_limit', __( 'Lite is capped to 1 export profile. Upgrade to Pro for unlimited profiles.', 'pelican' ) );
+                    return new \WP_Error( 'lite_limit', __( 'Lite is capped to 1 export profile. Upgrade to Pro for unlimited profiles.', 'red-headed-pro' ) );
                 }
             }
         }
@@ -47,7 +47,14 @@ class Pelican_Profile_Repo {
         /* schedule_meta is the catch-all bucket for new profile-level options (post_export_status,
            export_mode, line_item_header_fill) so we don't have to alter the wp_pl_profiles schema. */
         $meta = is_array( $data['schedule_meta'] ?? null ) ? $data['schedule_meta'] : array();
-        foreach ( array( 'post_export_status', 'export_mode', 'line_item_header_fill' ) as $k ) {
+        foreach ( array(
+            'post_export_status', 'export_mode', 'line_item_header_fill',
+            /* Structured-output suite (Pro): JSON shape + nesting key + bare flag +
+               build-time filename pattern + one-file-per-order toggle. */
+            'json_shape', 'line_items_key', 'json_bare', 'filename_pattern', 'split_per_order',
+            /* Delivery retry (Pro): re-attempt failed shipments until received. */
+            'retry_on_fail', 'retry_max',
+        ) as $k ) {
             if ( isset( $data[ $k ] ) ) $meta[ $k ] = sanitize_text_field( (string) $data[ $k ] );
         }
         return array(
@@ -68,7 +75,11 @@ class Pelican_Profile_Repo {
             $row[ $f ] = ! empty( $row[ $f ] ) ? ( json_decode( $row[ $f ], true ) ?: array() ) : array();
         }
         /* Hoist nested profile options to the top level for ergonomic access. */
-        foreach ( array( 'post_export_status', 'export_mode', 'line_item_header_fill' ) as $k ) {
+        foreach ( array(
+            'post_export_status', 'export_mode', 'line_item_header_fill',
+            'json_shape', 'line_items_key', 'json_bare', 'filename_pattern', 'split_per_order',
+            'retry_on_fail', 'retry_max',
+        ) as $k ) {
             if ( isset( $row['schedule_meta'][ $k ] ) ) $row[ $k ] = $row['schedule_meta'][ $k ];
         }
         return $row;

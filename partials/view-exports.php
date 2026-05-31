@@ -50,7 +50,7 @@ $stats_24h = $wpdb->get_row( "SELECT
 /* Clear-all handler — purges every job row. Disarms guard via wp_nonce + capability. */
 if ( isset( $_POST['pl_clear_logs'] ) && check_admin_referer( 'pl_clear_logs' ) && current_user_can( 'manage_woocommerce' ) ) {
     $cleared = (int) $wpdb->query( "DELETE FROM {$jobs_tbl}" );
-    echo '<div class="notice notice-success is-dismissible"><p>' . sprintf( esc_html__( '✓ Cleared %d job rows.', 'pelican' ), $cleared ) . '</p></div>';
+    echo '<div class="notice notice-success is-dismissible"><p>' . sprintf( esc_html__( '✓ Cleared %d job rows.', 'red-headed-pro' ), $cleared ) . '</p></div>';
     $jobs  = array();
     $total = 0;
     $stats_24h = array( 'success_count' => 0, 'error_count' => 0, 'total_syncs' => 0, 'avg_duration' => 0 );
@@ -61,7 +61,7 @@ if ( isset( $_POST['pl_clear_logs'] ) && check_admin_referer( 'pl_clear_logs' ) 
     if ( class_exists( 'FH_UI_Helper' ) ) {
         FH_UI_Helper::render_header(
             'Red Headed Pro',
-            __( 'Exports Orders Everywhere, Anytime', 'pelican' ),
+            __( 'Exports Orders Everywhere, Anytime', 'red-headed-pro' ),
             'red-headed-pro.webp',
             array(),
             'red-headed-pro'
@@ -73,14 +73,14 @@ if ( isset( $_POST['pl_clear_logs'] ) && check_admin_referer( 'pl_clear_logs' ) 
 
     <section class="pl-section">
         <div class="pl-section-head">
-            <h2 class="pl-h2"><?php esc_html_e( '📦 Exports', 'pelican' ); ?></h2>
-            <span class="pl-muted"><?php printf( esc_html__( '%d jobs total', 'pelican' ), (int) $total ); ?></span>
+            <h2 class="pl-h2"><?php esc_html_e( '📦 Exports', 'red-headed-pro' ); ?></h2>
+            <span class="pl-muted"><?php printf( esc_html__( '%d jobs total', 'red-headed-pro' ), (int) $total ); ?></span>
         </div>
 
         <div class="pl-stats-bar" style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-            <span class="pl-stat-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:#dcfce7;color:#166534;font-size:12px;font-weight:600;">✓ <?php printf( esc_html__( '%d success', 'pelican' ), (int) ( $stats_24h['success_count'] ?? 0 ) ); ?></span>
-            <span class="pl-stat-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:#fee2e2;color:#991b1b;font-size:12px;font-weight:600;">⚠ <?php printf( esc_html__( '%d errors', 'pelican' ), (int) ( $stats_24h['error_count'] ?? 0 ) ); ?></span>
-            <span class="pl-stat-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:#f1f5f9;color:#334155;font-size:12px;font-weight:600;"><?php printf( esc_html__( '%d total (24h)', 'pelican' ), (int) ( $stats_24h['total_syncs'] ?? 0 ) ); ?></span>
+            <span class="pl-stat-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:#dcfce7;color:#166534;font-size:12px;font-weight:600;">✓ <?php printf( esc_html__( '%d success', 'red-headed-pro' ), (int) ( $stats_24h['success_count'] ?? 0 ) ); ?></span>
+            <span class="pl-stat-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:#fee2e2;color:#991b1b;font-size:12px;font-weight:600;">⚠ <?php printf( esc_html__( '%d errors', 'red-headed-pro' ), (int) ( $stats_24h['error_count'] ?? 0 ) ); ?></span>
+            <span class="pl-stat-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:#f1f5f9;color:#334155;font-size:12px;font-weight:600;"><?php printf( esc_html__( '%d total (24h)', 'red-headed-pro' ), (int) ( $stats_24h['total_syncs'] ?? 0 ) ); ?></span>
             <?php if ( ! empty( $stats_24h['avg_duration'] ) ) : ?>
                 <span class="pl-stat-pill" style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;background:#f1f5f9;color:#334155;font-size:12px;font-weight:600;">~<?php echo esc_html( round( ( (int) $stats_24h['avg_duration'] ) / 1000, 2 ) ); ?>s avg</span>
             <?php endif; ?>
@@ -89,46 +89,46 @@ if ( isset( $_POST['pl_clear_logs'] ) && check_admin_referer( 'pl_clear_logs' ) 
         <form class="pl-filters" method="get">
             <input type="hidden" name="page" value="red-headed-pro-exports" />
             <select name="status">
-                <option value=""><?php esc_html_e( 'All statuses', 'pelican' ); ?></option>
+                <option value=""><?php esc_html_e( 'All statuses', 'red-headed-pro' ); ?></option>
                 <?php foreach ( array( 'success', 'running', 'failed' ) as $s ) : ?>
                     <option value="<?php echo esc_attr( $s ); ?>" <?php selected( $f_status, $s ); ?>><?php echo esc_html( ucfirst( $s ) ); ?></option>
                 <?php endforeach; ?>
             </select>
             <select name="format">
-                <option value=""><?php esc_html_e( 'All formats', 'pelican' ); ?></option>
+                <option value=""><?php esc_html_e( 'All formats', 'red-headed-pro' ); ?></option>
                 <?php foreach ( array( 'csv', 'tsv', 'json', 'ndjson', 'xml', 'xlsx' ) as $fmt ) : ?>
                     <option value="<?php echo esc_attr( $fmt ); ?>" <?php selected( $f_format, $fmt ); ?>><?php echo esc_html( strtoupper( $fmt ) ); ?></option>
                 <?php endforeach; ?>
             </select>
-            <button class="pl-btn"><?php esc_html_e( 'Filter', 'pelican' ); ?></button>
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-exports' ) ); ?>" class="pl-link"><?php esc_html_e( 'Reset', 'pelican' ); ?></a>
+            <button class="pl-btn"><?php esc_html_e( 'Filter', 'red-headed-pro' ); ?></button>
+            <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-exports' ) ); ?>" class="pl-link"><?php esc_html_e( 'Reset', 'red-headed-pro' ); ?></a>
         </form>
 
         <?php if ( $total > 0 ) : ?>
-            <form method="post" style="display:inline-block;margin:0 0 12px;" onsubmit="return confirm('<?php echo esc_js( __( 'Clear ALL export job rows? Files on disk are kept.', 'pelican' ) ); ?>');">
+            <form method="post" style="display:inline-block;margin:0 0 12px;" onsubmit="return confirm('<?php echo esc_js( __( 'Clear ALL export job rows? Files on disk are kept.', 'red-headed-pro' ) ); ?>');">
                 <?php wp_nonce_field( 'pl_clear_logs' ); ?>
-                <button type="submit" name="pl_clear_logs" class="pl-btn pl-btn-sm" style="color:#991b1b;">🗑 <?php esc_html_e( 'Clear all logs', 'pelican' ); ?></button>
+                <button type="submit" name="pl_clear_logs" class="pl-btn pl-btn-sm" style="color:#991b1b;">🗑 <?php esc_html_e( 'Clear all logs', 'red-headed-pro' ); ?></button>
             </form>
         <?php endif; ?>
 
         <?php if ( empty( $jobs ) ) : ?>
             <div class="pl-empty">
-                <div class="pl-empty-icon">🃏</div>
-                <p><?php esc_html_e( 'No exports yet. Configure a profile in Settings or run a bulk export from the WC orders list.', 'pelican' ); ?></p>
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-settings-profiles' ) ); ?>" class="pl-btn pl-btn-primary"><?php esc_html_e( '+ Create profile', 'pelican' ); ?></a>
+                <div class="pl-empty-icon">🐸</div>
+                <p><?php esc_html_e( 'No exports yet. Configure a profile in Settings or run a bulk export from the WC orders list.', 'red-headed-pro' ); ?></p>
+                <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-settings-profiles' ) ); ?>" class="pl-btn pl-btn-primary"><?php esc_html_e( '+ Create profile', 'red-headed-pro' ); ?></a>
             </div>
         <?php else : ?>
             <table class="pl-table pl-table-zebra">
                 <thead><tr>
                     <th>#</th>
-                    <th><?php esc_html_e( 'Format', 'pelican' ); ?></th>
-                    <th><?php esc_html_e( 'Records', 'pelican' ); ?></th>
-                    <th><?php esc_html_e( 'Size', 'pelican' ); ?></th>
-                    <th><?php esc_html_e( 'Trigger', 'pelican' ); ?></th>
-                    <th><?php esc_html_e( 'Started', 'pelican' ); ?></th>
-                    <th><?php esc_html_e( 'Duration', 'pelican' ); ?></th>
-                    <th><?php esc_html_e( 'Status', 'pelican' ); ?></th>
-                    <th><?php esc_html_e( 'Actions', 'pelican' ); ?></th>
+                    <th><?php esc_html_e( 'Format', 'red-headed-pro' ); ?></th>
+                    <th><?php esc_html_e( 'Records', 'red-headed-pro' ); ?></th>
+                    <th><?php esc_html_e( 'Size', 'red-headed-pro' ); ?></th>
+                    <th><?php esc_html_e( 'Trigger', 'red-headed-pro' ); ?></th>
+                    <th><?php esc_html_e( 'Started', 'red-headed-pro' ); ?></th>
+                    <th><?php esc_html_e( 'Duration', 'red-headed-pro' ); ?></th>
+                    <th><?php esc_html_e( 'Status', 'red-headed-pro' ); ?></th>
+                    <th><?php esc_html_e( 'Actions', 'red-headed-pro' ); ?></th>
                 </tr></thead>
                 <tbody>
                     <?php foreach ( $jobs as $j ) :
@@ -141,7 +141,7 @@ if ( isset( $_POST['pl_clear_logs'] ) && check_admin_referer( 'pl_clear_logs' ) 
                             <td>
                                 <?php echo (int) $j['records_count']; ?>
                                 <?php if ( $j['status'] === 'success' && (int) $j['records_count'] === 0 ) : ?>
-                                    <span class="pl-pill pl-pill-warn" title="<?php esc_attr_e( 'No orders matched your filters. Check the profile settings (statuses, dates).', 'pelican' ); ?>" style="background:#fef3c7;color:#92400e;border-color:#fcd34d;font-size:10px;margin-left:4px;">⚠ <?php esc_html_e( 'check filters', 'pelican' ); ?></span>
+                                    <span class="pl-pill pl-pill-warn" title="<?php esc_attr_e( 'No orders matched your filters. Check the profile settings (statuses, dates).', 'red-headed-pro' ); ?>" style="background:#fef3c7;color:#92400e;border-color:#fcd34d;font-size:10px;margin-left:4px;">⚠ <?php esc_html_e( 'check filters', 'red-headed-pro' ); ?></span>
                                 <?php endif; ?>
                             </td>
                             <td><?php echo $j['file_size'] ? esc_html( size_format( (int) $j['file_size'] ) ) : '—'; ?></td>
@@ -153,13 +153,13 @@ if ( isset( $_POST['pl_clear_logs'] ) && check_admin_referer( 'pl_clear_logs' ) 
                             </td>
                             <td>
                                 <?php if ( $j['file_path'] && (int) $j['records_count'] > 0 ) : ?>
-                                    <button type="button" class="pl-btn pl-btn-sm pl-btn-preview" data-job="<?php echo (int) $j['id']; ?>" title="<?php esc_attr_e( 'Preview the first rows of this export', 'pelican' ); ?>">👁</button>
+                                    <button type="button" class="pl-btn pl-btn-sm pl-btn-preview" data-job="<?php echo (int) $j['id']; ?>" title="<?php esc_attr_e( 'Preview the first rows of this export', 'red-headed-pro' ); ?>">👁</button>
                                 <?php endif; ?>
                                 <?php if ( $dl ) : ?>
-                                    <a href="<?php echo esc_url( $dl ); ?>" class="pl-btn pl-btn-sm" title="<?php esc_attr_e( 'Download the file', 'pelican' ); ?>">⬇</a>
+                                    <a href="<?php echo esc_url( $dl ); ?>" class="pl-btn pl-btn-sm" title="<?php esc_attr_e( 'Download the file', 'red-headed-pro' ); ?>">⬇</a>
                                 <?php endif; ?>
                                 <?php if ( $j['profile_id'] ) : ?>
-                                    <button type="button" class="pl-btn pl-btn-sm pl-btn-rerun" data-profile="<?php echo (int) $j['profile_id']; ?>" title="<?php esc_attr_e( 'Re-run profile', 'pelican' ); ?>">↻</button>
+                                    <button type="button" class="pl-btn pl-btn-sm pl-btn-rerun" data-profile="<?php echo (int) $j['profile_id']; ?>" title="<?php esc_attr_e( 'Re-run profile', 'red-headed-pro' ); ?>">↻</button>
                                 <?php endif; ?>
                             </td>
                         </tr>
