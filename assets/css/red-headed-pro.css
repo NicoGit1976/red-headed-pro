@@ -205,7 +205,8 @@
     font-weight: 500; transition: opacity .15s, transform .15s; white-space: nowrap;
 }
 .pl-tab:hover { color: var(--pl-turquoise); }
-.pl-tab-active { color: var(--pl-turquoise); border-bottom-color: var(--pl-turquoise); }
+/* Charte v1 §5B: active tab = orange (hover stays teal, matching Hub .lf-page-tab). */
+.pl-tab-active { color: var(--pl-orange); border-bottom-color: var(--pl-orange); }
 .pl-tab-locked { opacity: .6; }
 .pl-tab-icon { font-size: 14px; }
 

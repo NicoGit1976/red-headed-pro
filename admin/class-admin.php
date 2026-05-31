@@ -77,6 +77,29 @@ class Red_Headed_Admin {
     public function render_exports()   { include RED_HEADED_PATH . 'partials/view-exports.php'; }
     public function render_settings()  { include RED_HEADED_PATH . 'partials/view-settings.php'; }
 
+    /**
+     * Open the canonical Hub cockpit shell (header + .fh-tab top nav + .lf-page).
+     * Shared by all 3 views so the cockpit config lives in one place.
+     * Charte v1 §4 (cockpit layout) + §5B (Hub .fh-tab, no third tab style).
+     *
+     * @param string $active_tab  One of red-headed-pro | -exports | -settings.
+     */
+    public static function open_cockpit_shell( $active_tab ) {
+        if ( ! class_exists( 'FH_UI_Helper' ) ) { echo '<div class="lf-page lf-page-red-headed-pro wrap">'; return; }
+        $base = admin_url( 'admin.php?page=' );
+        FH_UI_Helper::open_cockpit( array(
+            'title'       => 'Red Headed Pro',
+            'baseline'    => __( 'Exports Orders Everywhere, Anytime', 'red-headed-pro' ),
+            'plugin_slug' => 'red-headed-pro',
+            'active_tab'  => $active_tab,
+            'tabs'        => array(
+                'red-headed-pro'          => array( 'icon' => '📊', 'label' => __( 'Dashboard', 'red-headed-pro' ), 'url' => $base . 'red-headed-pro' ),
+                'red-headed-pro-exports'  => array( 'icon' => '📦', 'label' => __( 'Exports',   'red-headed-pro' ), 'url' => $base . 'red-headed-pro-exports' ),
+                'red-headed-pro-settings' => array( 'icon' => '⚙️', 'label' => __( 'Settings',  'red-headed-pro' ), 'url' => $base . 'red-headed-pro-settings' ),
+            ),
+        ) );
+    }
+
     /* ────────── AJAX ────────── */
     public function ajax_save_profile() {
         check_ajax_referer( 'red-headed-pro', 'nonce' );

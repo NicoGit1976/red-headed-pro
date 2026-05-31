@@ -29,30 +29,19 @@ $formats = array(
 );
 $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $r['format'] ] = (int) $r['n'];
 ?>
-<div class="pl-wrap wrap">
-    <?php
-    /* v1.4.28 — Canonical Hub-rendered header (mascot + name + baseline + version pill).
-       Per `feedback_hub_centralizes_admin_chrome.md`: child plugins don't own admin
-       chrome — `FH_UI_Helper::render_header()` is the single source. */
-    if ( class_exists( 'FH_UI_Helper' ) ) {
-        FH_UI_Helper::render_header(
-            'Red Headed Pro',
-            __( 'Exports Orders Everywhere, Anytime', 'red-headed-pro' ),
-            'red-headed-pro.webp',
-            array(),
-            'red-headed-pro'
-        );
-    }
-    ?>
+<?php
+/* Charte v1 §4 — canonical Hub cockpit: header + .fh-tab top nav + 2-col grid.
+   Replaces the legacy .pl-wrap full-width layout + .pl-page-nav. */
+Red_Headed_Admin::open_cockpit_shell( 'red-headed-pro' );
+FH_UI_Helper::open_cockpit_main();
 
-    <?php include RED_HEADED_PATH . 'partials/_page-nav.php'; ?>
-
-    <section class="pl-kpis">
-        <div class="pl-kpi"><div class="pl-kpi-icon">📊</div><div><div class="pl-kpi-num"><?php echo (int) $stats['total']; ?></div><div class="pl-kpi-lbl"><?php esc_html_e( 'Total exports', 'red-headed-pro' ); ?></div></div></div>
-        <div class="pl-kpi"><div class="pl-kpi-icon">📅</div><div><div class="pl-kpi-num"><?php echo (int) $stats['this_month']; ?></div><div class="pl-kpi-lbl"><?php esc_html_e( 'This month', 'red-headed-pro' ); ?></div></div></div>
-        <div class="pl-kpi"><div class="pl-kpi-icon">✓</div><div><div class="pl-kpi-num"><?php echo (int) $stats['success']; ?></div><div class="pl-kpi-lbl"><?php esc_html_e( 'Successful', 'red-headed-pro' ); ?></div></div></div>
-        <div class="pl-kpi <?php echo $stats['failed'] > 0 ? 'pl-kpi-warn' : ''; ?>"><div class="pl-kpi-icon">⚠️</div><div><div class="pl-kpi-num"><?php echo (int) $stats['failed']; ?></div><div class="pl-kpi-lbl"><?php esc_html_e( 'Failed', 'red-headed-pro' ); ?></div></div></div>
-    </section>
+FH_UI_Helper::render_kpi_strip( array(
+    array( 'icon' => '📊', 'value' => (int) $stats['total'],      'label' => __( 'Total exports', 'red-headed-pro' ) ),
+    array( 'icon' => '📅', 'value' => (int) $stats['this_month'], 'label' => __( 'This month', 'red-headed-pro' ) ),
+    array( 'icon' => '✓',  'value' => (int) $stats['success'],    'label' => __( 'Successful', 'red-headed-pro' ), 'tone' => 'success' ),
+    array( 'icon' => '⚠️', 'value' => (int) $stats['failed'],     'label' => __( 'Failed', 'red-headed-pro' ), 'tone' => $stats['failed'] > 0 ? 'bad' : 'info' ),
+) );
+?>
 
     <section class="pl-section">
         <h2 class="pl-h2"><?php esc_html_e( '🗂️ Available formats', 'red-headed-pro' ); ?></h2>
@@ -111,54 +100,37 @@ $by_format_map = array(); foreach ( (array) $by_format as $r ) $by_format_map[ $
         <?php endif; ?>
     </section>
 
-    <section class="pl-section">
-        <h2 class="pl-h2"><?php esc_html_e( '⚡ Quick actions', 'red-headed-pro' ); ?></h2>
-        <div class="pl-actions">
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-settings-profiles' ) ); ?>" class="pl-action">
-                <span class="pl-action-icon">📁</span>
-                <span class="pl-action-label"><?php esc_html_e( 'Profiles', 'red-headed-pro' ); ?></span>
-                <span class="pl-action-meta"><?php echo (int) $profiles_n; ?> / <?php echo $is_pro ? '∞' : '1'; ?></span>
-            </a>
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-exports' ) ); ?>" class="pl-action">
-                <span class="pl-action-icon">📦</span>
-                <span class="pl-action-label"><?php esc_html_e( 'Exports', 'red-headed-pro' ); ?></span>
-            </a>
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-orders' ) ); ?>" class="pl-action">
-                <span class="pl-action-icon">🛒</span>
-                <span class="pl-action-label"><?php esc_html_e( 'WC Orders', 'red-headed-pro' ); ?></span>
-            </a>
-            <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-settings-destinations' ) ); ?>" class="pl-action">
-                <span class="pl-action-icon">📡</span>
-                <span class="pl-action-label"><?php esc_html_e( 'Destinations', 'red-headed-pro' ); ?></span>
-            </a>
-            <?php if ( $is_pro ) : ?>
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-settings-cron' ) ); ?>" class="pl-action">
-                    <span class="pl-action-icon">⏰</span>
-                    <span class="pl-action-label"><?php esc_html_e( 'Cron schedules', 'red-headed-pro' ); ?></span>
-                </a>
-                <a href="<?php echo esc_url( admin_url( 'admin.php?page=red-headed-pro-settings-webhooks' ) ); ?>" class="pl-action">
-                    <span class="pl-action-icon">🔔</span>
-                    <span class="pl-action-label"><?php esc_html_e( 'Webhooks', 'red-headed-pro' ); ?></span>
-                </a>
-            <?php endif; ?>
-        </div>
-    </section>
+<?php
+/* ── SIDEBAR : CTA / navigation only (operational tables stay in MAIN). ── */
+FH_UI_Helper::close_cockpit_main();
+FH_UI_Helper::open_cockpit_sidebar( __( 'Quick actions', 'red-headed-pro' ) );
 
-    <?php if ( ! $is_pro ) : ?>
-    <section class="pl-section">
-        <h2 class="pl-h2"><?php esc_html_e( '✉️ Email quota', 'red-headed-pro' ); ?></h2>
-        <div class="pl-quota-bar"><div class="pl-quota-fill" style="width: <?php echo (int) min( 100, ( $rate['sent_24h'] / max( 1, $rate['limit'] ) ) * 100 ); ?>%;"></div></div>
-        <p class="pl-quota-text">
-            <?php
-            $dash_limit_display     = ( $rate['limit'] >= 1e9 )     ? '∞' : number_format( (int) $rate['limit'] );
-            $dash_remaining_display = ( $rate['remaining'] >= 1e9 ) ? '∞' : number_format( (int) $rate['remaining'] );
-            printf(
-                /* translators: 1: sent, 2: limit or ∞, 3: remaining or ∞ */
-                esc_html__( '%1$d / %2$s emails sent (24h sliding) — %3$s remaining. Pro = unlimited.', 'red-headed-pro' ),
-                (int) $rate['sent_24h'], $dash_limit_display, $dash_remaining_display
-            );
-            ?>
-        </p>
-    </section>
-    <?php endif; ?>
-</div>
+$rh_qa = array(
+    array( 'icon' => '📁', 'label' => __( 'Profiles', 'red-headed-pro' ),     'url' => admin_url( 'admin.php?page=red-headed-pro-settings-profiles' ),     'value' => $profiles_n . ' / ' . ( $is_pro ? '∞' : '1' ) ),
+    array( 'icon' => '📦', 'label' => __( 'Exports', 'red-headed-pro' ),      'url' => admin_url( 'admin.php?page=red-headed-pro-exports' ) ),
+    array( 'icon' => '🛒', 'label' => __( 'WC Orders', 'red-headed-pro' ),    'url' => admin_url( 'admin.php?page=wc-orders' ) ),
+    array( 'icon' => '📡', 'label' => __( 'Destinations', 'red-headed-pro' ), 'url' => admin_url( 'admin.php?page=red-headed-pro-settings-destinations' ) ),
+);
+if ( $is_pro ) {
+    $rh_qa[] = array( 'icon' => '⏰', 'label' => __( 'Cron schedules', 'red-headed-pro' ), 'url' => admin_url( 'admin.php?page=red-headed-pro-settings-cron' ) );
+    $rh_qa[] = array( 'icon' => '🔔', 'label' => __( 'Webhooks', 'red-headed-pro' ),       'url' => admin_url( 'admin.php?page=red-headed-pro-settings-webhooks' ) );
+}
+FH_UI_Helper::render_sidebar_card( __( 'Quick actions', 'red-headed-pro' ), $rh_qa );
+
+if ( ! $is_pro ) {
+    $q_limit     = ( $rate['limit'] >= 1e9 )     ? '∞' : number_format( (int) $rate['limit'] );
+    $q_remaining = ( $rate['remaining'] >= 1e9 ) ? '∞' : number_format( (int) $rate['remaining'] );
+    echo '<div class="fh-sb-card">';
+    echo '<h3 class="fh-sb-title">' . esc_html__( 'Email quota', 'red-headed-pro' ) . '</h3>';
+    echo '<div class="pl-quota-bar"><div class="pl-quota-fill" style="width:' . (int) min( 100, ( $rate['sent_24h'] / max( 1, $rate['limit'] ) ) * 100 ) . '%;"></div></div>';
+    echo '<p class="pl-quota-text">' . sprintf(
+        /* translators: 1: sent, 2: limit or ∞, 3: remaining or ∞ */
+        esc_html__( '%1$d / %2$s emails sent (24h sliding) — %3$s remaining. Pro = unlimited.', 'red-headed-pro' ),
+        (int) $rate['sent_24h'], esc_html( $q_limit ), esc_html( $q_remaining )
+    ) . '</p>';
+    echo '</div>';
+}
+
+FH_UI_Helper::close_cockpit_sidebar();
+FH_UI_Helper::close_cockpit();
+?>

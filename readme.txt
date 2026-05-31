@@ -4,7 +4,7 @@ Tags: woocommerce, export, csv, xlsx, json, xml, sftp, cron, webhooks
 Requires at least: 6.2
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 License: GPL-2.0-or-later
 
 Exports WooCommerce orders everywhere, anytime — multi-format, multi-destination, scheduled and event-driven, with a visual field mapper, computed columns, REST API and HMAC-signed webhooks. Part of Ultimate Woo Powertools (by The Lion Frog).
