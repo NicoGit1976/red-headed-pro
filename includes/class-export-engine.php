@@ -20,16 +20,17 @@ class Red_Headed_Export_Engine {
         $profile  = is_array( $profile ) ? $profile : array();
 
         /* ── Split-per-order fan-out (Pro) ──────────────────────────────────
-           When enabled, a batch run is expanded into one export per order so
-           each order gets its own file, its own filename context (e.g. the
-           order's own date) and its own post-export status change. We reuse
-           the entire pipeline by re-entering run() with a single-order
-           override, so there is zero logic duplication. The single-order
-           auto-trigger path already sets order_ids_override, so it is left
-           untouched (no infinite recursion). */
+           When enabled, a multi-order run is expanded into one export per order
+           so each order gets its own file, its own filename context and its own
+           post-export status change. We reuse the whole pipeline by re-entering
+           run() with a single-order override. Recursion is bounded by the count
+           check below: a single-order run (auto-trigger, or a split sub-call)
+           resolves to one order, falls through, and produces one file — it never
+           re-splits. This MUST also fan out when order_ids_override carries
+           several IDs (the bulk "Export selected orders" action), so a multi-
+           selection yields one file per order, not one file of N orders. */
         if ( ! empty( $profile['split_per_order'] )
-             && Red_Headed_Soft_Lock::is_available( 'split_per_order' )
-             && empty( $profile['filters']['order_ids_override'] ) ) {
+             && Red_Headed_Soft_Lock::is_available( 'split_per_order' ) ) {
             $batch = self::fetch_orders( isset( $profile['filters'] ) ? (array) $profile['filters'] : array() );
             if ( count( $batch ) > 1 ) {
                 $last = 0;
