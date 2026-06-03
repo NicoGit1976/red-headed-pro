@@ -107,9 +107,22 @@ class Red_Headed_Export_Engine {
             }
 
             /* v1.5.0 — P2 dry-run: build the file but skip delivery entirely.
-               The file is saved and the job logged, but nothing is shipped. */
+               v1.6.0 — Empty-export guard: a 0-record run must NOT ship a ghost file
+               (the stray "commande-…-.json" of 2 bytes seen on the SFTP). Skip every
+               destination and log the job as 'empty' so nothing goes downstream. */
             $is_dry_run = ! empty( $profile['_dry_run'] );
-            $delivered   = $is_dry_run ? null : self::deliver( $file, $profile, $format );
+            $is_empty   = ( count( $rows ) === 0 );
+            $delivered  = ( $is_dry_run || $is_empty ) ? null : self::deliver( $file, $profile, $format );
+
+            /* v1.6.0 — Delivery visibility: a failed leg (SFTP auth/path, unreachable…)
+               must NOT hide behind a green "success". If any destination errored, the
+               job is 'partial' (the per-destination error is already appended to
+               error_message by deliver()), so silent SFTP failures are visible. */
+            $had_failure = is_array( $delivered ) && (bool) array_filter(
+                $delivered,
+                function ( $d ) { return is_wp_error( isset( $d['ok'] ) ? $d['ok'] : null ); }
+            );
+            $status = $is_dry_run ? 'dry_run' : ( $is_empty ? 'empty' : ( $had_failure ? 'partial' : 'success' ) );
 
             $duration = (int) round( microtime( true ) * 1000 ) - $started;
             $uploads  = wp_upload_dir();
@@ -118,7 +131,7 @@ class Red_Headed_Export_Engine {
                 'file_path'     => $rel,
                 'file_size'     => @filesize( $file ),
                 'records_count' => count( $rows ),
-                'status'        => $is_dry_run ? 'dry_run' : 'success',
+                'status'        => $status,
                 'duration_ms'   => $duration,
                 'finished_at'   => current_time( 'mysql' ),
             ), array( 'id' => $job_id ) );
@@ -488,13 +501,25 @@ class Red_Headed_Export_Engine {
                 /* Robust SKU resolution (SKU = the eternal key, never the WP ID):
                    1. frozen-at-order-time SKU (survives even a hard catalog purge),
                    2. live product SKU,
-                   3. _sku postmeta direct (mirrors AOE — survives a trashed/unloadable
-                      product). Returns '' only when no SKU exists anywhere. */
+                   3. _sku postmeta direct (mirrors AOE — survives a trashed/unloadable product),
+                   4. catalog re-link by exact product title (re-finds the SKU when a
+                      re-import recreated the product under a new ID — orphaning the order line).
+                   Returns '' only when no SKU exists anywhere. */
                 $frozen = $item->get_meta( '_rh_sku' );
                 if ( $frozen !== '' && $frozen !== null ) return (string) $frozen;
                 if ( $product && (string) $product->get_sku() !== '' ) return (string) $product->get_sku();
                 $pid = $item->get_variation_id() ? (int) $item->get_variation_id() : (int) $item->get_product_id();
                 if ( $pid ) { $sku = get_post_meta( $pid, '_sku', true ); if ( $sku !== '' && $sku !== false ) return (string) $sku; }
+                /* 4. Catalog re-link (v1.5.8): when a re-import recreates products under NEW
+                      post IDs, historical order lines point to a dead ID and 1–3 all miss.
+                      The catalog is the eternal source — re-find the SKU by EXACT product
+                      title (what AOE / WP All Export-class tools do). Cached per run,
+                      filterable (set red_headed_sku_recover_by_title to false to disable). */
+                $title = (string) $item->get_name();
+                if ( $title !== '' && apply_filters( 'red_headed_sku_recover_by_title', true, $item, $order ) ) {
+                    $by_title = self::sku_by_title( $title );
+                    if ( $by_title !== '' ) return $by_title;
+                }
                 return '';
             case 'line_name':      return (string) $item->get_name();
             case 'line_qty':       return (int)    $item->get_quantity();
@@ -513,6 +538,35 @@ class Red_Headed_Export_Engine {
             case 'line_variation': return $item->get_variation_id() ? (int) $item->get_variation_id() : '';
         }
         return '';
+    }
+
+    /**
+     * Resolve a product SKU from an EXACT product title — the last-resort catalog
+     * re-link for order lines whose product was deleted & recreated under a new ID
+     * (catalog re-import). The catalog is the eternal source, so the title still
+     * points to the right SKU even when the order's stored product_id is dead.
+     * Returns the most-recent published product/variation with that title that
+     * actually has a SKU, or '' if none. Cached per request (one query per title).
+     *
+     * @param  string $title Exact product title (the order line name).
+     * @return string        SKU, or '' when no titled product carries one.
+     */
+    protected static function sku_by_title( $title ) {
+        static $cache = array();
+        if ( array_key_exists( $title, $cache ) ) return $cache[ $title ];
+        global $wpdb;
+        $ids = $wpdb->get_col( $wpdb->prepare(
+            "SELECT ID FROM {$wpdb->posts}
+             WHERE post_type = 'product' AND post_status = 'publish' AND post_title = %s
+             ORDER BY ID DESC",
+            $title
+        ) );
+        $found = '';
+        foreach ( (array) $ids as $pid ) {
+            $sku = get_post_meta( $pid, '_sku', true );
+            if ( $sku !== '' && $sku !== false ) { $found = (string) $sku; break; }
+        }
+        return $cache[ $title ] = $found;
     }
 
     /** Substitute {placeholder} tokens with order field values, then evaluate the math expression. */

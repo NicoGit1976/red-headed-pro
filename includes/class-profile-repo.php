@@ -30,6 +30,14 @@ class Red_Headed_Profile_Repo {
                 }
             }
         }
+        /* v1.5.9 — Secret-preservation. The editor blanks secret fields (SFTP
+           password, OAuth tokens) on load for security, so a blank submitted value
+           means "unchanged", NOT "clear it". Without this, every profile edit
+           (port, path, filename…) re-saves an EMPTY password and silently wipes the
+           stored SFTP credential → delivery fails on the next run. Preserve on blank. */
+        if ( ! empty( $data['id'] ) ) {
+            $data = self::preserve_destination_secrets( $data, (int) $data['id'] );
+        }
         $row = self::encode( $data );
         if ( ! empty( $data['id'] ) ) {
             $wpdb->update( self::table(), $row, array( 'id' => (int) $data['id'] ) );
@@ -41,6 +49,48 @@ class Red_Headed_Profile_Repo {
     public static function delete( $id ) {
         global $wpdb;
         return false !== $wpdb->delete( self::table(), array( 'id' => (int) $id ), array( '%d' ) );
+    }
+
+    /**
+     * Preserve stored destination secrets when the submitted value is blank.
+     * The profile editor never re-renders saved passwords/tokens (security), so an
+     * empty field on submit means "unchanged", not "clear it". Matches destinations
+     * to the stored ones by type, in submission order. v1.5.9.
+     *
+     * @param array $data Incoming profile data (destinations may have blank secrets).
+     * @param int   $id   Existing profile id to read stored secrets from.
+     * @return array      $data with blank secrets backfilled from storage.
+     */
+    protected static function preserve_destination_secrets( $data, $id ) {
+        if ( empty( $data['destinations'] ) || ! is_array( $data['destinations'] ) ) {
+            return $data;
+        }
+        $existing = self::get( $id );
+        if ( ! $existing || empty( $existing['destinations'] ) || ! is_array( $existing['destinations'] ) ) {
+            return $data;
+        }
+        $by_type = array();
+        foreach ( $existing['destinations'] as $d ) {
+            if ( is_array( $d ) ) { $by_type[ $d['type'] ?? '' ][] = $d; }
+        }
+        $secret_keys = array( 'pass', 'pass_enc', 'token', 'access_token', 'access_token_enc', 'refresh_token', 'secret', 'api_key' );
+        $cursor = array();
+        foreach ( $data['destinations'] as &$dest ) {
+            if ( ! is_array( $dest ) ) { continue; }
+            $t   = $dest['type'] ?? '';
+            $idx = $cursor[ $t ] ?? 0;
+            $cursor[ $t ] = $idx + 1;
+            $prev = $by_type[ $t ][ $idx ] ?? null;
+            if ( ! is_array( $prev ) ) { continue; }
+            foreach ( $secret_keys as $sk ) {
+                $incoming = isset( $dest[ $sk ] ) ? (string) $dest[ $sk ] : '';
+                if ( '' === $incoming && ! empty( $prev[ $sk ] ) ) {
+                    $dest[ $sk ] = $prev[ $sk ];
+                }
+            }
+        }
+        unset( $dest );
+        return $data;
     }
 
     protected static function encode( $data ) {

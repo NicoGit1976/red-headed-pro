@@ -42,6 +42,7 @@ class Red_Headed_Engine {
 
         require_once $base . 'class-export-engine.php';
         require_once $base . 'class-profile-repo.php';
+        require_once $base . 'class-connection-repo.php';
         require_once $base . 'class-retry.php';
         require_once $base . 'class-cron.php';
         require_once $base . 'class-auto-trigger.php';

@@ -60,6 +60,11 @@ class Red_Headed_Installer {
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         dbDelta( $sql_profiles );
         dbDelta( $sql_jobs );
+        /* Reusable destination connections (refactor Phase 1 — SPEC-red-headed-reusable-connections). */
+        if ( ! class_exists( 'Red_Headed_Connection_Repo' ) ) {
+            require_once __DIR__ . '/class-connection-repo.php';
+        }
+        Red_Headed_Connection_Repo::maybe_create_table();
         update_option( self::DB_VERSION_KEY, self::DB_VERSION );
 
         /* Schedule the master cron tick on a 5-minute cadence (Pro) so sub-hourly

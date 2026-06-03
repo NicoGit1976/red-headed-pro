@@ -11,7 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 abstract class Red_Headed_Destination_Base {
     abstract public static function ship( $file, $config );
 
-    protected static function decrypt( $val ) {
+    /* public (symmetric with encrypt) so Connection_Repo can decrypt for live tests. */
+    public static function decrypt( $val ) {
         if ( ! is_string( $val ) || $val === '' ) return '';
         if ( strpos( $val, 'pl1:' ) !== 0 ) return $val; /* not encrypted */
         $iv_b64 = substr( $val, 4, 24 );
