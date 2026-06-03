@@ -24,6 +24,10 @@ class Red_Headed_Admin {
         add_action( 'wp_ajax_red_headed_run_dry',            array( $this, 'ajax_run_dry' ) );
         add_action( 'wp_ajax_red_headed_import_profile',     array( $this, 'ajax_import_profile' ) );
         add_action( 'wp_ajax_red_headed_preview_job_raw',    array( $this, 'ajax_preview_job_raw' ) );
+        /* Reusable connections (refactor): CRUD + live test. */
+        add_action( 'wp_ajax_red_headed_save_connection',   array( $this, 'ajax_save_connection' ) );
+        add_action( 'wp_ajax_red_headed_delete_connection', array( $this, 'ajax_delete_connection' ) );
+        add_action( 'wp_ajax_red_headed_test_connection',   array( $this, 'ajax_test_connection' ) );
         /* v1.4.45 — Tell the Hub to load its shared admin chrome (fh-admin-css) on
            our pages. The Exports/Settings pages are headless (parent=null) so their
            hook is `admin_page_red-headed-pro-*` — it doesn't contain "froggy-", so
@@ -116,6 +120,30 @@ class Red_Headed_Admin {
         $id = (int) ( $_POST['id'] ?? 0 );
         $ok = Red_Headed_Profile_Repo::delete( $id );
         wp_send_json_success( array( 'deleted' => $ok ) );
+    }
+
+    /* ───────── Reusable connections (refactor) ───────── */
+    public function ajax_save_connection() {
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
+        if ( ! current_user_can( 'manage_woocommerce' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
+        $data = isset( $_POST['connection'] ) ? json_decode( wp_unslash( $_POST['connection'] ), true ) : null;
+        if ( ! is_array( $data ) ) wp_send_json_error( array( 'message' => 'Invalid connection JSON.' ) );
+        $id = Red_Headed_Connection_Repo::save( $data );
+        if ( is_wp_error( $id ) ) wp_send_json_error( array( 'message' => $id->get_error_message() ) );
+        wp_send_json_success( array( 'id' => $id, 'connections' => Red_Headed_Connection_Repo::public_list() ) );
+    }
+    public function ajax_delete_connection() {
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
+        if ( ! current_user_can( 'manage_woocommerce' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
+        Red_Headed_Connection_Repo::delete( (int) ( $_POST['id'] ?? 0 ) );
+        wp_send_json_success( array( 'connections' => Red_Headed_Connection_Repo::public_list() ) );
+    }
+    public function ajax_test_connection() {
+        check_ajax_referer( 'red-headed-pro', 'nonce' );
+        if ( ! current_user_can( 'manage_woocommerce' ) ) wp_send_json_error( array( 'message' => 'Insufficient permissions.' ), 403 );
+        $r = Red_Headed_Connection_Repo::test( (int) ( $_POST['id'] ?? 0 ) );
+        if ( is_wp_error( $r ) ) wp_send_json_error( array( 'message' => $r->get_error_message() ) );
+        wp_send_json_success( array( 'message' => __( 'Connection OK ✓', 'red-headed-pro' ) ) );
     }
     public function ajax_run_profile() {
         check_ajax_referer( 'red-headed-pro', 'nonce' );

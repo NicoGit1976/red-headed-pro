@@ -58,6 +58,30 @@ class Red_Headed_Connection_Repo {
 		return array_map( array( __CLASS__, 'decode' ), (array) $rows );
 	}
 
+	/**
+	 * Connections for UI/client display — secrets stripped, with a per-secret "is set"
+	 * flag so the form can show "•••• saved (leave blank to keep)". Never exposes a secret.
+	 */
+	public static function public_list() {
+		$out = array();
+		foreach ( self::all() as $c ) {
+			$cfg = is_array( $c['config'] ) ? $c['config'] : array();
+			$has = array();
+			foreach ( self::secret_keys( $c['type'] ) as $k ) {
+				$has[ $k ] = ! empty( $cfg[ $k . '_enc' ] );
+				unset( $cfg[ $k ], $cfg[ $k . '_enc' ] );
+			}
+			$out[] = array(
+				'id'         => (int) $c['id'],
+				'name'       => $c['name'],
+				'type'       => $c['type'],
+				'config'     => $cfg,
+				'has_secret' => $has,
+			);
+		}
+		return $out;
+	}
+
 	public static function get( $id ) {
 		global $wpdb;
 		$row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE id = %d', (int) $id ), ARRAY_A );

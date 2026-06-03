@@ -796,7 +796,19 @@ class Red_Headed_Export_Engine {
         foreach ( $dest_list as $dest ) {
             $i++;
             if ( $i > 1 && ! $multi_ok ) break; /* Lite caps to 1 destination per run */
-            $ok = Red_Headed_Destination_Dispatcher::ship( $dest, $file, $profile, $format );
+            /* Reusable connections: a destination may reference a saved connection by
+               id (+ non-secret overrides) instead of inlining its creds. Resolve it to
+               a full config (secrets included) before shipping; legacy inline
+               destinations pass through unchanged. */
+            $target = $dest;
+            if ( ! empty( $dest['connection_id'] ) && class_exists( 'Red_Headed_Connection_Repo' ) ) {
+                $resolved = Red_Headed_Connection_Repo::resolve_for_delivery(
+                    (int) $dest['connection_id'],
+                    isset( $dest['overrides'] ) ? (array) $dest['overrides'] : array()
+                );
+                if ( is_array( $resolved ) ) $target = $resolved;
+            }
+            $ok = Red_Headed_Destination_Dispatcher::ship( $target, $file, $profile, $format );
             $delivered[] = array( 'destination' => $dest, 'ok' => $ok );
             /* v1.4.25 — log delivery result so the user can debug silent failures.
                The job stays "success" because the file IS built; but each destination
