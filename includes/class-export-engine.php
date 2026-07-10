@@ -73,13 +73,19 @@ class Red_Headed_Export_Engine {
             $json_shape = self::json_shape( $profile, $format );
             $mode = isset( $profile['export_mode'] ) ? sanitize_key( $profile['export_mode'] ) : 'per_order';
 
+            /* Reset the SKU-less drop log for this run (the "memory" of lines/orders
+               excluded for a missing SKU — persisted after a successful, non-dry run). */
+            self::$drop_log = array();
+
             if ( $json_shape !== '' ) {
                 $li_key = ( isset( $profile['line_items_key'] ) && $profile['line_items_key'] !== '' )
                     ? (string) $profile['line_items_key'] : 'items';
                 $nest = ( $json_shape === 'nested' );
                 $rows = array();
                 foreach ( $orders as $order ) {
-                    $rows[] = self::map_row_object( $order, $columns, $nest, $li_key );
+                    $row = self::map_row_object( $order, $columns, $nest, $li_key );
+                    if ( $row === null ) continue; /* every line lacked a SKU → nothing to export for this order */
+                    $rows[] = $row;
                 }
             } elseif ( $mode === 'per_line_item' && Red_Headed_Soft_Lock::is_available( 'line_item_export' ) ) {
                 $hf   = isset( $profile['line_item_header_fill'] ) && $profile['line_item_header_fill'] === 'first_only' ? 'first_only' : 'every';
@@ -135,6 +141,20 @@ class Red_Headed_Export_Engine {
                 'duration_ms'   => $duration,
                 'finished_at'   => current_time( 'mysql' ),
             ), array( 'id' => $job_id ) );
+
+            /* Persist the SKU-less drop log (the "memory") — append to a capped option so
+               vanished references stay consultable even after the catalog forgot them. */
+            if ( ! $is_dry_run && ! empty( self::$drop_log ) ) {
+                $reg = get_option( 'rh_dropped_lines', array() );
+                if ( ! is_array( $reg ) ) $reg = array();
+                foreach ( self::$drop_log as $d ) {
+                    $d['job_id'] = $job_id;
+                    $d['at']     = current_time( 'mysql' );
+                    $reg[]       = $d;
+                }
+                if ( count( $reg ) > 500 ) $reg = array_slice( $reg, -500 );
+                update_option( 'rh_dropped_lines', $reg, false );
+            }
 
             /* v1.4.22 — Mark each exported order so the WC orders list can show
                an "Exported" column. Skipped when 0 rows (no orders processed).
@@ -204,7 +224,7 @@ class Red_Headed_Export_Engine {
         /* v1.5.5 — HARD GUARANTEE for targeted exports (bulk action / auto-trigger).
            Some setups (legacy CPT storage, query-filtering plugins) silently ignore
            `include`/`post__in`, which let a single-order export leak ALL matching
-           orders to the destination (e.g. 600 orders pushed to SAP instead of 1).
+           orders to the destination (e.g. 600 orders pushed to the ERP instead of 1).
            Enforce the override post-fetch so a targeted export can NEVER contain
            another order, whatever the storage/query layer does. */
         if ( ! empty( $filters['order_ids_override'] ) ) {
@@ -380,10 +400,15 @@ class Red_Headed_Export_Engine {
      * so any downstream schema (ERP, partner API, custom importer…) can be matched
      * without touching code.
      */
+    /** Lines/orders dropped for a missing SKU during the current run — the "memory"
+     *  of vanished references, persisted to the `rh_dropped_lines` option after the run. */
+    public static $drop_log = array();
+
     public static function map_row_object( $order, $columns, $nest = false, $line_items_key = 'items' ) {
-        $obj       = array();
-        $line_cols = array();
-        $slot_set  = false;
+        $obj         = array();
+        $line_cols   = array();
+        $slot_set    = false;
+        $total_label = null; $total_col = null; $total_key = null;
         foreach ( $columns as $col ) {
             $key = is_array( $col ) ? ( $col['key'] ?? '' ) : (string) $col;
             if ( $key === '' ) continue;
@@ -405,19 +430,51 @@ class Red_Headed_Export_Engine {
                 $obj[ $label ] = self::transform_value( $order, $col, $key, self::resolve_calc( $order, isset( $col['expr'] ) ? (string) $col['expr'] : '' ) );
                 continue;
             }
+            /* Remember the order-total column so it can be recomputed if SKU-less lines are dropped. */
+            if ( $key === 'total' || $key === 'order_total' ) { $total_label = $label; $total_col = $col; $total_key = $key; }
             $obj[ $label ] = self::transform_value( $order, $col, $key, self::resolve_column( $order, $key ) );
         }
         if ( $nest && ! empty( $line_cols ) ) {
-            $items = method_exists( $order, 'get_items' ) ? $order->get_items() : array();
-            $list  = array();
+            $items      = method_exists( $order, 'get_items' ) ? $order->get_items() : array();
+            /* Clean-export rule (opt-in via filter): never emit a line without a SKU
+               (a strict ERP/EDI importer can reject the whole order on an empty product code).
+               Such lines are dropped, recorded in the run's drop log, and the order
+               total is recomputed from the kept lines so it stays coherent. */
+            $drop       = (bool) apply_filters( 'red_headed_drop_line_without_sku', false, $order );
+            $list       = array();
+            $kept_total = 0.0;
+            $dropped    = 0;
             foreach ( $items as $item ) {
+                if ( $drop && (string) self::resolve_line_column( $order, $item, 'line_sku' ) === '' ) {
+                    self::$drop_log[] = array(
+                        'order_id'     => method_exists( $order, 'get_id' ) ? (int) $order->get_id() : 0,
+                        'order_number' => method_exists( $order, 'get_order_number' ) ? (string) $order->get_order_number() : '',
+                        'name'         => (string) $item->get_name(),
+                        'qty'          => (int) $item->get_quantity(),
+                        'total'        => (float) $item->get_total(),
+                        'reason'       => 'no_sku',
+                    );
+                    $dropped++;
+                    continue;
+                }
                 $line = array();
                 foreach ( $line_cols as $lc ) {
                     $line[ $lc['label'] ] = self::transform_value( $order, $lc['col'], $lc['key'], self::resolve_line_column( $order, $item, $lc['key'] ) );
                 }
-                $list[] = $line;
+                $list[]      = $line;
+                $kept_total += (float) $item->get_total();
+            }
+            /* Every line lacked a SKU → nothing to export for this order. Signal the
+               caller to skip it entirely (it's preserved in the drop log either way). */
+            if ( $drop && $dropped > 0 && empty( $list ) ) {
+                return null;
             }
             $obj[ $line_items_key ] = $list;
+            /* Recompute the order total from the kept lines (the dropped lines aren't
+               billed/shipped), so the order total matches what's actually exported. */
+            if ( $dropped > 0 && $total_label !== null && apply_filters( 'red_headed_recompute_total_on_drop', true, $order ) ) {
+                $obj[ $total_label ] = self::transform_value( $order, $total_col, $total_key, $kept_total );
+            }
         }
         return $obj;
     }
@@ -707,6 +764,11 @@ class Red_Headed_Export_Engine {
             case 'shipping_country':    return $order->get_shipping_country();
             case 'customer_id':         return (int) $order->get_customer_id();
             case 'customer_login':
+                /* Eternal key = the client code (WP user_login). Prefer the value
+                   frozen on the order at creation (_rh_customer_code) so ID Client
+                   survives a user rename/deletion; fall back to the live account. */
+                $frozen = (string) $order->get_meta( '_rh_customer_code' );
+                if ( $frozen !== '' ) return $frozen;
                 $uid = (int) $order->get_customer_id();
                 if ( ! $uid || ! function_exists( 'get_userdata' ) ) return '';
                 $u = get_userdata( $uid );
@@ -824,7 +886,7 @@ class Red_Headed_Export_Engine {
                     $append = trim( $existing . "\n" . $msg );
                     $wpdb->update( "{$wpdb->prefix}rh_jobs", array( 'error_message' => substr( $append, 0, 1500 ) ), array( 'id' => $jid ) );
                 }
-                /* Retry on failure (e.g. the SAP/SFTP receiving server is momentarily
+                /* Retry on failure (e.g. the ERP/SFTP receiving server is momentarily
                    unreachable): queue this destination for re-delivery on the cron
                    tick, until it succeeds or hits the max attempts. */
                 if ( ! empty( $profile['retry_on_fail'] ) && class_exists( 'Red_Headed_Retry' ) ) {

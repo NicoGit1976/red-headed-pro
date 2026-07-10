@@ -4,7 +4,7 @@ Tags: woocommerce, export, csv, xlsx, json, xml, sftp, cron, webhooks
 Requires at least: 6.2
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.6.0
+Stable tag: 1.6.2
 License: GPL-2.0-or-later
 
 Exports WooCommerce orders everywhere, anytime — multi-format, multi-destination, scheduled and event-driven, with a visual field mapper, computed columns, REST API and HMAC-signed webhooks. Part of Ultimate Woo Powertools (by The Lion Frog).
@@ -105,6 +105,9 @@ AES-256-CBC encrypted at rest with `wp_salt('auth')`.
 Yes — **Red-Headed Lite**: manual + bulk, CSV only, Email + SFTP + direct download, 1 profile. Pro features are visible & soft-locked inside Lite.
 
 == Changelog ==
+
+= 1.6.2 =
+Documentation update.
 
 = 1.5.1 - 2026-05-29 =
 * **Feature (G1):** Filename pattern now supports `{date:FORMAT}` dynamic placeholder — any PHP date format (e.g. `{date:d-m-Y-H-i-s}`). Filesystem-unsafe characters are auto-replaced with dashes.
