@@ -123,7 +123,7 @@ $local_dir = get_option( 'red_headed_default_local_folder_path', '' );
 
         <fieldset class="pl-card">
             <legend class="pl-card-title">📁 <?php esc_html_e( 'Google Drive', 'red-headed-pro' ); ?> <span class="pl-pill pl-pill-pro">PRO</span></legend>
-            <p class="pl-muted"><?php esc_html_e( 'OAuth flow — set up under each Pro profile destination. Server-side OAuth client coming in v1.1.', 'red-headed-pro' ); ?></p>
+            <p class="pl-muted"><?php esc_html_e( 'OAuth flow — set up under each Pro profile destination.', 'red-headed-pro' ); ?></p>
         </fieldset>
 
         <fieldset class="pl-card">

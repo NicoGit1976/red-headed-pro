@@ -1,0 +1,1195 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-headed-pro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es_ES\n"
+"PO-Revision-Date: 2026-09-09 00:00+0000\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "%1$d / %2$s emails sent (24h sliding) — %3$s remaining. Pro = unlimited."
+msgstr "%1$d / %2$s correos enviados (24 h deslizantes): quedan %3$s. La versión Pro no tiene límite."
+
+msgid "%1$d / %2$s profiles"
+msgstr "%1$d / %2$s perfiles"
+
+msgid "%1$d / %2$s sent (24h sliding) — %3$s."
+msgstr "%1$d / %2$s enviados (24 h deslizantes): %3$s."
+
+msgid "%d errors"
+msgstr "%d errores"
+
+msgid "%d jobs total"
+msgstr "%d trabajos en total"
+
+msgid "%d success"
+msgstr "%d correctos"
+
+msgid "%d total (24h)"
+msgstr "%d en total (24 h)"
+
+msgid "(stored)"
+msgstr "(guardado)"
+
+msgid "+ Add webhook endpoint"
+msgstr "+ Añadir un punto de acceso de webhook"
+
+msgid "+ Create profile"
+msgstr "+ Crear un perfil"
+
+msgid "6 destinations: Email · SFTP · Google Drive · REST · Local ZIP · Direct download"
+msgstr "6 destinos: correo · SFTP · Google Drive · REST · ZIP local · descarga directa"
+
+msgid "6 formats: CSV · TSV · JSON · NDJSON · XML · XLSX"
+msgstr "6 formatos: CSV · TSV · JSON · NDJSON · XML · XLSX"
+
+msgid "6-char alphanumeric (uniqueness)"
+msgstr "6 caracteres alfanuméricos (para la unicidad)"
+
+msgid "6-digit numeric (e.g. 048291)"
+msgstr "6 dígitos (p. ej. 048291)"
+
+msgid "A Red-Headed export job has failed."
+msgstr "Una exportación de Red-Headed ha fallado."
+
+msgid "A profile = format + filters + columns + destinations (+ cron/auto in Pro)."
+msgstr "Un perfil = un formato, unos filtros, unas columnas y unos destinos (además de la programación y el disparo automático en Pro)."
+
+msgid "About"
+msgstr "Acerca de"
+
+msgid "Actions"
+msgstr "Acciones"
+
+msgid "Active columns"
+msgstr "Columnas activas"
+
+msgid "Add an \"Exported\" status to WooCommerce. Use it as the post-export action target so already-exported orders are easy to filter out."
+msgstr "Añade un estado «Exportado» a WooCommerce. Úselo como destino de la acción posterior a la exportación, para descartar fácilmente los pedidos ya exportados."
+
+msgid "Add calculated field"
+msgstr "Añadir un campo calculado"
+
+msgid "Add destination"
+msgstr "Añadir un destino"
+
+msgid "Add meta column"
+msgstr "Añadir una columna de metadato"
+
+msgid "Add one or many destinations. Lite is capped to 1."
+msgstr "Añada uno o varios destinos. La versión Lite está limitada a uno solo."
+
+msgid "Add static field"
+msgstr "Añadir un campo fijo"
+
+msgid "Advanced filters"
+msgstr "Filtros avanzados"
+
+msgid "Advanced filters: date range · payment · category · SKU · min/max amount"
+msgstr "Filtros avanzados: intervalo de fechas · pago · categoría · SKU · importe mínimo y máximo"
+
+msgid "After a successful export, set order status to"
+msgstr "Tras una exportación correcta, pasar el pedido al estado"
+
+msgid "All formats"
+msgstr "Todos los formatos"
+
+msgid "All statuses"
+msgstr "Todos los estados"
+
+msgid "Allowed: + - * / parentheses + numeric placeholders {total} {subtotal} {tax_total} {shipping_total} {discount_total}."
+msgstr "Se permiten: + - * /, los paréntesis y los marcadores numéricos {total} {subtotal} {tax_total} {shipping_total} {discount_total}."
+
+msgid "Authenticated, but the remote path \"%s\" does not exist or is not reachable for this user (try a relative path without a leading slash)."
+msgstr "Autenticación correcta, pero la ruta remota «%s» no existe o no está al alcance de este usuario (pruebe una ruta relativa, sin barra inclinada al principio)."
+
+msgid "Auto-trigger"
+msgstr "Disparo automático"
+
+msgid "Auto-trigger on WC order status change (dedupe + min-total threshold)"
+msgstr "Disparo automático al cambiar el estado de un pedido de WooCommerce (deduplicación y umbral de total mínimo)"
+
+msgid "Bare array — no { meta, orders } wrapper"
+msgstr "Array desnudo, sin la envoltura { meta, orders }"
+
+msgid "Billing address"
+msgstr "Dirección de facturación"
+
+msgid "Billing city"
+msgstr "Ciudad de facturación"
+
+msgid "Billing country (2-letter)"
+msgstr "País de facturación (2 letras)"
+
+msgid "Body"
+msgstr "Cuerpo del mensaje"
+
+msgid "Browse export fields"
+msgstr "Examinar los campos exportables"
+
+msgid "Browse fields"
+msgstr "Examinar los campos"
+
+msgid "Build file without delivering"
+msgstr "Generar el archivo sin entregarlo"
+
+msgid "Calculated field"
+msgstr "Campo calculado"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Cannot open remote path."
+msgstr "No se puede abrir la ruta remota."
+
+msgid "Cannot open zip for writing."
+msgstr "No se puede abrir el archivo ZIP para escritura."
+
+msgid "Clean on uninstall"
+msgstr "Limpiar al desinstalar"
+
+msgid "Clear"
+msgstr "Borrar"
+
+msgid "Clear ALL export job rows? Files on disk are kept."
+msgstr "¿Borrar TODAS las filas del registro de exportaciones? Los archivos del disco se conservan."
+
+msgid "Clear all logs"
+msgstr "Borrar todos los registros"
+
+msgid "Close"
+msgstr "Cerrar"
+
+msgid "Columns"
+msgstr "Columnas"
+
+msgid "Comma-separated"
+msgstr "Separados por comas"
+
+msgid "Comma-separated emails"
+msgstr "Correos separados por comas"
+
+msgid "Computed columns (formulas across order fields)"
+msgstr "Columnas calculadas (fórmulas sobre los campos del pedido)"
+
+msgid "Configure URL + auth per profile destination — supports Bearer / Basic / custom header."
+msgstr "Configure la URL y la autenticación para cada destino de perfil: Bearer, Basic o cabecera personalizada."
+
+msgid "Configure automatic export schedules"
+msgstr "Configurar la programación automática de las exportaciones"
+
+msgid "Connected, but authentication failed (check user / password / port)."
+msgstr "Conexión establecida, pero la autenticación ha fallado (compruebe el usuario, la contraseña y el puerto)."
+
+msgid "Connection OK ✓"
+msgstr "Conexión correcta ✓"
+
+msgid "Connection error: %s"
+msgstr "Error de conexión: %s"
+
+msgid "Connection not found."
+msgstr "Conexión no encontrada."
+
+msgid "Connection type is required."
+msgstr "El tipo de conexión es obligatorio."
+
+msgid "Could not copy the file to the target folder."
+msgstr "No se ha podido copiar el archivo a la carpeta de destino."
+
+msgid "Could not create the folder. Check server permissions."
+msgstr "No se ha podido crear la carpeta. Compruebe los permisos en el servidor."
+
+msgid "Could not create the target folder."
+msgstr "No se ha podido crear la carpeta de destino."
+
+msgid "Coupon used"
+msgstr "Código de descuento utilizado"
+
+msgid "Create a new export profile"
+msgstr "Crear un perfil de exportación"
+
+msgid "Create folder if missing"
+msgstr "Crear la carpeta si no existe"
+
+msgid "Cron"
+msgstr "Programación"
+
+msgid "Cron schedules"
+msgstr "Ritmos de programación"
+
+msgid "Cron schedules — Pro feature"
+msgstr "Ritmos de programación: función Pro"
+
+msgid "Cron schedules: hourly · daily · weekly · custom interval"
+msgstr "Programación: cada hora · una vez al día · una vez por semana · intervalo personalizado"
+
+msgid "Custom WC statuses support (non-native order statuses)"
+msgstr "Compatibilidad con los estados personalizados de WooCommerce (estados de pedido no nativos)"
+
+msgid "Custom date (PHP date format, e.g. {date:d-m-Y-H-i-s})"
+msgstr "Fecha personalizada (formato de fecha de PHP, p. ej. {date:d-m-Y-H-i-s})"
+
+msgid "Custom interval (n minutes)"
+msgstr "Intervalo personalizado (n minutos)"
+
+msgid "Custom meta"
+msgstr "Metadato personalizado"
+
+msgid "Custom meta key"
+msgstr "Clave de metadato personalizado"
+
+msgid "Custom order status"
+msgstr "Estado de pedido personalizado"
+
+msgid "Customer email contains"
+msgstr "El correo del cliente contiene"
+
+msgid "Customer role"
+msgstr "Rol del cliente"
+
+msgid "Daily"
+msgstr "Una vez al día"
+
+msgid "Dashboard"
+msgstr "Panel"
+
+msgid "Data hygiene"
+msgstr "Higiene de los datos"
+
+msgid "Date from"
+msgstr "Fecha de inicio"
+
+msgid "Date to"
+msgstr "Fecha de fin"
+
+msgid "Decimal separator"
+msgstr "Separador decimal"
+
+msgid "Default BCC"
+msgstr "Copia oculta por defecto"
+
+msgid "Default CC"
+msgstr "Copia por defecto"
+
+msgid "Default body"
+msgstr "Cuerpo del mensaje por defecto"
+
+msgid "Default credentials used as a starting point for new destinations inside profiles. Per-profile overrides supported."
+msgstr "Credenciales por defecto, que sirven de punto de partida para los nuevos destinos dentro de los perfiles. Cada perfil puede redefinirlas."
+
+msgid "Default email template"
+msgstr "Plantilla de correo por defecto"
+
+msgid "Default from email"
+msgstr "Dirección del remitente por defecto"
+
+msgid "Default from name"
+msgstr "Nombre del remitente por defecto"
+
+msgid "Default path"
+msgstr "Ruta por defecto"
+
+msgid "Default recipient(s)"
+msgstr "Destinatario(s) por defecto"
+
+msgid "Default subject"
+msgstr "Asunto por defecto"
+
+msgid "Delete success jobs older than 90 days from the log."
+msgstr "Eliminar del registro los trabajos correctos de más de 90 días."
+
+msgid "Destinations"
+msgstr "Destinos"
+
+msgid "Discover meta keys"
+msgstr "Descubrir las claves de metadatos"
+
+msgid "Docs"
+msgstr "Documentación"
+
+msgid "Done"
+msgstr "Terminado"
+
+msgid "Download the file"
+msgstr "Descargar el archivo"
+
+msgid "Duration"
+msgstr "Duración"
+
+msgid "Edit a profile to change its schedule or auto-trigger."
+msgstr "Edite un perfil para cambiar su programación o su disparo automático."
+
+msgid "Email"
+msgstr "Correo electrónico"
+
+msgid "Email quota"
+msgstr "Cuota de correos"
+
+msgid "Email quota reached (30/24h Lite limit). Upgrade to Pro for unlimited emails."
+msgstr "Cuota de correos alcanzada (límite Lite de 30 cada 24 h). Pase a Pro para enviar sin límite."
+
+msgid "Error message:"
+msgstr "Mensaje de error:"
+
+msgid "Events"
+msgstr "Eventos"
+
+msgid "Every 15 minutes"
+msgstr "Cada 15 minutos"
+
+msgid "Every 15 minutes (Red-Headed)"
+msgstr "Cada 15 minutos (Red-Headed)"
+
+msgid "Every 30 minutes"
+msgstr "Cada 30 minutos"
+
+msgid "Every 30 minutes (Red-Headed)"
+msgstr "Cada 30 minutos (Red-Headed)"
+
+msgid "Every 5 minutes"
+msgstr "Cada 5 minutos"
+
+msgid "Every 5 minutes (Red-Headed)"
+msgstr "Cada 5 minutos (Red-Headed)"
+
+msgid "Every POST request includes these headers and a JSON body. Use the secret for HMAC verification."
+msgstr "Cada petición POST lleva estas cabeceras y un cuerpo JSON. Use el secreto para la verificación HMAC."
+
+msgid "Export each order automatically the instant it reaches a status — in real time, no cron needed. e.g. on a classic shop: “processing, completed” to export every paid + completed order. Leave empty to disable."
+msgstr "Exporte cada pedido automáticamente en cuanto alcanza un estado, en tiempo real y sin programación. Por ejemplo, en una tienda clásica: «processing, completed» para exportar todo pedido pagado y completado. Déjelo vacío para desactivarlo."
+
+msgid "Export file missing on disk."
+msgstr "Falta el archivo de exportación en el disco."
+
+msgid "Export history"
+msgstr "Historial de exportaciones"
+
+msgid "Export mode"
+msgstr "Modo de exportación"
+
+msgid "Export orders"
+msgstr "Exportar los pedidos"
+
+msgid "Export profile as JSON"
+msgstr "Exportar el perfil en JSON"
+
+msgid "Export profiles"
+msgstr "Perfiles de exportación"
+
+msgid "Export ran but no orders matched your filters. Check the profile settings (statuses, date range)."
+msgstr "La exportación se ha ejecutado, pero ningún pedido corresponde a sus filtros. Compruebe los ajustes del perfil (estados, intervalo de fechas)."
+
+msgid "Exported"
+msgstr "Exportado"
+
+msgid "Exported %1$d time(s), last on %2$s"
+msgstr "Exportado %1$d veces, la última el %2$s"
+
+msgid "Exported <span class=\"count\">(%s)</span>"
+msgid_plural "Exported <span class=\"count\">(%s)</span>"
+msgstr[0] "Exportado <span class=\"count\">(%s)</span>"
+msgstr[1] "Exportados <span class=\"count\">(%s)</span>"
+
+msgid "Exports"
+msgstr "Exportaciones"
+
+msgid "Exports Orders Everywhere, Anytime"
+msgstr "Sus pedidos exportados a cualquier sitio y en cualquier momento"
+
+msgid "Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format (CSV / XLSX / JSON / XML / NDJSON / TSV) with structured JSON shapes (labeled, nested line items, bare array), multi-destination (Email / SFTP / Google Drive / Download / REST / Local ZIP / Local folder), custom filename patterns, one-file-per-order split, cron + status-driven triggers. Mascot: Red-Headed Poison Frog. Pro edition. Part of Ultimate Woo Powertools (by The Lion Frog)."
+msgstr "Exporta sus pedidos de WooCommerce a cualquier sitio y en cualquier momento. Exportaciones en bloque y automáticas, multiformato (CSV / XLSX / JSON / XML / NDJSON / TSV) con formas JSON estructuradas (etiquetas explícitas, líneas de artículo anidadas, array desnudo), multidestino (correo / SFTP / Google Drive / descarga / REST / ZIP local / carpeta local), patrones de nombre de archivo, fragmentación en un archivo por pedido, programación y disparo por estado. Mascota: la rana dardo de cabeza roja. Edición Pro. Forma parte de Ultimate Woo Powertools (de The Lion Frog)."
+
+msgid "Exports WooCommerce orders everywhere, anytime. Bulk + auto exports, multi-format, multi-destination, cron + status-driven triggers. Mascot: Red-Headed Poison Frog."
+msgstr "Exporta sus pedidos de WooCommerce a cualquier sitio y en cualquier momento. Exportaciones en bloque y automáticas, multiformato, multidestino, programación y disparo por estado. Mascota: la rana dardo de cabeza roja."
+
+msgid "Failed"
+msgstr "Fallido"
+
+msgid "Failed-export notifications"
+msgstr "Avisos de exportación fallida"
+
+msgid "File defaults"
+msgstr "Ajustes de archivo por defecto"
+
+msgid "File missing on disk."
+msgstr "Falta el archivo en el disco."
+
+msgid "Filename pattern"
+msgstr "Patrón de nombre de archivo"
+
+msgid "Files older than this are auto-deleted from /uploads/red-headed-pro/exports. 0 = keep forever."
+msgstr "Los archivos con más antigüedad que este valor se eliminan automáticamente de /uploads/red-headed-pro/exports. 0 = conservación sin límite."
+
+msgid "Fill order columns…"
+msgstr "Rellenar las columnas de pedido…"
+
+msgid "Filter"
+msgstr "Filtro"
+
+msgid "Filters"
+msgstr "Filtros"
+
+msgid "Fire only once per order"
+msgstr "Dispararse solo una vez por pedido"
+
+msgid "First order WP ID (numeric)"
+msgstr "Identificador de WordPress del primer pedido (numérico)"
+
+msgid "First order billing email"
+msgstr "Correo de facturación del primer pedido"
+
+msgid "First order billing first + last name"
+msgstr "Nombre y apellidos de facturación del primer pedido"
+
+msgid "First order customer ID"
+msgstr "Identificador de cliente del primer pedido"
+
+msgid "First order date (d-m-Y)"
+msgstr "Fecha del primer pedido (d-m-A)"
+
+msgid "First order date+time (d-m-Y-H-i-s)"
+msgstr "Fecha y hora del primer pedido (d-m-A-H-i-s)"
+
+msgid "First order number (e.g. e-4123)"
+msgstr "Número del primer pedido (p. ej. e-4123)"
+
+msgid "First order time (H-i-s)"
+msgstr "Hora del primer pedido (H-i-s)"
+
+msgid "Flat rows (internal keys)"
+msgstr "Filas planas (claves internas)"
+
+msgid "Folder exists but is not writable."
+msgstr "La carpeta existe, pero no permite la escritura."
+
+msgid "Folder ready."
+msgstr "Carpeta lista."
+
+msgid "Format"
+msgstr "Formato"
+
+msgid "General"
+msgstr "General"
+
+msgid "General settings"
+msgstr "Ajustes generales"
+
+msgid "Get an email when an export job fails (run error or destination delivery error)."
+msgstr "Recibir un correo cuando falle una exportación (error de ejecución o de entrega en el destino)."
+
+msgid "Get notified by HTTP POST every time an export is generated, delivered, or fails. HMAC-signed payloads, per-endpoint event filter."
+msgstr "Reciba aviso mediante un POST HTTP cada vez que una exportación se genere, se entregue o falle. Contenidos firmados con HMAC y filtro de eventos por punto de acceso."
+
+msgid "Google Drive"
+msgstr "Google Drive"
+
+msgid "Google Drive destination requires Pro."
+msgstr "El destino Google Drive requiere la versión Pro."
+
+msgid "Google Drive: no OAuth access token configured. Paste one in the destination config (helper text under the field shows where to get it)."
+msgstr "Google Drive: no hay ningún token de acceso OAuth configurado. Pegue uno en la configuración del destino (el texto de ayuda bajo el campo indica dónde conseguirlo)."
+
+msgid "HMAC SHA-256 signature in X-Red_Headed_Pro-Signature"
+msgstr "Firma HMAC SHA-256 en X-Red_Headed_Pro-Signature"
+
+msgid "HMAC SHA-256 signed webhooks with retry x3 exponential"
+msgstr "Webhooks firmados con HMAC SHA-256, con 3 reintentos de espera creciente"
+
+msgid "Headers"
+msgstr "Cabeceras"
+
+msgid "Host"
+msgstr "Host"
+
+msgid "Hourly"
+msgstr "Cada hora"
+
+msgid "Hourly / twice-daily / daily / weekly presets"
+msgstr "Ritmos predefinidos: cada hora, dos veces al día, una vez al día, una vez por semana"
+
+msgid "If a destination is unreachable (e.g. the receiving ERP/SFTP server is down), re-attempt delivery automatically on each cron tick — with backoff — until it goes through. The export file is re-sent as-is (same filename). Relies on WP-cron / a server cron running."
+msgstr "Si un destino está inaccesible (por ejemplo, si el ERP o el servidor SFTP receptor está parado), reintentar la entrega automáticamente en cada pasada de la programación, con una espera creciente, hasta que salga bien. El archivo de exportación se reenvía tal cual, con el mismo nombre. Supone que WP-Cron o una tarea cron del servidor está funcionando."
+
+msgid "Import"
+msgstr "Importar"
+
+msgid "Import a profile from a JSON file"
+msgstr "Importar un perfil desde un archivo JSON"
+
+msgid "Insufficient permissions."
+msgstr "Permisos insuficientes."
+
+msgid "Interval schedules rely on WP-cron, which only fires on site traffic. For precise timing (e.g. every 5 min), point a real server cron at wp-cron.php. To export the instant an order reaches a status, use Auto-trigger below instead — no cron needed."
+msgstr "Los ritmos por intervalo se apoyan en WP-Cron, que solo se dispara cuando pasan visitantes. Para un horario preciso (cada 5 minutos, por ejemplo), apunte una tarea cron real del servidor a wp-cron.php. Para exportar en el instante mismo en que un pedido alcanza un estado, use más bien el disparo automático de abajo: no necesita ninguna programación."
+
+msgid "Invalid JSON."
+msgstr "JSON no válido."
+
+msgid "JSON structure"
+msgstr "Estructura del JSON"
+
+msgid "Job ID"
+msgstr "Identificador del trabajo"
+
+msgid "Job not found."
+msgstr "Trabajo no encontrado."
+
+msgid "Labeled + nested line items"
+msgstr "Etiquetas explícitas y líneas de artículo anidadas"
+
+msgid "Last run"
+msgstr "Última ejecución"
+
+msgid "Line item"
+msgstr "Línea de artículo"
+
+msgid "Line-item export mode (one row per product)"
+msgstr "Modo de exportación por línea de artículo (una fila por producto)"
+
+msgid "Line-items key (nested shape)"
+msgstr "Clave de las líneas de artículo (forma anidada)"
+
+msgid "Lite cap"
+msgstr "Tope de la versión Lite"
+
+msgid "Lite is capped to 1 export profile. Upgrade to Pro for unlimited profiles."
+msgstr "La versión Lite está limitada a un perfil de exportación. Pase a Pro para tener perfiles sin límite."
+
+msgid "Local ZIP requires Pro."
+msgstr "El ZIP local requiere la versión Pro."
+
+msgid "Local folder"
+msgstr "Carpeta local"
+
+msgid "Local folder destination requires Pro."
+msgstr "El destino «carpeta local» requiere la versión Pro."
+
+msgid "Maintenance"
+msgstr "Mantenimiento"
+
+msgid "Manual only"
+msgstr "Solo manual"
+
+msgid "Master tick: every hour — next run at %s."
+msgstr "Latido principal: cada hora; próxima ejecución a las %s."
+
+msgid "Max attempts (0 = keep trying until success)"
+msgstr "Número máximo de intentos (0 = reintentar hasta que salga bien)"
+
+msgid "Meta value (= match)"
+msgstr "Valor del metadato (igualdad estricta)"
+
+msgid "Min total (€)"
+msgstr "Total mínimo (€)"
+
+msgid "Missing SFTP host or user."
+msgstr "Falta el host o el usuario de SFTP."
+
+msgid "Missing endpoint URL."
+msgstr "Falta la URL del punto de acceso."
+
+msgid "Multi-destinations per profile (simultaneous fan-out)"
+msgstr "Varios destinos por perfil (entrega simultánea)"
+
+msgid "Multiple endpoints, per-endpoint event subscription"
+msgstr "Varios puntos de acceso, con una suscripción a los eventos propia de cada uno"
+
+msgid "N alphanumeric chars (e.g. {random:10})"
+msgstr "N caracteres alfanuméricos (p. ej. {random:10})"
+
+msgid "N numeric digits (e.g. {digits:9} for AOE compat)"
+msgstr "N dígitos (p. ej. {digits:9}, para la compatibilidad con AOE)"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "New order received"
+msgstr "Nuevo pedido recibido"
+
+msgid "New profile"
+msgstr "Perfil nuevo"
+
+msgid "No columns yet. Click \"Browse fields\" to add them."
+msgstr "Todavía no hay ninguna columna. Pulse «Examinar los campos» para añadirlas."
+
+msgid "No exports yet. Configure a profile in Settings or run a bulk export from the WC orders list."
+msgstr "Todavía no hay ninguna exportación. Configure un perfil en los Ajustes, o lance una exportación en bloque desde la lista de pedidos de WooCommerce."
+
+msgid "No exports yet. Go to Settings → Profiles to create one, or use \"🐸 Export with Red-Headed\" as a bulk action on the WC orders list."
+msgstr "Todavía no hay ninguna exportación. Vaya a Ajustes → Perfiles para crear uno, o use «🐸 Exportar con Red-Headed» como acción en bloque en la lista de pedidos de WooCommerce."
+
+msgid "No orders matched your filters. Check the profile settings (statuses, dates)."
+msgstr "Ningún pedido corresponde a sus filtros. Compruebe los ajustes del perfil (estados, fechas)."
+
+msgid "No profile yet. Create one to start exporting WooCommerce orders."
+msgstr "Todavía no hay ningún perfil. Cree uno para empezar a exportar sus pedidos de WooCommerce."
+
+msgid "No recipient email configured."
+msgstr "No hay ningún correo de destinatario configurado."
+
+msgid "No valid test recipient."
+msgstr "No hay ningún destinatario de prueba válido."
+
+msgid "None yet."
+msgstr "Ninguno todavía."
+
+msgid "OAuth flow — set up under each Pro profile destination."
+msgstr "Recorrido OAuth: se configura bajo cada destino de perfil Pro."
+
+msgid "On status change to (comma-separated)"
+msgstr "Al pasar al estado (separados por comas)"
+
+msgid "Once a week"
+msgstr "Una vez por semana"
+
+msgid "One file per order (split a batch into individual files)"
+msgstr "Un archivo por pedido (parte un lote en archivos individuales)"
+
+msgid "One object per order (column labels as keys)"
+msgstr "Un objeto por pedido (las etiquetas de columna hacen de claves)"
+
+msgid "One row per line item (product)"
+msgstr "Una fila por artículo (producto)"
+
+msgid "One row per order"
+msgstr "Una fila por pedido"
+
+msgid "Only applies to JSON / NDJSON formats. Shape the output to match a downstream schema (ERP, partner API…)."
+msgstr "Solo afecta a los formatos JSON y NDJSON. Dé a la salida la forma que se espera aguas abajo (ERP, API de un socio…)."
+
+msgid "Open Exports list"
+msgstr "Abrir la lista de exportaciones"
+
+msgid "Open Red-Headed settings"
+msgstr "Abrir los ajustes de Red-Headed"
+
+msgid "Open the Exports list:"
+msgstr "Abrir la lista de exportaciones:"
+
+msgid "Optional but recommended"
+msgstr "Opcional, pero recomendable"
+
+msgid "Order"
+msgstr "Pedido"
+
+msgctxt "Order status"
+msgid "Exported"
+msgstr "Exportado"
+
+msgctxt "Order status"
+msgid "📦 Exported"
+msgstr "📦 Exportado"
+
+msgid "Order status auto-trigger (processing → SFTP, completed → email…)"
+msgstr "Disparo automático según el estado del pedido (processing → SFTP, completed → correo…)"
+
+msgid "Order statuses"
+msgstr "Estados de pedido"
+
+msgid "Order total max"
+msgstr "Total de pedido máximo"
+
+msgid "Order total min"
+msgstr "Total de pedido mínimo"
+
+msgid "Output file"
+msgstr "Archivo generado"
+
+msgid "PHP ZipArchive extension missing."
+msgstr "Falta la extensión ZipArchive de PHP."
+
+msgid "Password"
+msgstr "Contraseña"
+
+msgid "Password is encrypted at rest (AES-256-CBC + wp_salt)."
+msgstr "La contraseña se cifra en reposo (AES-256-CBC y wp_salt)."
+
+msgid "Payload reference"
+msgstr "Referencia del contenido enviado"
+
+msgid "Payment & Shipping"
+msgstr "Pago y envío"
+
+msgid "Per-profile fire-once dedupe"
+msgstr "Deduplicación de «una sola vez», perfil por perfil"
+
+msgid "Pick the order fields to include in the export, then drag them into the order you want."
+msgstr "Elija los campos de pedido que se incluyen en la exportación y ordénelos como quiera arrastrándolos."
+
+msgid "Placeholders: {filename} {records} {order_number} {order_id} {customer_email} {site_name} {date} {time}"
+msgstr "Marcadores: {filename} {records} {order_number} {order_id} {customer_email} {site_name} {date} {time}"
+
+msgid "Placeholders: {order_id} {order_number} {order_datetime} {order_date} {date_eu} {datetime_eu} {date} {time} {date:FORMAT} {customer_id} {customer_email} {customer_name} {records} {job_id} {random} {random:N} {digits} {digits:N} {profile} {format}. Extension auto-appended. Empty = global default."
+msgstr "Marcadores: {order_id} {order_number} {order_datetime} {order_date} {date_eu} {datetime_eu} {date} {time} {date:FORMAT} {customer_id} {customer_email} {customer_name} {records} {job_id} {random} {random:N} {digits} {digits:N} {profile} {format}. La extensión se añade automáticamente. Vacío = valor general por defecto."
+
+msgid "PolyLang & WPML compatibility"
+msgstr "Compatibilidad con PolyLang y WPML"
+
+msgid "Port"
+msgstr "Puerto"
+
+msgid "Post-export action"
+msgstr "Acción posterior a la exportación"
+
+msgid "Post-export status change (auto-set order status after export)"
+msgstr "Cambio de estado tras la exportación (el estado del pedido se pone automáticamente)"
+
+msgid "Preview the first rows of this export"
+msgstr "Vista previa de las primeras filas de esta exportación"
+
+msgid "Preview which orders match this profile"
+msgstr "Ver qué pedidos corresponden a este perfil"
+
+msgid "Pro feature locked"
+msgstr "Función Pro bloqueada"
+
+msgid "Pro: unlimited"
+msgstr "Pro: sin límite"
+
+msgid "Product category (term ID)"
+msgstr "Categoría de producto (identificador de término)"
+
+msgid "Profile"
+msgstr "Perfil"
+
+msgid "Profile #%d"
+msgstr "Perfil n.º %d"
+
+msgid "Profile imported."
+msgstr "Perfil importado."
+
+msgid "Profile name"
+msgstr "Nombre del perfil"
+
+msgid "Profile not found."
+msgstr "Perfil no encontrado."
+
+msgid "Profiles"
+msgstr "Perfiles"
+
+msgid "Purge old job rows? This cannot be undone."
+msgstr "¿Purgar las filas antiguas del registro? Esta acción no puede deshacerse."
+
+msgid "Purge old jobs"
+msgstr "Purgar los trabajos antiguos"
+
+msgid "Quick actions"
+msgstr "Acciones rápidas"
+
+msgid "REST API endpoints (/red-headed-pro/v1/profiles, /jobs)"
+msgstr "Puntos de acceso de la API REST (/red-headed-pro/v1/profiles, /jobs)"
+
+msgid "REST destination requires Pro."
+msgstr "El destino REST requiere la versión Pro."
+
+msgid "REST endpoint"
+msgstr "Punto de acceso REST"
+
+msgid "Re-deliver failed exports until received"
+msgstr "Reenviar las exportaciones fallidas hasta que se reciban"
+
+msgid "Re-run profile"
+msgstr "Volver a lanzar el perfil"
+
+msgid "Recipients (comma-separated)"
+msgstr "Destinatarios (separados por comas)"
+
+msgid "Records"
+msgstr "Registros"
+
+msgid "Red Headed (Pro) — Orders Export Manager"
+msgstr "Red Headed (Pro) — gestor de exportación de pedidos"
+
+msgid "Red Headed Dashboard"
+msgstr "Panel de Red Headed"
+
+msgid "Red Headed Exports"
+msgstr "Exportaciones de Red Headed"
+
+msgid "Red Headed Lite has been deactivated automatically. All your data and settings have been preserved."
+msgstr "Red Headed Lite se ha desactivado automáticamente. Todos sus datos y sus ajustes se conservan."
+
+msgid "Red Headed Pro activated."
+msgstr "Red Headed Pro activado."
+
+msgid "Red Headed Settings"
+msgstr "Ajustes de Red Headed"
+
+msgid "Red-Headed export #%1$d created. %2$s"
+msgstr "Exportación de Red-Headed n.º %1$d creada. %2$s"
+
+msgid "Register the \"📦 Exported\" custom WooCommerce order status (wc-rh-exported)"
+msgstr "Registrar el estado de pedido personalizado de WooCommerce «📦 Exportado» (wc-rh-exported)"
+
+msgid "Registered endpoints"
+msgstr "Puntos de acceso registrados"
+
+msgid "Relative to wp-content/ (e.g. \"order-exports\") or an absolute path inside the WordPress root. Empty = wp-content/order-exports. The raw export file is copied here (no zip)."
+msgstr "Relativo a wp-content/ (por ejemplo «order-exports»), o una ruta absoluta dentro de la raíz de WordPress. Vacío = wp-content/order-exports. El archivo de exportación en bruto se copia ahí, sin ZIP."
+
+msgid "Remote path"
+msgstr "Ruta remota"
+
+msgid "Remove this webhook?"
+msgstr "¿Eliminar este webhook?"
+
+msgid "Reset"
+msgstr "Restablecer"
+
+msgid "Restrict which orders are exported by this profile."
+msgstr "Restrinja los pedidos que exporta este perfil."
+
+msgid "Retention (days)"
+msgstr "Conservación (días)"
+
+msgid "Retry on failure"
+msgstr "Reintentar si falla"
+
+msgid "Row count"
+msgstr "Número de filas"
+
+msgid "Row layout"
+msgstr "Disposición de las filas"
+
+msgid "Run"
+msgstr "Ejecutar"
+
+msgid "Run a manual order export"
+msgstr "Lanzar una exportación manual de pedidos"
+
+msgid "SFTP"
+msgstr "SFTP"
+
+msgid "SFTP authentication failed."
+msgstr "La autenticación SFTP ha fallado."
+
+msgid "SFTP library missing. Install phpseclib3 (composer install --no-dev) or enable PHP SSH2 extension."
+msgstr "Falta la biblioteca de SFTP. Instale phpseclib3 (composer install --no-dev) o active la extensión SSH2 de PHP."
+
+msgid "SFTP subsystem failed."
+msgstr "El subsistema SFTP ha fallado."
+
+msgid "SFTP upload failed."
+msgstr "Ha fallado el envío por SFTP."
+
+msgid "SKU contains"
+msgstr "El SKU contiene"
+
+msgid "SSH2 auth failed."
+msgstr "La autenticación SSH2 ha fallado."
+
+msgid "SSH2 connect failed."
+msgstr "Ha fallado la conexión SSH2."
+
+msgid "Save profile"
+msgstr "Guardar el perfil"
+
+msgid "Scan order meta"
+msgstr "Analizar los metadatos de los pedidos"
+
+msgid "Scan your order meta to find available keys. Click a key to add it as a column."
+msgstr "Analice los metadatos de sus pedidos para localizar las claves disponibles. Pulse una clave para añadirla como columna."
+
+msgid "Schedule"
+msgstr "Programación"
+
+msgid "Schedule any export profile to run hourly, twice daily, daily, weekly, or with a custom WP-Cron interval. Combine with auto-trigger to fire on order status changes."
+msgstr "Programe cualquier perfil de exportación cada hora, dos veces al día, una vez al día, una vez por semana, o con un intervalo de WP-Cron a su elección. Combínelo con el disparo automático para reaccionar a los cambios de estado de los pedidos."
+
+msgid "Schedules"
+msgstr "Programaciones"
+
+msgid "Search…"
+msgstr "Buscar…"
+
+msgid "Secret"
+msgstr "Secreto"
+
+msgid "Secret (HMAC SHA-256)"
+msgstr "Secreto (HMAC SHA-256)"
+
+msgid "See all →"
+msgstr "Ver todo →"
+
+msgid "Send a notification email on failure"
+msgstr "Enviar un correo de aviso si falla"
+
+msgid "Set by Red-Headed export"
+msgstr "Puesto por una exportación de Red-Headed"
+
+msgid "Settings"
+msgstr "Ajustes"
+
+msgid "Shape"
+msgstr "Forma"
+
+msgid "Shipping address"
+msgstr "Dirección de envío"
+
+msgid "Shipping city"
+msgstr "Ciudad de envío"
+
+msgid "Shipping country (2-letter)"
+msgstr "País de envío (2 letras)"
+
+msgid "Shipping method ID"
+msgstr "Identificador del método de envío"
+
+msgid "Site"
+msgstr "Sitio"
+
+msgid "Size"
+msgstr "Tamaño"
+
+msgid "Split export produced no files."
+msgstr "La exportación fragmentada no ha generado ningún archivo."
+
+msgid "Started"
+msgstr "Iniciado"
+
+msgid "Static field"
+msgstr "Campo fijo"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "Subject"
+msgstr "Asunto"
+
+msgid "Subject (optional)"
+msgstr "Asunto (opcional)"
+
+msgid "Successful"
+msgstr "Correctos"
+
+msgid "Support"
+msgstr "Soporte"
+
+msgid "Target folder is not writable."
+msgstr "La carpeta de destino no permite la escritura."
+
+msgid "The JSON key that holds each order’s product lines — e.g. items, lines, products."
+msgstr "La clave JSON que lleva las líneas de producto de cada pedido: por ejemplo items, lines o products."
+
+msgid "The Lion Frog Team"
+msgstr "El equipo de The Lion Frog"
+
+msgid "The folder must be inside wp-content or the WordPress root."
+msgstr "La carpeta debe estar dentro de wp-content o en la raíz de WordPress."
+
+msgid "This feature (%s) requires Red-Headed Pro."
+msgstr "Esta función (%s) requiere Red-Headed Pro."
+
+msgid "This month"
+msgstr "Este mes"
+
+msgid "Tokens: {date} {time} {datetime} {date_eu} {date:FORMAT} {records} {format} {profile} {order_id} {order_number} {random} {random:N} {digits} {digits:N}. Empty = profile name + timestamp + random."
+msgstr "Marcadores: {date} {time} {datetime} {date_eu} {date:FORMAT} {records} {format} {profile} {order_id} {order_number} {random} {random:N} {digits} {digits:N}. Vacío = nombre del perfil, marca de tiempo y serie aleatoria."
+
+msgid "Tokens: {{job_id}} {{profile}} {{site}}"
+msgstr "Marcadores: {{job_id}} {{profile}} {{site}}"
+
+msgid "Total exports"
+msgstr "Exportaciones en total"
+
+msgid "Totals"
+msgstr "Totales"
+
+msgid "Translatable via PolyLang & WPML — use the “Red_Headed_Pro” string group in the language admin."
+msgstr "Traducible con PolyLang y WPML: use el grupo de cadenas «Red_Headed_Pro» en la administración de idiomas."
+
+msgid "Trigger"
+msgstr "Disparador"
+
+msgid "Twice daily"
+msgstr "Dos veces al día"
+
+msgid "URL"
+msgstr "URL"
+
+msgid "URL (HTTPS only)"
+msgstr "URL (solo HTTPS)"
+
+msgid "Unix epoch"
+msgstr "Marca de tiempo Unix"
+
+msgid "Unknown destination type."
+msgstr "Tipo de destino desconocido."
+
+msgid "Unlimited email delivery (no 30/24h cap)"
+msgstr "Envío de correos sin límite (sin el tope de 30 cada 24 h)"
+
+msgid "Unlimited export profiles"
+msgstr "Perfiles de exportación sin límite"
+
+msgid "Upgrade to Pro"
+msgstr "Pasar a Pro"
+
+msgid "Use defaults"
+msgstr "Usar los valores por defecto"
+
+msgid "Useful to mark exported orders so they are skipped on the next run."
+msgstr "Práctico para marcar los pedidos exportados, de modo que se descarten en la pasada siguiente."
+
+msgid "User"
+msgstr "Usuario"
+
+msgid "Verify: hash_hmac(\"sha256\", $raw_body, $your_secret) === str_replace(\"sha256=\",\"\", $header[\"X-Red_Headed_Pro-Signature\"])"
+msgstr "Verificación: hash_hmac(\"sha256\", $raw_body, $your_secret) === str_replace(\"sha256=\",\"\", $header[\"X-Red_Headed_Pro-Signature\"])"
+
+msgid "View past export jobs and downloads"
+msgstr "Consultar las exportaciones pasadas y sus descargas"
+
+msgid "Visual field mapper (drag-and-drop column picker)"
+msgstr "Editor visual de correspondencias (elección de columnas arrastrando y soltando)"
+
+msgid "WC Orders"
+msgstr "Pedidos de WooCommerce"
+
+msgid "Webhooks"
+msgstr "Webhooks"
+
+msgid "Webhooks — Pro feature"
+msgstr "Webhooks: función Pro"
+
+msgid "Weekly"
+msgstr "Una vez por semana"
+
+msgid "When"
+msgstr "Cuándo"
+
+msgid "When ON (default), deleting Red-Headed from Plugins removes its options (settings, webhooks, cron flags), the rh_profiles + rh_jobs tables and the red_headed_cron_tick cron. Tables are preserved if the sister edition (Pro/Lite) is still installed. Turn OFF if you plan to reinstall later."
+msgstr "Cuando este ajuste está activo (por defecto), borrar Red-Headed desde la página de plugins elimina sus opciones (ajustes, webhooks, indicadores de programación), las tablas rh_profiles y rh_jobs, y la tarea red_headed_cron_tick. Las tablas se conservan si la edición hermana (Pro o Lite) sigue instalada. Desactívelo si piensa reinstalar más adelante."
+
+msgid "WordPress default"
+msgstr "Valor por defecto de WordPress"
+
+msgid "Your Red-Headed order export is attached."
+msgstr "Su exportación de pedidos de Red-Headed va adjunta."
+
+msgid "check filters"
+msgstr "compruebe los filtros"
+
+msgid "comma — France/EU"
+msgstr "coma: España y Europa"
+
+msgid "csv | json | xlsx | xml | …"
+msgstr "csv | json | xlsx | xml | …"
+
+msgid "dot — international"
+msgstr "punto: internacional"
+
+msgid "e.g. Daily orders → SFTP"
+msgstr "p. ej. Pedidos del día → SFTP"
+
+msgid "exports"
+msgstr "exportaciones"
+
+msgid "first line only"
+msgstr "solo la primera línea"
+
+msgid "header label"
+msgstr "etiqueta de cabecera"
+
+msgid "imported"
+msgstr "importado"
+
+msgid "key (e.g. vat_amount)"
+msgstr "clave (p. ej. vat_amount)"
+
+msgid "key (e.g. vendor)"
+msgstr "clave (p. ej. vendor)"
+
+msgid "last 7 days"
+msgstr "últimos 7 días"
+
+msgid "leave empty = field exists"
+msgstr "dejar vacío = el campo existe"
+
+msgid "meta_key (e.g. _vat_number)"
+msgstr "meta_key (p. ej. _vat_number)"
+
+msgid "not scheduled"
+msgstr "sin programar"
+
+msgid "on every line"
+msgstr "en cada línea"
+
+msgid "phpseclib3 not available on this server."
+msgstr "phpseclib3 no está disponible en este servidor."
+
+msgid "profiles"
+msgstr "perfiles"
+
+msgid "set"
+msgstr "puesto"
+
+msgid "value (constant on every row)"
+msgstr "valor (constante en cada fila)"
+
+msgid "wp_mail returned false."
+msgstr "wp_mail ha devuelto false."
+
+msgid "wp_mail() returned false — check your mailer."
+msgstr "wp_mail() ha devuelto false: compruebe su servicio de envío."
+
+msgid "— any —"
+msgstr "— cualquiera —"
+
+msgid "— do nothing —"
+msgstr "— no hacer nada —"
+
+msgid "⚙️ Settings"
+msgstr "⚙️ Ajustes"
+
+msgid "⚠ Invalid URL — must be HTTPS."
+msgstr "⚠ URL no válida: debe ser HTTPS."
+
+msgid "✓ Cleared %d job rows."
+msgstr "✓ %d filas de trabajo borradas."
+
+msgid "✓ Destinations defaults saved."
+msgstr "✓ Valores por defecto de los destinos guardados."
+
+msgid "✓ Purged %d old jobs."
+msgstr "✓ %d trabajos antiguos purgados."
+
+msgid "✓ Settings saved."
+msgstr "✓ Ajustes guardados."
+
+msgid "✓ Webhook removed."
+msgstr "✓ Webhook eliminado."
+
+msgid "✓ Webhook saved."
+msgstr "✓ Webhook guardado."
+
+msgid "🐸 Export with Red-Headed"
+msgstr "🐸 Exportar con Red-Headed"
+
+msgid "🐸 Lite is capped to 1 profile. Upgrade to Pro for unlimited profiles, cron schedules and auto-triggers."
+msgstr "🐸 La versión Lite está limitada a un perfil. Pase a Pro para tener perfiles sin límite, programación y disparo automático."
+
+msgid "🐸 Order Export for WooCommerce — by The Lion Frog."
+msgstr "🐸 Exportación de pedidos para WooCommerce, de The Lion Frog."
+
+msgid "💾 Save defaults"
+msgstr "💾 Guardar los valores por defecto"
+
+msgid "💾 Save settings"
+msgstr "💾 Guardar los ajustes"
+
+msgid "💾 Save webhook"
+msgstr "💾 Guardar el webhook"
+
+msgid "📡 Destinations defaults"
+msgstr "📡 Valores por defecto de los destinos"
+
+msgid "📦 Exports"
+msgstr "📦 Exportaciones"
+
+msgid "🕒 Recent exports"
+msgstr "🕒 Exportaciones recientes"
+
+msgid "🗂️ Available formats"
+msgstr "🗂️ Formatos disponibles"

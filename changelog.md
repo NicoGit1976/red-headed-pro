@@ -1,5 +1,19 @@
 # Red-Headed Pro — Changelog
 
+## 1.7.0 — 2026-09-09
+
+### Corrigé
+- Relecture des traductions française et espagnole : contresens, registre et vocabulaire.
+- Une annonce de version à venir figurait dans l'écran des destinations.
+- « Subject » était traduit « Sujet » à côté de « Objet par défaut », pour le même champ.
+- « Order Export pour WooCommerce » : un mot français au milieu d'un titre anglais.
+- Les deux statuts de commande WooCommerce à contexte (`_x()`) n'atteignaient pas le
+  catalogue et restaient donc intraduisibles.
+
+### Ajouté
+- Traduction française et espagnole complètes.
+
+
 ## 1.4.36 — 2026-05-05
 
 ### Added
