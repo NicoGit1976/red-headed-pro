@@ -133,7 +133,7 @@ if ( isset( $_POST['rh_purge_jobs'] ) && check_admin_referer( 'rh_purge_jobs' ) 
     <fieldset class="pl-card">
         <legend class="pl-card-title">ℹ️ <?php esc_html_e( 'About', 'red-headed-pro' ); ?></legend>
         <p><strong>Red-Headed</strong> v<?php echo esc_html( RED_HEADED_VERSION ); ?> — <?php echo esc_html( strtoupper( Red_Headed_Soft_Lock::edition() ) ); ?></p>
-        <p class="pl-muted"><?php esc_html_e( '🐸 Order Export pour WooCommerce — by The Lion Frog.', 'red-headed-pro' ); ?></p>
+        <p class="pl-muted"><?php esc_html_e( '🐸 Order Export for WooCommerce — by The Lion Frog.', 'red-headed-pro' ); ?></p>
         <ul class="pl-muted">
             <li>📚 <?php esc_html_e( 'Docs', 'red-headed-pro' ); ?>: <a href="https://thelionfrog.com/docs/red-headed-pro" target="_blank" rel="noopener">thelionfrog.com/docs/red-headed-pro</a></li>
             <li>🐛 <?php esc_html_e( 'Support', 'red-headed-pro' ); ?>: <a href="https://thelionfrog.com/support" target="_blank" rel="noopener">thelionfrog.com/support</a></li>
